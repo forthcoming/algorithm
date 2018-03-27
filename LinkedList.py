@@ -1,3 +1,4 @@
+#带头节点的单链表
 class Node:
     def __init__(self, data,right=None):
         self.data = data
