@@ -61,37 +61,37 @@ class LinkedList:
         print()
 
     def reverseK(self,count):
-        head=self.__head
-        while head.right:
-            tail=starts=head.right
-            if starts:
-                ends=starts.right
-                flag=count-1
-                while ends and flag:
-                    cur=ends
-                    ends=ends.right
-                    cur.right=starts
-                    starts=cur
-                    flag-=1   
-                tail.right=ends
-                head.right=starts
-            head=tail
+#         head=self.__head
+#         while head.right:
+#             tail=starts=head.right
+#             if starts:
+#                 ends=starts.right
+#                 flag=count-1
+#                 while ends and flag:
+#                     cur=ends
+#                     ends=ends.right
+#                     cur.right=starts
+#                     starts=cur
+#                     flag-=1   
+#                 tail.right=ends
+#                 head.right=starts
+#             head=tail
 
-        # start=self.__head
-        # end=cur=self.__head.right
-        # while cur:
-        #     flag=count
-        #     L=None
-        #     while flag and cur:
-        #         tmp=cur
-        #         cur=cur.right
-        #         tmp.right=L
-        #         L=tmp
-        #         flag-=1
+        start=self.__head
+        end=cur=self.__head.right
+        while cur:
+            flag=count
+            L=None
+            while flag and cur:
+                tmp=cur
+                cur=cur.right
+                tmp.right=L
+                L=tmp
+                flag-=1
 
-        #     start.right=L
-        #     start=end
-        #     end=cur
+            start.right=L
+            start=end
+            end=cur
 
     def init(self,node): #当且仅当链表为空时才有效
         if not self.__length:
