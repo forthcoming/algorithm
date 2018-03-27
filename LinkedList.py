@@ -53,7 +53,7 @@ class LinkedList:
             self.__length+=1
             return True
 
-    def show(self):
+    def traverse(self):
         cur = self.__head.right
         while cur:
             print(cur)
@@ -145,6 +145,6 @@ if __name__=='__main__':
     Lc=LinkedList()
     Lc.init(Node(1,Node(3,Node(3,Node(5,Node(7,Node(9,Node(10,Node(11,Node(12))))))))))
     Lc.filter(La,Lb,Lc) 
-    Lc.show()
+    Lc.traverse()
     Lc.reverseK(2)
-    Lc.show()
+    Lc.traverse()
