@@ -60,7 +60,7 @@ class LinkedList:
             cur = cur.right
         print()
 
-    def reverseK(self,count):
+    def reverseK(self,count): #分组反转链表
 #         head=self.__head
 #         while head.right:
 #             tail=starts=head.right
