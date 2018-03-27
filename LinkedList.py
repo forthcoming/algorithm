@@ -88,7 +88,6 @@ class LinkedList:
                 tmp.right=L
                 L=tmp
                 flag-=1
-
             start.right=L
             start=end
             end=cur
