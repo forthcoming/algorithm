@@ -1,3 +1,4 @@
+# 数组版队列
 class Queue:
     def __init__(self,maxlen=1000,incrementsize=100):
         self.front=self.rear=0
