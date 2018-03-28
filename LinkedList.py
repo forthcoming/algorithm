@@ -98,7 +98,31 @@ class LinkedList:
             while node:
                 node=node.right
                 self.__length+=1
+                
+    def randinit(self,ranges=99,num=10):
+        from random import randrange
+        from functools import reduce
+        def concat(node1,node2):
+            node2.right=node1
+            return node2
+        self.__head.right=reduce(concat,[Node(randrange(0,ranges)) for i in range(num)])
+        self.__length+=num
 
+    @staticmethod
+    def quickSort(starts,ends=None):
+        if starts!=ends: #这里要特别注意,starts可能为空
+            pre=starts
+            cur=starts.right
+            while cur!=ends:
+                if cur.data<starts.data:
+                    pre=pre.right
+                    if pre!=cur:
+                        pre.data,cur.data=cur.data,pre.data
+                cur=cur.right
+            pre.data,starts.data=starts.data,pre.data
+            __class__.quickSort(starts,pre) #不包含pre
+            __class__.quickSort(pre.right,ends)
+                
     @staticmethod
     def filter(La,Lb,Lc):  #有序链表La,Lb,Lc,删除Lc中同时出现在三者之间的节点
         root=Lc
@@ -147,3 +171,8 @@ if __name__=='__main__':
     Lc.traverse()
     Lc.reverseK(2)
     Lc.traverse()
+    
+    Ld=LinkedList()
+    Ld.randinit(9,11)
+    Ld.quickSort(Ld._LinkedList__head.right)
+    Ld.traverse()
