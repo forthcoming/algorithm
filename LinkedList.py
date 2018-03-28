@@ -122,7 +122,48 @@ class LinkedList:
             pre.data,starts.data=starts.data,pre.data
             __class__.quickSort(starts,pre) #不包含pre
             __class__.quickSort(pre.right,ends)
-                
+         
+    @staticmethod
+    def merge(starts,mid,ends):  #合并2个以starts,mid开头ends(None)结尾的有序单链表
+        if starts.data>mid.data:
+            '''保证头指针始终指向链表的头位置,避免遍历链表得到starts前驱结点'''
+            L=Node(starts.data,starts.right)
+            starts.data=mid.data
+            mid=mid.right
+
+            # starts.data,mid.data=mid.data,starts.data
+            # L=mid
+            # mid=mid.right
+            # L.right=starts.right
+        else:
+            L=starts.right
+        while L!=ends and mid!=ends:
+            if L.data<mid.data:
+                starts.right=L  # 这里别漏掉了
+                starts=L
+                L=L.right
+            else:
+                starts.right=mid
+                starts=mid
+                mid=mid.right
+        starts.right = L if L else mid
+
+
+    @staticmethod
+    def mergeSort(starts,ends=None):
+        if starts.right!=ends:  # 至少包含了两个节点
+            pre=Node(None,starts)
+            mid=cur=starts
+            # while cur.right and cur.right.right:  这种写法有问题,应为mid应该指向中间的后一个位置
+            while cur!=ends and cur.right!=ends:  #不要漏掉cur!=ends检验
+                mid=mid.right
+                pre=pre.right
+                cur=cur.right.right
+            pre.right=ends   #这里是重点!
+            __class__.mergeSort(starts,ends)  #不包含ends
+            __class__.mergeSort(mid,ends)
+            __class__.merge(starts,mid,ends)
+            
     @staticmethod
     def filter(La,Lb,Lc):  #有序链表La,Lb,Lc,删除Lc中同时出现在三者之间的节点
         root=Lc
