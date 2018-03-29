@@ -18,3 +18,10 @@ def InsertSort(li):
             li[i]=li[i-1]  # 避免相邻两项两两交换
             i-=1              
         li[i]=tmp
+        
+    # for i in range(1,length): #效率较低
+    #     for j in range(i,0,-1):
+    #         if li[j]<li[j-1]:
+    #             li[j],li[j-1]=li[j-1],li[j]
+    #         else:
+    #             break
