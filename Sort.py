@@ -15,6 +15,6 @@ def InsertSort(li):
     for i in range(1,length):
         tmp=li[i]
         while i and tmp<li[i-1]:
-            li[i]=li[i-1]
+            li[i]=li[i-1]  # 避免相邻两项两两交换
             i-=1              
         li[i]=tmp
