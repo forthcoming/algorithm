@@ -1,3 +1,24 @@
+# 冒泡排序
+def BubbleSort(li):  #针对此类[random.randrange(0,1000,3) for i in range(2000)]+list(range(3000))大数基本靠右的效率更高
+    lastChange=len(li)-1
+    flag=-1
+    while flag!=lastChange:
+        flag=lastChange
+        for i in range(lastChange):
+            if li[i]>li[i+1]:
+                li[i],li[i+1]=li[i+1],li[i]
+                lastChange=i
+   
+    # length=len(li)
+    # flag=True
+    # for i in range(1,length):   #控制次数
+    #     for j in range(length-i):
+    #         if li[j]>li[j+1]:
+    #             li[j],li[j+1]=li[j+1],li[j]
+    #             flag=False
+    #     if flag:
+    #         break
+
 # 地精排序
 def GnomeSort(li):
     length=len(li)
