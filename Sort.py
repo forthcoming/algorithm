@@ -1,3 +1,22 @@
+# 位排序(仅适用于不重复的自然数)
+def BitSort(li):   
+    import math
+    bitmap=0
+    for each in li:
+        bitmap|=1<<each
+
+    while bitmap:  #适用于数的范围较零散
+        t=math.log2(bitmap&-bitmap) #x&-x返回最低位1
+        print(int(t),end=' ')
+        bitmap&=bitmap-1            #x&=x-1清除最低位1
+
+    # index=-1       #适用于数的范围较稠密
+    # while bitmap:
+    #     index+=1
+    #     if bitmap&1:
+    #         print(index,end=' ')
+    #     bitmap>>=1   
+    
 # 冒泡排序
 def BubbleSort(li):  #针对此类[random.randrange(0,1000,3) for i in range(2000)]+list(range(3000))大数基本靠右的效率更高
     lastChange=len(li)-1
