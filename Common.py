@@ -14,3 +14,22 @@ def BKDRHash(string,radix=31):
     for i in string:
         hash=hash*radix+ord(i)
     return hash
+
+
+'''
+幂运算问题
+如果采用递归slow(x,y)=x*slow(x,y-1)效率会很慢
+分治法降低power时间复杂度到logn,效率 x**y = pow > power > slow
+'''
+def power(x,y):  # y为任意整数
+    if not y:
+        return 1
+    elif y==1:
+        return x
+    elif y==-1:
+        return 1/x
+    else:
+        mid=y>>1
+        return power(x,mid)*power(x,y-mid)
+
+
