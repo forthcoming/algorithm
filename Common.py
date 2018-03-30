@@ -32,4 +32,26 @@ def power(x,y):  # y为任意整数
         mid=y>>1
         return power(x,mid)*power(x,y-mid)
 
-
+'''
+牛顿/二分法求平方根问题(幂级数展开也能求近似值)
+# Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
+x=1  # x也可以是2
+for i in range(10):
+    # x-=(x**4+x-10)/(4*x**3+1)
+    x=(3*x**4+10)/(4*x**3+1)
+'''
+def sqrt(t,precision=10):
+    assert t>0 and type(precision)==int and precision>0
+    border=t  # border也可以是2t等
+    left=0
+    right=t
+    for i in range(precision):
+        border=.5*(border+t/border)   #牛顿法,收敛速度快
+        mid=(left+right)/2  #二分法,收敛速度很慢
+        if mid**2>=t:
+            right=mid
+        else:
+            left=mid
+    print(f'牛顿法结果:{border}\n二分法结果:{mid}')
+    
+    
