@@ -3,7 +3,7 @@ def ShellSort(li):
     length=len(li)
     step=length>>1
     # while step:
-    #     for i in range(step):
+    #     for i in range(step):  #遍历每个分组
     #         for j in range(i+step,length,step):
     #             tmp=li[j]
     #             while j>=step and tmp<li[j-step]:
@@ -13,7 +13,7 @@ def ShellSort(li):
     #     step>>=1
 
     while step:  #效率与上面一样,只不过从不同的方向思考问题
-        for i in range(step,length):
+        for i in range(step,length):  #遍历每一个数组元素,然后再跟其对应的分组元素做比较
             index=i-step
             tmp=li[i]
             while index>=0 and li[index]>tmp:
