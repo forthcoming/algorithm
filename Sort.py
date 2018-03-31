@@ -1,17 +1,17 @@
-# 快速排序
+# 快速排序(非稳定排序)
 from random import randrange
 def QuickSort(li,left,right):  # 包含left,right边界
-#     if left<right:  # 效率一般
-#         index=randrange(left,right+1)  # 防止数组本身基本有序带来的效率损失
-#         li[left],li[index]=li[index],li[left]
-#         mid=left
-#         for i in range(left+1,right+1):
-#             if li[i]<li[left]:
-#                 mid+=1
-#                 li[i],li[mid]=li[mid],li[i]
-#         li[left],li[mid]=li[mid],li[left]
-#         QuickSort(li,left,mid-1)
-#         QuickSort(li,mid+1,right)
+    # if left<right:  # 效率一般
+    #     index=randrange(left,right+1)  # 防止数组本身基本有序带来的效率损失
+    #     li[left],li[index]=li[index],li[left]
+    #     mid=left
+    #     for i in range(left+1,right+1):
+    #         if li[i]<li[left]:
+    #             mid+=1
+    #             li[i],li[mid]=li[mid],li[i]
+    #     li[left],li[mid]=li[mid],li[left]
+    #     QuickSort(li,left,mid-1)
+    #     QuickSort(li,mid+1,right)
         
     # if left<right:  # 效率较低
     #     key=li[left]
