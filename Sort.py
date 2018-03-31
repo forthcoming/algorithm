@@ -13,6 +13,19 @@ def QuickSort(li,left,right):  # 包含left,right边界
         QuickSort(li,left,mid-1)
         QuickSort(li,mid+1,right)
         
+    # if left<right:  # 效率较低
+    #     key=li[left]
+    #     start,end=left+1,right
+    #     while start<=end:
+    #         if li[start]>key:
+    #             li[start],li[end]=li[end],li[start]
+    #             end-=1
+    #         else:
+    #             start+=1     
+    #     li[start-1],li[left]=li[left],li[start-1]
+    #     QuickSort(li,left,start-2)
+    #     QuickSort(li,start,right)
+    
 # 希尔排序
 def ShellSort(li):
     length=len(li)
