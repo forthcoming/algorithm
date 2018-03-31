@@ -1,3 +1,27 @@
+# 希尔排序
+def ShellSort(li):
+    length=len(li)
+    step=length>>1
+    # while step:
+    #     for i in range(step):
+    #         for j in range(i+step,length,step):
+    #             tmp=li[j]
+    #             while j>=step and tmp<li[j-step]:
+    #                 li[j]=li[j-step]
+    #                 j-=step
+    #             li[j]=tmp
+    #     step>>=1
+
+    while step:  #效率与上面一样,只不过从不同的方向思考问题
+        for i in range(step,length):
+            index=i-step
+            tmp=li[i]
+            while index>=0 and li[index]>tmp:
+                li[index+step]=li[index]
+                index-=step
+            li[index+step]=tmp
+        step>>=1
+        
 # 位排序(仅适用于不重复的自然数)
 def BitSort(li):   
     import math
