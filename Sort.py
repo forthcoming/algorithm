@@ -1,6 +1,21 @@
 # 快速排序(非稳定排序)
 from random import randrange
 def QuickSort(li,left,right):  # 包含left,right边界
+    if left<right:   # 效率最高
+        flag=li[left]
+        start=left
+        end=right
+        while start<end:  #不能有等号
+            while start<end and li[end]>=flag:  #不能有等号
+                end-=1
+            li[start]=li[end]
+            while start<end and li[start]<=flag:   #不能有等号
+                start+=1
+            li[end]=li[start] 
+        li[start]=flag      #此时start等与end
+        QuickSort(li,left,start-1)
+        QuickSort(li,start+1,right)
+        
     # if left<right:  # 效率一般
     #     index=randrange(left,right+1)  # 防止数组本身基本有序带来的效率损失
     #     li[left],li[index]=li[index],li[left]
