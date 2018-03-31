@@ -106,7 +106,7 @@ def InsertSort(li):
     #             break
 
 # 选择排序(非稳定排序)
-def selectSort(li):
+def SelectSort(li):
     length=len(li)
     for i in range(1,length):
         index=i-1
