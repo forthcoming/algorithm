@@ -1,3 +1,15 @@
+# 快速排序
+def QuickSort(li,left,right):  # 包含left,right边界
+    if left<right:
+        mid=left
+        for i in range(left+1,right+1):
+            if li[i]<li[left]:
+                mid+=1
+                li[i],li[mid]=li[mid],li[i]
+        li[left],li[mid]=li[mid],li[left]
+        QuickSort(li,left,mid-1)
+        QuickSort(li,mid+1,right)
+        
 # 希尔排序
 def ShellSort(li):
     length=len(li)
