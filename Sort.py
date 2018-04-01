@@ -1,4 +1,4 @@
-# 归并排序(稳定排序，时间复杂度永远是nlogn,跟数组的数据无关)
+# 归并排序(稳定排序,时间复杂度永远是nlogn,跟数组的数据无关)
 def reverse(li,left,right): #[::-1] or list.reverse
     while left<right:
         li[left],li[right]=li[right],li[left]
