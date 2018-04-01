@@ -148,7 +148,6 @@ class LinkedList:
                 mid=mid.right
         starts.right = L if L else mid
 
-
     @staticmethod
     def mergeSort(starts,ends=None):
         if starts.right!=ends:  # 至少包含了两个节点
