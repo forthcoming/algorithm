@@ -15,7 +15,7 @@ def merge(li,left,mid,right):
         li[p2:right+1]=li[p1:mid+1]
     li[left:p2]=result
 
-def MergeSort(li,left,right):  #递归非原地归并排序
+def MergeSort(li,left,right):  #递归版
     if left<right:
         mid = (left+right)>>1
         MergeSort(li,left,mid)
