@@ -1,3 +1,27 @@
+# 归并排序(稳定排序，时间复杂度永远是nlogn,跟数组的数据无关)
+def merge(li,left,mid,right):
+    result=[]
+    p1=left
+    p2=mid+1
+    while p1<=mid and p2<=right:
+        if li[p1] < li[p2]:
+            result.append(li[p1])
+            p1 += 1
+        else:
+            result.append(li[p2])
+            p2 += 1
+    if p2==right+1:
+        p2=right-mid+p1
+        li[p2:right+1]=li[p1:mid+1]
+    li[left:p2]=result
+
+def MergeSort(li,left,right):  #递归非原地归并排序
+    if left<right:
+        mid = (left+right)>>1
+        MergeSort(li,left,mid)
+        MergeSort(li,mid+1,right)
+        merge(li,left,mid,right)
+
 # 快速排序(非稳定排序)
 from random import randrange
 def QuickSort(li,left,right):  # 包含left,right边界
