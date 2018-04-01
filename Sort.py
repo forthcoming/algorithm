@@ -1,4 +1,23 @@
 # 归并排序(稳定排序，时间复杂度永远是nlogn,跟数组的数据无关)
+def reverse(li,left,right): #[::-1] or list.reverse
+    while left<right:
+        li[left],li[right]=li[right],li[left]
+        left+=1
+        right-=1
+
+def InPlaceMerge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界,效率低于merge
+    mid+=1
+    while left<mid and mid<=right:
+        p=mid
+        while left<mid and li[left]<=li[mid]:
+            left+=1
+        while mid<=right and li[mid]<=li[left]:
+            mid+=1
+        reverse(li,left,p-1)    
+        reverse(li,p,mid-1)    
+        reverse(li,left,mid-1)  
+        left+=mid-p
+        
 def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
     result=[]
     p1=left
