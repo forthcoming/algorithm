@@ -34,12 +34,28 @@ def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
         li[p2:right+1]=li[p1:mid+1]
     li[left:p2]=result
 
-def RecurMergeSort(li,left,right):  #递归版,包含left,right边界
+def RecurMergeSort(li,left,right):  #递归版归并排序,包含left,right边界
     if left<right:
         mid = (left+right)>>1
         MergeSort(li,left,mid)
         MergeSort(li,mid+1,right)
         merge(li,left,mid,right)
+
+def IterMergeSort(li):   #迭代版归并排序
+    length=len(li)
+    step=2
+    while step<length:
+        for left in range(0,length,step):
+            mid=left+(step>>1)-1  # 注意要先求mid,再根据mid求right
+            if mid<length-1:
+                right=mid+(step>>1)  # right=left+step-1            
+                if right>=length:
+                    right=length-1
+                merge(li,left,mid,right)
+        step<<=1
+    mid=(step>>1)-1
+    right=length-1
+    merge(li,0,mid,right)
 
 # 快速排序(非稳定排序)
 from random import randrange
