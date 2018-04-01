@@ -34,7 +34,7 @@ def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
         li[p2:right+1]=li[p1:mid+1]
     li[left:p2]=result
 
-def MergeSort(li,left,right):  #递归版,包含left,right边界
+def RecurMergeSort(li,left,right):  #递归版,包含left,right边界
     if left<right:
         mid = (left+right)>>1
         MergeSort(li,left,mid)
