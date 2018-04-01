@@ -1,5 +1,5 @@
 # 归并排序(稳定排序，时间复杂度永远是nlogn,跟数组的数据无关)
-def merge(li,left,mid,right):
+def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
     result=[]
     p1=left
     p2=mid+1
@@ -15,7 +15,7 @@ def merge(li,left,mid,right):
         li[p2:right+1]=li[p1:mid+1]
     li[left:p2]=result
 
-def MergeSort(li,left,right):  #递归版
+def MergeSort(li,left,right):  #递归版,包含left,right边界
     if left<right:
         mid = (left+right)>>1
         MergeSort(li,left,mid)
