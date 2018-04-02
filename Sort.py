@@ -5,7 +5,7 @@ def BucketSort(li,radix=10):
     bit=0
     while True:
         for val in li:
-            bucket[val>>(bit*radix)&lower].append(val)
+            bucket[val>>(bit*radix)&lower].append(val) # 很关键
         if len(bucket[0])==len(li):
             break
         del li[:]
