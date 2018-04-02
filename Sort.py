@@ -40,23 +40,20 @@ def RecurMergeSort(li,left,right):  #递归版归并排序,包含left,right边�
         MergeSort(li,left,mid)
         MergeSort(li,mid+1,right)
         merge(li,left,mid,right)
-
+    
 def IterMergeSort(li):   #迭代版归并排序
     length=len(li)
-    step=2
-    while step<length:
-        for left in range(0,length,step):
-            mid=left+(step>>1)-1  # 注意要先求mid,再根据mid求right
-            if mid<length-1:
-                right=mid+(step>>1)  # right=left+step-1            
-                if right>=length:
-                    right=length-1
-                merge(li,left,mid,right)
-        step<<=1
-    mid=(step>>1)-1
-    right=length-1
-    merge(li,0,mid,right)
-
+    initmid=0
+    while initmid<length-1:
+        step=(initmid+1)<<1
+        for mid in range(initmid,length,step):
+            left=mid-(step>>1)+1
+            right=mid+(step>>1)  # right=left+step-1            
+            if right>=length:
+                right=length-1
+            merge(li,left,mid,right)
+        initmid=(initmid<<1)+1
+        
 # 快速排序(非稳定排序)
 from random import randrange
 def QuickSort(li,left,right):  # 包含left,right边界
