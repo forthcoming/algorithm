@@ -1,3 +1,24 @@
+# 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
+def BucketSort(li,radix=10):
+    lower=(1<<radix)-1
+    bucket = [[] for i in range(lower+1)] # 不能用 [[]]*(lower+1)
+    bit=0
+    while True:
+        for val in li:
+            bucket[val>>(bit*radix)&lower].append(val)
+        if len(bucket[0])==len(li):
+            break
+        del li[:]
+        for each in bucket:
+            li+=each  # 部分each为[]
+            each[:]=[] # 清空桶数据
+        bit+=1
+        '''
+        下面2种li赋值方法效率很低
+        li[:]=reduce(lambda x,y:x+y,bucket)
+        li[:]=sum(bucket,[])
+        '''
+        
 # 归并排序(稳定排序,时间复杂度永远是nlogn,跟数组的数据无关)
 def reverse(li,left,right): #[::-1] or list.reverse
     while left<right:
