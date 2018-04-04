@@ -35,6 +35,7 @@ def BucketSort(li,radix=10):
             break
         del li[:]
         for each in bucket:
+        # for each in bucket[::-1]:   # 逆序
             li+=each  # 部分each为[]
             each[:]=[] # 清空桶数据
         bit+=1
