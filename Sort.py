@@ -1,3 +1,28 @@
+# 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
+def RadixSort(li,radix=10):
+    num=1<<radix
+    length=len(li)
+    bucket=[None]*length
+    count=[0]*num
+    getBit=lambda x,y:x>>(y*radix)&(num-1)
+    bit=0
+    while True:
+        for i in li:
+            count[getBit(i,bit)]+=1  #有点计数排序的思想
+        if count[0]==length:   #说明已经遍历完所有位
+            break
+        #for j in range(len(count)-2,-1,-1):  #逆序
+            #count[j]+=count[j+1]
+        for j in range(1,len(count)):
+            count[j]+=count[j-1]
+        for k in li[::-1]:  #注意这里要逆序遍历
+            index=getBit(k,bit)
+            bucket[count[index]-1]=k
+            count[index]-=1
+        li[:]=bucket   #li=bucket并不会改变外面的li对象
+        count=[0]*num
+        bit+=1
+        
 # 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
 def BucketSort(li,radix=10):
     lower=(1<<radix)-1
