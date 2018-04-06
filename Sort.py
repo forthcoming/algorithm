@@ -38,7 +38,6 @@ def MSDRadixSort(li,left,right,N=5,radix=10):
             bucket[count[index]-1]=li[k]
             count[index]-=1
         li[left:right+1]=bucket  #注意这里要加1
-
         N-=1
         for x in range(0,radix-1):  #遍历count每一个元素
             MSDRadixSort(li,left+count[x],left+count[x+1]-1,N,radix)  # attention
