@@ -29,13 +29,13 @@ def MSDRadixSort(li,left,right,N=5,radix=10):
         bucket=[None]*(right-left+1)
         count=[0]*radix
         getBit=lambda x,y:x//radix**(y-1)%radix
-        for i in range(left,right+1):
-            count[getBit(li[i],N)]+=1
+        for i in li[left:right+1]:
+            count[getBit(i,N)]+=1
         for j in range(1,radix):
             count[j]+=count[j-1]
-        for k in range(left,right+1):  # 正序逆序都可以
-            index=getBit(li[k],N)
-            bucket[count[index]-1]=li[k]
+        for k in li[left:right+1]:  # 正序逆序都可以
+            index=getBit(k,N)
+            bucket[count[index]-1]=k
             count[index]-=1
         li[left:right+1]=bucket  #注意这里要加1
         N-=1
