@@ -23,6 +23,27 @@ def RadixSort(li,radix=10):
         count=[0]*num
         bit+=1
         
+# MSD-10进制递归版基数排序
+def MSDRadixSort(li,left,right,N=5,radix=10):
+    if N and left<right:
+        bucket=[None]*(right-left+1)
+        count=[0]*radix
+        getBit=lambda x,y:x//radix**(y-1)%radix
+        for i in range(left,right+1):
+            count[getBit(li[i],N)]+=1
+        for j in range(1,radix):
+            count[j]+=count[j-1]
+        for k in range(left,right+1):  # 正序逆序都可以
+            index=getBit(li[k],N)
+            bucket[count[index]-1]=li[k]
+            count[index]-=1
+        li[left:right+1]=bucket  #注意这里要加1
+
+        N-=1
+        for x in range(0,radix-1):  #遍历count每一个元素
+            MSDRadixSort(li,left+count[x],left+count[x+1]-1,N,radix)  # attention
+        MSDRadixSort(li,left+count[-1],right,N,radix)   # attention
+        
 # 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
 def BucketSort(li,radix=10):
     lower=(1<<radix)-1
