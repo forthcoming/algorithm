@@ -2,13 +2,13 @@
 class UnionFindSet:
     def __init__(self,sets=[-4,0,1,1,-6,4,4,5,7,5]): #非负数指向父节点的下标,负数n代表该根节点下有|n|个孩子
         '''
-             A       E
-             |      / \            A B C D E F G H I J
-             B     F   G           | | | | | | | | | |
-            / \   / \              0 1 2 3 4 5 6 7 8 9
-           C   D  H  J
+             0       4
+             |      / \            
+             1     5   6    
+            / \   / \              
+           2   3  7  9
                   |
-                  I
+                  8
         '''
         self.__set=sets
 
