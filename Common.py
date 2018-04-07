@@ -14,7 +14,6 @@ def BKDRHash(string,radix=31):
         hash=hash*radix+ord(i)
     return hash
 
-
 '''
 幂运算问题
 如果采用递归slow(x,y)=x*slow(x,y-1)效率会很慢
@@ -80,14 +79,14 @@ def RecurBinarySearch(li,left,right,num):
 
 # 移位有序数组查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
 def search(li,left,right,num):
-	if left<=right:
-	    mid=(left+right)>>1
-	    if li[left]<=li[mid]:
-	    	if li[left]<=num<=li[mid]:
-	    	    return BinarySearch(li,left,mid,num)
-	    	else:
-	    		return search(li,mid+1,right,num)
-	    else:
-	    	return max(search(li,left,mid,num),BinarySearch(li,mid+1,right,num))
-	else:
-		return -1
+    if left<=right:
+        mid=(left+right)>>1
+        if li[left]<=li[mid]:
+            if li[left]<=num<=li[mid]:
+                return BinarySearch(li,left,mid,num)
+            else:
+                return search(li,mid+1,right,num)
+        else:
+            return max(search(li,left,mid,num),BinarySearch(li,mid+1,right,num))
+    else:
+        return -1
