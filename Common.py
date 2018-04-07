@@ -78,7 +78,7 @@ def RecurBinarySearch(li,left,right,num):
     else:
          return -1
 
-# 移位数组循环查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
+# 移位有序数组查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
 def search(li,left,right,num):
 	if left<=right:
 	    mid=(left+right)>>1
