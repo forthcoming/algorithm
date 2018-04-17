@@ -1,4 +1,4 @@
-# 堆(应用场景:求n个数中的最大k个数,需要构建一个大小为k的小顶堆,或者将n个数构建成一个大顶堆,或者快速排序稍加改变)
+# 堆
 class Heap:
     def __init__(self,heap=[],key=lambda x,y:x>y):  #默认构建小顶堆
         self.__heap=list(heap)
