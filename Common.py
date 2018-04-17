@@ -1,4 +1,25 @@
 '''
+选择数组中最大的k个数
+1.构建一个大顶堆
+2.构建一个大小为k的小顶堆
+3.快排变形
+'''
+def topK(li,left,right,k,result):  #不包含right,结果存入result
+    if 0<k<=right-left:
+        index=left
+        for i in range(left+1,right):
+            if li[i]<li[left]:
+                index+=1
+                li[i],li[index]=li[index],li[i]
+        li[index],li[left]=li[left],li[index]
+        if right-index>k:
+            topK(li,index+1,right,k,result)
+        else:
+            result+=li[index:right]
+            if right-index<k:
+                topK(li,left,index,k-right+index,result)
+
+'''
 哈希
 数据量n/哈希表长度m=[.65,.85],比值越小效率越高
 处理冲突的方法有开放地址法,链地址法(推荐),前者不太适合删除操作,应为删除的元素要做特殊标记
