@@ -57,7 +57,7 @@ class Heap:
         root=self.__heap[starts]
         left=self.leftChild(starts)
         while left!=-1 and left<=ends:
-            if left+1<=ends and self.key(self.__heap[left],self.__heap[left+1]):
+            if left<ends and self.key(self.__heap[left],self.__heap[left+1]):
                 left+=1
             if self.key(root,self.__heap[left]):
                 self.__heap[starts]=self.__heap[left]
