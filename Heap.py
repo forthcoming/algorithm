@@ -98,18 +98,15 @@ class Heap:
     
     def createCompleteSearchTree(self):  #跟堆相关的一道题目(不属于堆结构)
         self.sort()
-        tree=[0]*self.length
-        def __solve(root,starts,size):
-            if size>0:
-                if size==1:
-                    tree[root]=self.__heap[starts]
-                else:
-                    lchilds=self.countLeftChild(size)
-                    tree[root]=self.__heap[starts+lchilds]
-                    left=(root<<1)+1
-                    right=left+1
-                    __solve(left,starts,lchilds)  #不需要检查左右孩子是否存在
-                    __solve(right,starts+lchilds+1,size-lchilds-1)
+        tree=[None]*self.length
+        def __solve(root,start,size):
+            if size:
+                lchilds=self.countLeftChild(size)
+                tree[root]=self.__heap[start+lchilds]
+                left=(root<<1)+1
+                right=left+1
+                __solve(left,start,lchilds)
+                __solve(right,start+lchilds+1,size-1-lchilds)
         __solve(0,0,self.length)
         return tree
 
