@@ -79,7 +79,6 @@ class Heap:
     def buildHeap(self):  #建堆的时间复杂度是O(n)
         #for ends in range(0,self.length):  #自上而下构建堆
             #self.__shiftUp(ends)
-
         for starts in range((self.length>>1)-1,-1,-1):  #自下而上构建堆,只需要从非叶子节点开始构建
             self.__shiftDown(starts,self.length-1)
 
