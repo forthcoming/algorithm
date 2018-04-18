@@ -25,7 +25,7 @@ def nextPermutation(s):  #不去重
     length=len(s)
     arr=list(range(length))  # Ⅰ
     while True:
-        print(''.join(s[i] for i in arr))
+        print([s[i] for i in arr])
         for i in range(length-2,-1,-1):
             if arr[i]<arr[i+1]:   # Ⅱ
                 break
@@ -36,3 +36,36 @@ def nextPermutation(s):  #不去重
                 arr[i],arr[j]=arr[j],arr[i]
                 break
         arr[i+1:]=arr[:i:-1]
+    
+#当需要排列的对象可比较(如全字符or全数字对象)时,可以通过prePermutation+nextPermutation实现去重全排列permutation
+def permutation(s):  #去重
+    print(s)
+    length=len(s)
+
+    right=list(s)
+    while True:
+        for i in range(length-2,-1,-1):
+            if right[i]<right[i+1]:
+                break
+        else:
+            break
+        for j in range(length-1,i,-1):
+            if right[i]<right[j]:
+                right[i],right[j]=right[j],right[i]
+                break
+        right[i+1:]=right[:i:-1]
+        print(right)
+
+    left=list(s)
+    while True:
+        for i in range(length-2,-1,-1):
+            if left[i]>left[i+1]:
+                break
+        else:
+            break
+        for j in range(length-1,i,-1):
+            if left[i]>left[j]:
+                left[i],left[j]=left[j],left[i]
+                break
+        left[i+1:]=left[:i:-1]
+        print(left)
