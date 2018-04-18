@@ -12,6 +12,13 @@ def arrangement(s,left,right):
                 arrangement(s,left+1,right)
                 s[j],s[left]=s[left],s[j]   #注意此处要还原
                 
+'''
+相邻两个位置ai < ai+1,ai称作该升序的首位
+步骤:二找、一交换、一翻转
+找到排列中最后(最右)一个升序的首位位置i,x = ai
+找到排列中第i位右边最后一个比ai大的位置j,y = aj
+交换x,y
+'''
 def nextPermutations(s):  #不去重
     length=len(s)
     arr=list(range(length))
