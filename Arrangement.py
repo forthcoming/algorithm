@@ -19,6 +19,7 @@ def arrangement(s,left,right):
 找到排列中第i位右边最后一个比ai大的位置j,y = aj
 交换x,y
 prePermutation只需要将Ⅰ逆序并将Ⅱ,Ⅲ处<变为>即可
+python中通过from itertools import permutations调用全排列
 '''
 def nextPermutation(s):  #不去重
     length=len(s)
