@@ -36,18 +36,6 @@ def BKDRHash(string,radix=31):
         hash=hash*radix+ord(i)
     return hash
 
-def DJBHash(key):
-    hash = 5381
-    for i in key:
-       hash = ((hash << 5) + hash) + ord(i)
-    return hash
-
-def JSHash(key):
-    hash = 1315423911
-    for i in key:
-      hash ^= ((hash << 5) + ord(i) + (hash >> 2))
-    return hash
-
 '''
 幂运算问题
 如果采用递归slow(x,y)=x*slow(x,y-1)效率会很慢
