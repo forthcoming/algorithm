@@ -30,9 +30,22 @@ Hash=lambda num,m,A=(5**.5-1)/2:int(A*num%1*m)  # 除留取余法,平方取中�
 
 # 字符串哈希
 def BKDRHash(string,radix=31):
+    # radix 31 131 1313 13131 131313 etc.
     hash=0
     for i in string:
         hash=hash*radix+ord(i)
+    return hash
+
+def DJBHash(key):
+    hash = 5381
+    for i in key:
+       hash = ((hash << 5) + hash) + ord(i)
+    return hash
+
+def JSHash(key):
+    hash = 1315423911
+    for i in key:
+      hash ^= ((hash << 5) + ord(i) + (hash >> 2))
     return hash
 
 '''
