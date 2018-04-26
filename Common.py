@@ -112,3 +112,23 @@ def search(li,left,right,num):
             return max(search(li,left,mid,num),BinarySearch(li,mid+1,right,num))
     else:
         return -1
+
+# 求连续子列和的最大值(也可以用分治法,不过时间复杂度是nlogn)
+def maxSum(li):
+    curSum=MAX=0
+    for i in li:
+        curSum+=i
+        if curSum>MAX:
+            MAX=curSum
+        elif curSum<0:
+            curSum=0
+    return MAX
+
+def maxSum(li,left,right,count=0):
+	if left<=right:
+		count+=li[left]
+		if count<0:
+			count=0
+		return maxSum(li,left+1,right,count) # 应为这里用了return,so下面不需要else可以直接跟return
+	return count
+
