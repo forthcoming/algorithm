@@ -59,18 +59,18 @@ class Graph:  #邻接表存储
         pass
     
     def DFSTraverse(self):  #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数
-        vertices=set()  # 保存已访问节点
+        vertices={vertex for vertex in self.__vertices}  # 保存未访问节点
         def _traverse(vertex):
-            vertices.add(vertex)
+            vertices.remove(vertex)
             print(vertex,end=' ')
             edge=self.__vertices[vertex]
             while edge:
                 vertex=edge.vertex
-                if vertex not in vertices:
+                if vertex in vertices:
                     _traverse(vertex)
                 edge=edge.right
         for vertex in self.__vertices:  #对于非连通图,尚需要从所有未被访问的顶点起调用_traverse
-            if vertex not in vertices:
+            if vertex in vertices:
                 _traverse(vertex)
 
     def BFSTraverse(self):
