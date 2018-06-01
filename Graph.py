@@ -5,6 +5,8 @@ G(V,E)满足2*E=所有顶点的度之和
 邻接矩阵对角线元素是0,无向图邻接矩阵是对称矩阵
 '''
 
+# to be continued
+
 from collections import deque
 
 UDG=1  #无向图
