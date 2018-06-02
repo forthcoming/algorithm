@@ -125,7 +125,7 @@ class Graph:  #邻接表存储
             path.append(start)
             if start==end:
                 print(path)
-                result.append(path)
+                result.append(path[:])  # 注意这里是深拷贝
             else:
                 edge=self.__vertices[start]
                 while edge:
