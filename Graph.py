@@ -72,7 +72,32 @@ class Graph:  #邻接表存储
         for vertex in self.__vertices:  #对于非连通图,尚需要从所有未被访问的顶点起调用_traverse
             if vertex in vertices:
                 _traverse(vertex)
-
+                
+    def DFSStackTraverse(self):  # 非递归
+        stack=[]
+        vertices={vertex for vertex in self.__vertices}
+        for vertex in self.__vertices:
+            if vertex in vertices:
+                vertices.remove(vertex)
+                print(vertex,end=' ')              
+                edge=self.__vertices[vertex]
+                stack.append(edge)
+                while stack:
+                    edge=stack.pop()
+                    vertex=edge.vertex
+                    if vertex in vertices:
+                        vertices.remove(vertex)
+                        print(vertex,end=' ')    
+                    edge=edge.right
+                    if edge:
+                        stack.append(edge)
+                    edge=self.__vertices[vertex]
+                    while edge:
+                        if edge.vertex in vertices:
+                            stack.append(edge)
+                            break
+                        edge=edge.right
+                        
     def BFSTraverse(self):
         vertices=set()
         queue=deque()
