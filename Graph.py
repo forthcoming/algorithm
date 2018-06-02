@@ -93,7 +93,7 @@ class Graph:  #邻接表存储
                         stack.append(edge)
                     edge=self.__vertices[vertex]
                     while edge:
-                        if edge.vertex in vertices:
+                        if edge.vertex in vertices: # 这里只能追加有效边
                             stack.append(edge)
                             break
                         edge=edge.right
