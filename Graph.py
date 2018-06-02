@@ -118,7 +118,7 @@ class Graph:  #邻接表存储
     
     def find_path(self,start,end):
         vertices=set()
-        path=deque()
+        path=[]
         result=[]
         def _find_path(start,end):
             vertices.add(start)
