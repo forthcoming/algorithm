@@ -19,14 +19,7 @@ class Edge:
         self.right=right
 
 class Graph:  #邻接表存储
-    def __init__(self,edges=[('A','C',2),('A','B',1),('B','C',5),('C','D',4),('B','F',7),('B','E',2),('E','F',3),('F','C',6)],kind=UDG):
-        '''
-              A
-             / \
-            B---C---D
-            | \ |
-            E---F
-        '''
+    def __init__(self,edges=(),kind=UDG):
         self.__kind=kind
         self.__vertices={}
         self.__edge_num=0
@@ -150,6 +143,13 @@ class Graph:  #邻接表存储
         ''' 
 
 if __name__=='__main__':
-    graph=Graph()
+    '''
+          A
+         / \
+        B---C---D
+        | \ |
+        E---F
+    '''
+    graph=Graph([('A','C',2),('A','B',1),('B','C',5),('C','D',4),('B','F',7),('B','E',2),('E','F',3),('F','C',6)])
     graph.BFSTraverse()
     graph.find_path('A','F')
