@@ -116,7 +116,7 @@ class Graph:  #邻接表存储
                         queue.append(self.__vertices[vertex])
                     edge=edge.right
     
-    def find_path(self,start,end):
+    def find_path(self,start,end):  # 回溯法,常与DFS配合使用
         vertices=set()
         path=[]
         result=[]
