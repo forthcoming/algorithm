@@ -1,3 +1,38 @@
+from collections import deque
+
+# 广度优先遍历,查找无权图最短路径
+def shortest_path():
+    class Node:
+        def __init__(self,x,y,left=None):
+            self.pos=(x,y)
+            self.left=left
+    maze=[  # 1代表可达,注意区分与邻接矩阵表示图的区别
+        [1,0,1,0,1,1,1,0],   
+        [0,1,1,0,0,1,0,1],
+        [1,0,0,1,1,0,0,0],
+        [0,1,1,0,0,1,1,0],
+        [0,1,1,1,0,0,1,0],
+        [1,0,0,0,1,1,1,1],
+    ]
+    m=len(maze)
+    n=len(maze[0])
+    queue=deque()
+    queue.append(Node(0,0))
+    while queue:
+        node=queue.popleft()
+        x,y=node.pos
+        if x==m-1 and y==n-1:
+            while node:
+                print(node.pos)
+                node=node.left
+            break
+        maze[x][y]=0
+        for i,j in zip([-1,-1,0,1,1,1,0,-1],[0,1,1,1,0,-1,-1,-1]):
+            X=x+i
+            Y=y+j
+            if 0<=X<m and 0<=Y<n and maze[X][Y]:
+                queue.append(Node(X,Y,node))
+             
 '''
 选择数组中最大的k个数
 1.构建一个大顶堆
