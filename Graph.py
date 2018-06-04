@@ -23,21 +23,18 @@ class Graph:  #邻接表存储
         self.__kind=kind
         self.__vertices={}
         self.__edge_num=0
-        self.__vertex_num=0
 
     def add(self,come,to,weight=0):
         self.__edge_num+=1
         if come in self.__vertices:
             self.__vertices[come]=Edge(to,weight,self.__vertices[come])
         else:
-            self.__vertex_num+=1
             self.__vertices[come]=Edge(to,weight)
 
         if self.__kind==UDG:
             if to in self.__vertices:
                 self.__vertices[to]=Edge(come,weight,self.__vertices[to])
             else:
-                self.__vertex_num+=1
                 self.__vertices[to]=Edge(come,weight)
 
     def delete(self,come,to):  # 注意判断self.__kind类型
