@@ -43,24 +43,24 @@ class Graph:  #邻接表存储
     def delete(self,come,to):  # 注意判断self.__kind类型
         pass
     
-    def DFSTraverse(self):  #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数
-        vertices={vertex for vertex in self.__vertices}  # 保存未访问节点
-        def _traverse(vertex):
-            vertices.remove(vertex)
+    def _DFStraverse(self,vertex,vertices={}): # don't assign to vertices 
+        if vertex not in vertices:
+            vertices.add(vertex)
             print(vertex,end=' ')
             edge=self.__vertices[vertex]
             while edge:
                 vertex=edge.vertex
-                if vertex in vertices:
-                    _traverse(vertex)
+                if vertex not in vertices:
+                    _DFStraverse(vertex)
                 edge=edge.right
-        for vertex in self.__vertices:  #对于非连通图,尚需要从所有未被访问的顶点起调用_traverse
-            if vertex in vertices:
-                _traverse(vertex)
+
+    def DFSTraverse(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
+        for vertex in self.__vertices:  # For non connected graphs
+            _DFStraverse(vertex)
                 
     def DFSStackTraverse(self):  # 非递归
         stack=[]
-        vertices={vertex for vertex in self.__vertices}
+        vertices={vertex for vertex in self.__vertices} # 保存未访问节点
         for vertex in self.__vertices:
             if vertex in vertices:
                 vertices.remove(vertex)
