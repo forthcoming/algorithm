@@ -37,8 +37,35 @@ class Graph:  #邻接表存储
             else:
                 self.__vertices[to]=Edge(come,weight)
 
-    def delete(self,come,to):  # 注意判断self.__kind类型
-        pass
+    def delete(self,come,to):
+        self.__edge_num-=1
+
+        edge=self.__vertices[come]
+        if edge.vertex==to:
+            self.__vertices[come]=edge.right
+        else:
+            pre=edge
+            edge=edge.right
+            while edge:
+                if edge.vertex==to:
+                    pre.right=edge.right
+                    break
+                pre=edge
+                edge=edge.right
+
+        if self.__kind=='UDG': # undirected graph
+            edge=self.__vertices[to]
+            if edge.vertex==to:
+                self.__vertices[come]=edge.right
+            else:
+                pre=edge
+                edge=edge.right
+                while edge:
+                    if edge.vertex==to:
+                        pre.right=edge.right
+                        break
+                    pre=edge
+                    edge=edge.right
     
     def _DFStraverse(self,vertex,vertices=set()): # don't assign to vertices 
         if vertex not in vertices:
