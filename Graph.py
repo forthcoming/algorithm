@@ -19,36 +19,28 @@ class Edge:
         self.right=right
 
 class Graph:  #邻接表存储
-    def __init__(self,kind=UDG,edges=()):
+    def __init__(self,kind=UDG):
         self.__kind=kind
         self.__vertices={}
         self.__edge_num=0
         self.__vertex_num=0
-        for edge in edges:
-            self.add(edge)
 
-    def add(self,edge):
+    def add(self,come,to,weight=0):
         self.__edge_num+=1
-        vertex_f=edge[0]
-        vertex_t=edge[1]
-        try:
-            weight=edge[2]
-        except IndexError:
-            weight=0
-        if vertex_f in self.__vertices:
-            self.__vertices[vertex_f]=Edge(vertex_t,weight,self.__vertices[vertex_f])
+        if come in self.__vertices:
+            self.__vertices[come]=Edge(to,weight,self.__vertices[come])
         else:
             self.__vertex_num+=1
-            self.__vertices[vertex_f]=Edge(vertex_t,weight)
+            self.__vertices[come]=Edge(to,weight)
 
         if self.__kind==UDG:
-            if vertex_t in self.__vertices:
-                self.__vertices[vertex_t]=Edge(vertex_f,weight,self.__vertices[vertex_t])
+            if to in self.__vertices:
+                self.__vertices[to]=Edge(come,weight,self.__vertices[to])
             else:
                 self.__vertex_num+=1
-                self.__vertices[vertex_t]=Edge(vertex_f,weight)
+                self.__vertices[to]=Edge(come,weight)
 
-    def delete(self,edge):  # 注意判断self.__kind类型
+    def delete(self,come,to):  # 注意判断self.__kind类型
         pass
     
     def DFSTraverse(self):  #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数
@@ -150,6 +142,8 @@ if __name__=='__main__':
         | \ |
         E---F
     '''
-    graph=Graph(edges=[('A','C',2),('A','B',1),('B','C',5),('C','D',4),('B','F',7),('B','E',2),('E','F',3),('F','C',6)])
+    graph=Graph()
+    for edge in [('A','C',2),('A','B',1),('B','C',5),('C','D',4),('B','F',7),('B','E',2),('E','F',3),('F','C',6)]:
+        graph.add(*edge)
     graph.BFSTraverse()
     graph.find_path('A','F')
