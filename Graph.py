@@ -43,7 +43,7 @@ class Graph:  #邻接表存储
     def delete(self,come,to):  # 注意判断self.__kind类型
         pass
     
-    def _DFStraverse(self,vertex,vertices={}): # don't assign to vertices 
+    def _DFStraverse(self,vertex,vertices=set()): # don't assign to vertices 
         if vertex not in vertices:
             vertices.add(vertex)
             print(vertex,end=' ')
@@ -51,12 +51,12 @@ class Graph:  #邻接表存储
             while edge:
                 vertex=edge.vertex
                 if vertex not in vertices:
-                    _DFStraverse(vertex)
+                    self._DFStraverse(vertex)
                 edge=edge.right
 
     def DFSTraverse(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
         for vertex in self.__vertices:  # For non connected graphs
-            _DFStraverse(vertex)
+            self._DFStraverse(vertex)
                 
     def DFSStackTraverse(self):  # 非递归
         stack=[]
