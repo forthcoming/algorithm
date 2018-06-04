@@ -55,13 +55,13 @@ class Graph:  #邻接表存储
 
         if self.__kind=='UDG': # undirected graph
             edge=self.__vertices[to]
-            if edge.vertex==to:
-                self.__vertices[come]=edge.right
+            if edge.vertex==come:
+                self.__vertices[to]=edge.right
             else:
                 pre=edge
                 edge=edge.right
                 while edge:
-                    if edge.vertex==to:
+                    if edge.vertex==come:
                         pre.right=edge.right
                         break
                     pre=edge
