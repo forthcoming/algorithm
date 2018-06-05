@@ -67,7 +67,7 @@ class Graph:  #邻接表存储
                     pre=edge
                     edge=edge.right
     
-    def _DFStraverse(self,vertex,vertices=set()): # don't assign to vertices 
+    def _DFS(self,vertex,vertices=set()): # don't assign to vertices 
         if vertex not in vertices:
             vertices.add(vertex)
             print(vertex,end=' ')
@@ -75,12 +75,12 @@ class Graph:  #邻接表存储
             while edge:
                 vertex=edge.vertex
                 if vertex not in vertices:
-                    self._DFStraverse(vertex)
+                    self._DFS(vertex)
                 edge=edge.right
 
-    def DFSTraverse(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
+    def DFS(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
         for vertex in self.__vertices:  # For non connected graphs
-            self._DFStraverse(vertex)
+            self._DFS(vertex)
                 
     def DFSStackTraverse(self):  # 非递归
         stack=[]
@@ -107,7 +107,7 @@ class Graph:  #邻接表存储
                             break
                         edge=edge.right
                         
-    def BFSTraverse(self):
+    def BFS(self):
         vertices=set()
         queue=deque()
         for vertex in self.__vertices:
@@ -169,5 +169,5 @@ if __name__=='__main__':
     graph=Graph()
     for edge in [('A','C',2),('A','B',1),('B','C',5),('C','D',4),('B','F',7),('B','E',2),('E','F',3),('F','C',6)]:
         graph.add(*edge)
-    graph.BFSTraverse()
+    graph.BFS()
     graph.find_path('A','F')
