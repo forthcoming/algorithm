@@ -82,7 +82,7 @@ class Graph:  #邻接表存储
         for vertex in self.__vertices:  # For non connected graphs
             self._DFS(vertex)
                 
-    def DFSStackTraverse(self):  # 非递归
+    def DFS_stack(self):  # 非递归
         stack=[]
         vertices={vertex for vertex in self.__vertices} # 保存未访问节点
         for vertex in self.__vertices:
