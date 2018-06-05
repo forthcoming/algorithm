@@ -36,37 +36,38 @@ class Graph:  #邻接表存储
                 self.__vertices[to]=Edge(come,weight,self.__vertices[to])
             else:
                 self.__vertices[to]=Edge(come,weight)
-
-    def delete(self,come,to):
-        self.__edge_num-=1
-
-        edge=self.__vertices[come]
-        if edge.vertex==to:
-            self.__vertices[come]=edge.right
-        else:
-            pre=edge
-            edge=edge.right
-            while edge:
-                if edge.vertex==to:
-                    pre.right=edge.right
-                    break
-                pre=edge
-                edge=edge.right
-
-        if self.__kind=='UDG': # undirected graph
-            edge=self.__vertices[to]
-            if edge.vertex==come:
-                self.__vertices[to]=edge.right
+                
+      def delete(self,come,to):
+        if (come in self.__vertices) and (to in self.__vertices):
+            self.__edge_num-=1
+    
+            edge=self.__vertices[come]
+            if edge.vertex==to:
+                self.__vertices[come]=edge.right
             else:
                 pre=edge
                 edge=edge.right
                 while edge:
-                    if edge.vertex==come:
+                    if edge.vertex==to:
                         pre.right=edge.right
                         break
                     pre=edge
                     edge=edge.right
     
+            if self.__kind=='UDG': # undirected graph
+                edge=self.__vertices[to]
+                if edge.vertex==come:
+                    self.__vertices[to]=edge.right
+                else:
+                    pre=edge
+                    edge=edge.right
+                    while edge:
+                        if edge.vertex==come:
+                            pre.right=edge.right
+                            break
+                        pre=edge
+                        edge=edge.right
+                        
     def _DFS(self,vertex,vertices=set()): # don't assign to vertices 
         if vertex not in vertices:
             vertices.add(vertex)
