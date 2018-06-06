@@ -76,7 +76,7 @@ class Graph:  #邻接表存储
             edge=self.__vertices[vertex]
             while edge:
                 vertex=edge.vertex
-                if vertex not in vertices:
+                if vertex not in vertices:  # 非必需,加判断减少递归次数
                     self._DFS(vertex)
                 edge=edge.right
 
