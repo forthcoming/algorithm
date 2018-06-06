@@ -83,32 +83,27 @@ class Graph:  #邻接表存储
     def DFS(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
         for vertex in self.__vertices:  # For non connected graphs
             self._DFS(vertex)
-                
+            
     def DFS_stack(self):  # 非递归
         stack=[]
+        tmp=[]
         vertices={vertex for vertex in self.__vertices} # 保存未访问节点
         for vertex in self.__vertices:
-            if vertex in vertices:
-                vertices.remove(vertex)
-                print(vertex,end=' ')              
+            stack.append(vertex)
+            while stack:
+                vertex=stack.pop()
+                if vertex in vertices:  # 不能少
+                    vertices.remove(vertex)
+                    print(vertex,end=' ')    
                 edge=self.__vertices[vertex]
-                stack.append(edge)
-                while stack:
-                    edge=stack.pop()
+                while edge:
                     vertex=edge.vertex
-                    if vertex in vertices:
-                        vertices.remove(vertex)
-                        print(vertex,end=' ')    
+                    if vertex in vertices:  # 不能少
+                        tmp.append(vertex)
                     edge=edge.right
-                    if edge:
-                        stack.append(edge)
-                    edge=self.__vertices[vertex]
-                    while edge:
-                        if edge.vertex in vertices: # 这里只能追加有效边
-                            stack.append(edge)
-                            break
-                        edge=edge.right
-                        
+                while tmp:
+                    stack.append(tmp.pop())
+                    
     def BFS(self):
         vertices=set()
         queue=deque()
