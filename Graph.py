@@ -92,7 +92,7 @@ class Graph:  #邻接表存储
             stack.append(vertex)
             while stack:
                 vertex=stack.pop()
-                if vertex in vertices:  # 不能少
+                if vertex in vertices:  # 不能少,但执行find_path或单独执行_DFS则不需要加这个判断
                     vertices.remove(vertex)
                     print(vertex,end=' ')    
                 edge=self.__vertices[vertex]
