@@ -96,7 +96,7 @@ class Graph:  #邻接表存储
                     if is_head:
                         edge=self.__vertices[vertex]
                     elif pos:
-                        edge=pos.pop().right
+                        edge=pos.pop()
                         is_head=True 
                     else:
                         break
@@ -105,7 +105,7 @@ class Graph:  #邻接表存储
                         if vertex not in vertices:
                             print(vertex)
                             vertices.add(vertex)
-                            pos.append(edge)
+                            pos.append(edge.right)
                             break
                         edge=edge.right
                     else:
