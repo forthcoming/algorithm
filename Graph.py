@@ -148,6 +148,42 @@ class Graph:  #邻接表存储
                         queue.append(self.__vertices[vertex])
                     edge=edge.right
     
+    def find_path_stack(self,start,end):
+        if start==end:
+            return [start]
+        else:
+            flag=True
+            pos=[]
+            vertices=set()
+            path=[]
+            result=[]
+            path.append(start)
+            vertices.add(start)
+            while True:
+                if flag:
+                    edge=self.__vertices[start]
+                elif pos:
+                    edge=pos.pop()
+                    flag=True 
+                else:
+                    break
+                while edge:
+                    start=edge.vertex
+                    if start not in vertices:
+                        path.append(start)
+                        vertices.add(start)
+                        if start==end:
+                            result.append(path[:])
+                            vertices.remove(path.pop())
+                        else:
+                            pos.append(edge.right)
+                            break
+                    edge=edge.right
+                else:
+                    vertices.remove(path.pop())
+                    flag=False
+            return result
+        
     def find_path(self,start,end):  # 回溯法,常与DFS配合使用
         vertices=set()
         path=[]
