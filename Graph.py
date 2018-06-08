@@ -69,20 +69,20 @@ class Graph:  #邻接表存储
                             pre=edge
                             edge=edge.right
                         
-    def _DFS(self,vertex,vertices=set()): # don't assign to vertices 
-        if vertex not in vertices:
+    def DFS(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数 
+        vertices=set()  
+        def _DFS(vertex):
             vertices.add(vertex)
             print(vertex,end=' ')
             edge=self.__vertices[vertex]
             while edge:
                 vertex=edge.vertex
-                if vertex not in vertices:  # 非必需,加判断减少递归次数
-                    self._DFS(vertex)
+                if vertex not in vertices:
+                    _DFS(vertex)
                 edge=edge.right
-
-    def DFS(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
         for vertex in self.__vertices:  # For non connected graphs
-            self._DFS(vertex)
+            if vertex not in vertices:
+                _DFS(vertex)
                
     def DFS_stack(self):
         is_head=True
