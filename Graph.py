@@ -83,27 +83,53 @@ class Graph:  #邻接表存储
     def DFS(self):    #类似于树的先根遍历,有向图的时间复杂度是O(n+e),无向图是O(n+2e),其中e代表邻接点个数   
         for vertex in self.__vertices:  # For non connected graphs
             self._DFS(vertex)
-            
-    def DFS_stack(self):  # 非递归
-        stack=[]
-        tmp=[]
-        vertices={vertex for vertex in self.__vertices} # 保存未访问节点
+               
+    def DFS_stack(self):
+        is_head=True
+        pos=[]
+        vertices=set()
         for vertex in self.__vertices:
-            stack.append(vertex)
-            while stack:
-                vertex=stack.pop()
-                if vertex in vertices:  # 不能少,但执行find_path或单独执行_DFS则不需要加这个判断
-                    vertices.remove(vertex)
-                    print(vertex,end=' ')    
-                edge=self.__vertices[vertex]
-                while edge:
-                    vertex=edge.vertex
-                    if vertex in vertices:  # 不能少
-                        tmp.append(vertex)
-                    edge=edge.right
-                while tmp:
-                    stack.append(tmp.pop())
-                    
+            if vertex not in vertices:  # 仅仅是为了过滤上一层for循环中的重复元素
+                print(vertex)
+                vertices.add(vertex)
+                while True:
+                    if is_head:
+                        edge=self.__vertices[vertex]
+                    elif pos:
+                        edge=pos.pop().right
+                        is_head=True 
+                    else:
+                        break
+                    while edge:
+                        vertex=edge.vertex
+                        if vertex not in vertices:
+                            print(vertex)
+                            vertices.add(vertex)
+                            pos.append(edge)
+                            break
+                        edge=edge.right
+                    else:
+                        is_head=False
+        # 低效版           
+        # stack=[]
+        # tmp=[]
+        # vertices={vertex for vertex in self.__vertices} # 保存未访问节点
+        # for vertex in self.__vertices:
+        #     stack.append(vertex)
+        #     while stack:
+        #         vertex=stack.pop()
+        #         if vertex in vertices:  # 不能少,但执行find_path或单独执行_DFS则不需要加这个判断
+        #             vertices.remove(vertex)
+        #             print(vertex,end=' ')    
+        #         edge=self.__vertices[vertex]
+        #         while edge:
+        #             vertex=edge.vertex
+        #             if vertex in vertices:  # 不能少
+        #                 tmp.append(vertex)
+        #             edge=edge.right
+        #         while tmp:
+        #             stack.append(tmp.pop())     
+        
     def BFS(self):
         vertices=set()
         queue=deque()
