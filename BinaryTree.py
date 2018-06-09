@@ -109,7 +109,29 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
             print(root)
         if self.__root:
             _post_order(self.__root)
-            
+
+    def find_path_stack(self):  # all path from root to leaf
+        root=self.__root
+        stack=[]
+        path=[]
+        while root or stack:
+            if root:
+                path.append(root)
+                if root.right:
+                    stack.append(root) # 这里不能让其右孩子入栈
+                elif not root.left:
+                    for i in path:
+                        print(i,end=' ')
+                    print()
+                root=root.left
+            else:
+                root=stack.pop()
+                if root.left:  # 一定要判断
+                    node=path.pop()
+                    while root.left!=node:
+                        node=path.pop()
+                root=root.right
+                
 if __name__=='__main__':
     tree=BinaryTree()
     tree.init()
