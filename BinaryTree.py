@@ -14,7 +14,11 @@ class Node:
 class BinaryTree:   # 度为0的个数=度为2的个数+1
     def __init__(self,root=None):
         self.__root=root
-
+        
+    @property
+    def root(self):
+        return self.__root
+    
     def init(self,calc=False):  # just for test
         a,b,c,d,e,f=6,5,4,3,2,1
         F=(a+b)/((c-d)*e)*(-f) #后续遍历即可得到后缀表达式
@@ -160,6 +164,18 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                         node=path.pop()
                 root=root.right
                 
+    def node_num(self,node):
+        if node:
+            return self.node_num(node=node.left)+self.node_num(node=node.right)+1
+        else:
+            return 0
+
+    def max_depth(self,node):
+        if node:
+            return max(self.max_depth(node.left),self.max_depth(node.right))+1
+        else:
+            return 0
+        
 if __name__=='__main__':
     tree=BinaryTree()
     tree.init()
