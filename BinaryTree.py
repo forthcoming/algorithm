@@ -109,8 +109,22 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
             print(root)
         if self.__root:
             _post_order(self.__root)
-            
-    def find_path(self):  #涉及根到叶节点路径问题，一律是先序遍历
+    
+    def BFS(self):
+        count=0   # 结点个数
+        if self.__root:
+            queue=deque([self.__root])
+            while queue:
+                node=queue.popleft()
+                count+=1
+                print(node)
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                    queue.append(node.right)
+        return count   
+    
+    def find_path(self):  #涉及root => leaf路径问题，一律是先序遍历
         path=[]
         def _find_path(root):
             path.append(root.data)
