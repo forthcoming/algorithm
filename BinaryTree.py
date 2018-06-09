@@ -109,7 +109,22 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
             print(root)
         if self.__root:
             _post_order(self.__root)
-
+            
+    def find_path(self):  #涉及根到叶节点路径问题，一律是先序遍历
+        path=[]
+        def _find_path(root):
+            path.append(root.data)
+            if root.left or root.right:
+                if root.left:
+                    _find_path(root.left)
+                if root.right:
+                    _find_path(root.right)
+            else:
+                print(path)
+            path.pop()
+        if self.__root:
+            _find_path(self.__root)
+            
     def find_path_stack(self):  # all path from root to leaf
         root=self.__root
         stack=[]
