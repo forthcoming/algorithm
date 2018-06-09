@@ -116,19 +116,18 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
         path=[]
         while root or stack:
             if root:
-                path.append(root)
+                path.append(root.data)
                 if root.right:
                     stack.append(root) # 这里不能让其右孩子入栈
                 elif not root.left:
-                    for i in path:
-                        print(i,end=' ')
-                    print()
+                    print(path)
                 root=root.left
             else:
                 root=stack.pop()
                 if root.left:  # 一定要判断
                     node=path.pop()
-                    while root.left!=node:
+                    l_data=root.left.data
+                    while l_data!=node:
                         node=path.pop()
                 root=root.right
                 
