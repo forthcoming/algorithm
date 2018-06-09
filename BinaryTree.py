@@ -48,6 +48,16 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
             '''
             self.__root=Node(0,Node(1,Node(3,Node(6)),Node(4)),Node(2,None,Node(5,Node(7,Node(9),Node(10)),Node(8))))
 
+    def post_order_copy(self):  # 思想类似于归并
+        if self.__root:
+            def _post_order_copy(node):
+                left=_post_order_copy(node.left) if node.left else None
+                right=_post_order_copy(node.right) if node.right else None
+                return Node(node.data,left,right)
+            return _post_order_copy(self.__root)
+        else:
+            return None
+        
     def pre_order(self):
         def _pre_order(root):
             print(root,end='\t')
