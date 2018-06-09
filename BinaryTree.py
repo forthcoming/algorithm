@@ -55,6 +55,29 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
         if self.__root:
             _pre_order(self.__root)
 
+    def pre_order_stack(self):
+        stack=[]
+        root=self.__root
+        while root or stack:
+            if root:
+                print(root)
+                if root.right:  #提高效率
+                    stack.append(root.right) #也可以让root入栈,出栈时令root=stack.pop().right
+                root=root.left
+                # root.left,root.right=root.right,root.left  # 反转二叉树
+                # root=root.right 
+            else:
+                root=stack.pop()
+
+        # 频繁出入栈，效率低
+        # stack=[self.__root]
+        # while stack:
+        #     root=stack.pop()
+        #     if root:
+        #         print(root)
+        #         stack.append(root.right)
+        #         stack.append(root.left)
+        
 if __name__=='__main__':
     tree=BinaryTree()
     tree.init()
