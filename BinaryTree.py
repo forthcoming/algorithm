@@ -164,17 +164,32 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                         node=path.pop()
                 root=root.right
                 
-    def node_num(self,node):
+    def node_num(self,node):  # 各种遍历都可以计算结点个数
         if node:
             return self.node_num(node=node.left)+self.node_num(node=node.right)+1
         else:
             return 0
 
-    def max_depth(self,node):
-        if node:
-            return max(self.max_depth(node.left),self.max_depth(node.right))+1
-        else:
-            return 0
+    def max_depth(self):  # BFS也可以计算最大深度
+        def _max_depth(node):
+            if node:
+                return max(_max_depth(node.left),_max_depth(node.right))+1
+            else:
+                return 0
+        return _max_depth(self.__root)
+        
+        # depth=0
+        # def _max_depth(node,level):
+        #     nonlocal depth
+        #     if level>depth:
+        #         depth=level
+        #     if node.left:
+        #         _max_depth(node.left,level+1)
+        #     if node.right:
+        #         _max_depth(node.right,level+1)
+        # if self.__root:
+        #     _max_depth(self.__root,1)
+        # return depth
         
 if __name__=='__main__':
     tree=BinaryTree()
