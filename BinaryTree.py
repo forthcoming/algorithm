@@ -78,6 +78,16 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
         #         stack.append(root.right)
         #         stack.append(root.left)
         
+    def in_order(self):
+        def _in_order(root):
+            if root.left:
+                _in_order(root.left)
+            print(root)
+            if root.right:
+                _in_order(root.right)
+        if self.__root:
+            _in_order(self.__root)
+            
 if __name__=='__main__':
     tree=BinaryTree()
     tree.init()
