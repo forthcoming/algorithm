@@ -87,7 +87,19 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                 _in_order(root.right)
         if self.__root:
             _in_order(self.__root)
-            
+
+    def in_order_stack(self):
+        stack=[]
+        root=self.__root
+        while root or stack:
+            if root:
+                stack.append(root)
+                root=root.left
+            else:
+                root=stack.pop()
+                print(root)
+                root=root.right
+                
 if __name__=='__main__':
     tree=BinaryTree()
     tree.init()
