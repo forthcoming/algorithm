@@ -255,7 +255,6 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                 
 if __name__=='__main__':
     tree=BinaryTree()
-    tree.init()
     tree.pre_order()
     
     '''
