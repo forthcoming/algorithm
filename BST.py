@@ -44,6 +44,39 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
             self.__root=node
         return True
     
+    def delete(self,num): #时间复杂度是O(logn)
+        '''
+        1. 删除的节点没有右孩子,直接替换掉左孩子
+        2. 删除的节点没有左孩子,直接替换掉右孩子
+        3. 删除的节点有左右孩子,先找到右孩子,如果他还有左孩子,就一直迭代下去,然后拷贝该孩子的值替换掉待删结点(也可以找左孩子的最大值结点)
+        '''
+        if self.find(num):
+            if self._pointer.left and self._pointer.right:
+                first=self._pointer
+                second=self._pointer.right
+                while second.left:
+                    first=second
+                    second=second.left
+                self._pointer.data=second.data
+                if first is self._pointer:
+                    first.right=second.right
+                else:
+                    first.left=second.right
+
+            else:
+                if self._pointer.left:   # 右子树空
+                    son=self._pointer.left
+                else:                    # 左子树空
+                    son=self._pointer.right
+                if not self._hot:
+                    self.__root=son
+                elif self.key(self._hot.data,self._pointer.data):
+                    self._hot.right=son
+                else:
+                    self._hot.left=son
+            return True
+        return False
+    
     def post_order_copy(self):  # 思想类似于归并
         def _post_order_copy(node):
             if node:
