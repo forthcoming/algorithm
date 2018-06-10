@@ -19,34 +19,19 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
     def root(self):
         return self.__root
     
-    def init(self,calc=False):  # just for test
-        a,b,c,d,e,f=6,5,4,3,2,1
-        F=(a+b)/((c-d)*e)*(-f) #后续遍历即可得到后缀表达式
-        if calc:
-            '''         '*'
-                      /     \
-                    '/'     '-'
-                   /   \      \
-                 '+'    '*'    f
-                 / \    / \
-                a   b  '-' e
-                       / \
-                      c   d
-            '''
-            self.__root=Node('*',Node('/',Node('+',Node(a),Node(b)),Node('*',Node('-',Node(c),Node(d)),Node(e))),Node('-',None,Node(f)))
-        else:
-            '''
-                      0
-                    /   \
-                   1     2
-                  / \     \
-                 3   4     5
-                /         / \
-               6         7   8
-                        / \
-                       9  10
-            '''
-            self.__root=Node(0,Node(1,Node(3,Node(6)),Node(4)),Node(2,None,Node(5,Node(7,Node(9),Node(10)),Node(8))))
+    def init(self):  # just for test
+        '''
+                  0
+                /   \
+               1     2
+              / \     \
+             3   4     5
+            /         / \
+           6         7   8
+                    / \
+                   9  10
+        '''
+        self.__root=Node(0,Node(1,Node(3,Node(6)),Node(4)),Node(2,None,Node(5,Node(7,Node(9),Node(10)),Node(8))))
 
     def post_order_copy(self):  # 思想类似于归并
         def _post_order_copy(node):
@@ -244,7 +229,77 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
         #     _max_depth(self.__root,1)
         # return depth
         
+    def find_parent(self,child,sibling):   #寻找最低公共父节点
+        # 还有个思路，若child和sibling分别在当前节点的左右子树上,则当前节点即为最低公共父节点,否则递归调用其左子树或右子树
+        root=self.__root
+        stack=[]
+        path=[]
+        while root or stack:
+            if root:
+                if root.data==child:   #找到了child,则查看child的所有父节点中哪个也属于sibling父节点即可
+                    return __class__.check(path,sibling)
+                path.append(root)
+                if root.right:
+                    stack.append(root)
+                root=root.left
+            else:
+                root=stack.pop()
+                if root.left:
+                    node=path.pop()
+                    while root.left!=node:
+                        node=path.pop()
+                root=root.right 
+
+    def check(path,sibling):
+        queue=deque()
+        while path:
+            parent=path.pop()
+            if parent.left:
+                queue.append(parent.left)
+            if parent.right:
+                queue.append(parent.right)
+            while queue:
+                node=queue.popleft()
+                if node.data==sibling:
+                    return parent
+                if node.left:
+                    queue.append(node.left)
+                if node.right:
+                   queue.append(node.right)      
+                
 if __name__=='__main__':
     tree=BinaryTree()
     tree.init()
     tree.pre_order()
+    
+    '''
+    a,b,c,d,e,f=6,5,4,3,2,1
+    F=(a+b)/((c-d)*e)*(-f) #后续遍历即可得到后缀表达式
+                '*'
+              /     \
+            '/'     '-'
+           /   \      \
+         '+'    '*'    f
+         / \    / \
+        a   b  '-' e
+               / \
+              c   d
+    root=Node('*',Node('/',Node('+',Node(a),Node(b)),Node('*',Node('-',Node(c),Node(d)),Node(e))),Node('-',None,Node(f)))
+    def post_order_calc(root):
+        operators={
+            '+':lambda x,y:x+y,
+            '-':lambda x,y:x-y,
+            '*':lambda x,y:x*y,
+            '/':lambda x,y:x/y,
+        }
+        if root:
+            if isinstance(root.data,str):
+                left_value=post_order_calc(root.left)
+                right_value=post_order_calc(root.right)
+                return operators[root.data](left_value,right_value)
+            else:
+                return root.data
+        else:
+            return 0
+    '''    
+    
