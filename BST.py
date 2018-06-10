@@ -18,20 +18,6 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
     @property
     def root(self):
         return self.__root
-    
-    def init(self):  # just for test
-        '''
-                  0
-                /   \
-               1     2
-              / \     \
-             3   4     5
-            /         / \
-           6         7   8
-                    / \
-                   9  10
-        '''
-        self.__root=Node(0,Node(1,Node(3,Node(6)),Node(4)),Node(2,None,Node(5,Node(7,Node(9),Node(10)),Node(8))))
 
     def post_order_copy(self):  # 思想类似于归并
         def _post_order_copy(node):
