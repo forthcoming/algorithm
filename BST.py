@@ -108,7 +108,7 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
         if self.__root:
             _in_order(self.__root)
 
-    def in_order_stack(self):
+    def in_order_stack(self):  # 稳定排序,思考如何按从大到小排序
         stack=[]
         root=self.__root
         while root or stack:
