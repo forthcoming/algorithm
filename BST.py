@@ -1,5 +1,3 @@
-# to be continued
-
 from collections import deque
 
 class Node:
@@ -10,15 +8,42 @@ class Node:
 
     def __str__(self):
         return str(self.data)
-
-class BinaryTree:   # 度为0的个数=度为2的个数+1
-    def __init__(self,root=None):
+    
+class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2的个数+1
+    def __init__(self,root=None,key=lambda x,y:x<y):  #默认升序
         self.__root=root
+        self.key=key
         
     @property
     def root(self):
         return self.__root
 
+    def find(self,num):  #时间复杂度是O(logn)
+        self._hot=None             #指向待查节点父节点
+        self._pointer=self.__root  #指向待查节点
+        while self._pointer:
+            if self._pointer.data==num:  #注意顺序,应为self.key规则可能包含=
+                return True
+            self._hot=self._pointer
+            if self.key(num,self._pointer.data):
+                self._pointer=self._pointer.left
+            else:
+                self._pointer=self._pointer.right
+        return False
+
+    def add(self,num):   # 树的高度越小,效率越高,这就要求插入的序列尽量无序,一定是在叶子节点处增加新节点
+        if self.find(num): # 只插入不重复的序列
+            return False
+        node=Node(num)
+        if self._hot:
+            if self.key(num,self._hot.data):
+                self._hot.left=node
+            else:
+                self._hot.right=node
+        else:  #空树
+            self.__root=node
+        return True
+    
     def post_order_copy(self):  # 思想类似于归并
         def _post_order_copy(node):
             if node:
@@ -254,9 +279,21 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                    queue.append(node.right)      
                 
 if __name__=='__main__':
-    tree=BinaryTree()
-    tree.pre_order()
-    
+    '''
+    从根节点开始遍历,他的最左边和最右边分别为极大值和极小值
+                  49
+                 /  \
+                38  65
+               /   /  \
+              13  52  76
+               \  
+               27 
+    '''
+    tree=BST()
+    for num in [49,38,65,76,13,27,52]:  # 时间复杂度介于O(nlogn)和O(n^2),后者出现在序列已经有序的情况下
+        tree.add(num)
+    tree.in_order()
+
     '''
     a,b,c,d,e,f=6,5,4,3,2,1
     F=(a+b)/((c-d)*e)*(-f) #后续遍历即可得到后缀表达式
