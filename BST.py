@@ -201,6 +201,21 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                         queue.append(node.right)
         else:
             return -1
+       
+        # 低效版
+        # depth=-1
+        # def _find(root,level):
+        #     nonlocal depth
+        #     if root.data==num:
+        #         depth=level
+        #     else:
+        #         if root.left:
+        #             _find(root.left,level+1)
+        #         if root.right:
+        #             _find(root.right,level+1)
+        # if self.__root:
+        #     _find(self.__root,1)
+        # return depth
         
     def node_num(self,node):  # 各种遍历都可以计算结点个数
         if node:
