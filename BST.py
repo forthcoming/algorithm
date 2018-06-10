@@ -179,7 +179,29 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                     while l_data!=node:
                         node=path.pop()
                 root=root.right
-                
+    
+    def BFS_nth_depth(self,num): #可以求二叉树最大宽度
+        if self.__root:
+            depth=1
+            queue=deque((self.__root,depth))
+            while queue:
+                node=queue.popleft()
+                if isinstance(node,int):
+                    if queue:
+                        depth+=1
+                        queue.append(depth)
+                    else:
+                        return -1
+                else:
+                    if node.data==num:
+                        return depth
+                    if node.left:
+                        queue.append(node.left)
+                    if node.right:
+                        queue.append(node.right)
+        else:
+            return -1
+        
     def node_num(self,node):  # 各种遍历都可以计算结点个数
         if node:
             return self.node_num(node=node.left)+self.node_num(node=node.right)+1
