@@ -55,7 +55,15 @@ class BinaryTree:   # 度为0的个数=度为2的个数+1
                 right=_post_order_copy(node.right)
                 return Node(node.data,left,right)
         return _post_order_copy(self.__root)
-        
+    
+    def is_same(self,another):
+        def _is_same(first,second):
+            if first and second:
+                return (first.data==second.data) and _is_same(first.left,second.left) and _is_same(first.right,second.right)
+            else:
+                return not(first or second)
+        return _is_same(self.__root,another.__root)
+    
     def pre_order(self):
         def _pre_order(root):
             print(root,end='\t')
