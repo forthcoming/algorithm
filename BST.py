@@ -158,7 +158,58 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
             print(root)
         if self.__root:
             _post_order(self.__root)
-    
+  
+    def post_order_stack(self):
+        #method 1:  推荐
+        root=self.__root
+        stack=[]
+        r_child=None 
+        while root:
+            stack.append(root)
+            root=root.left
+        while stack:
+            root=stack[-1].right
+            if root and root!=r_child:
+                while root:
+                    stack.append(root)
+                    root=root.left                
+            else:
+                r_child=stack.pop()
+                print(r_child)
+
+        #method 2:  可以看成DRL,然后再将结果翻转
+        # stack=[]
+        # result=[]
+        # root=self.__root        
+        # while root or stack:
+        #     if root:
+        #         result.append(root.data)
+        #         if root.left:
+        #             stack.append(root.left)
+        #         root=root.right  
+        #     else:
+        #         root=stack.pop()
+        # while result:
+        #     print(result.pop())
+
+        #method 3: 不推荐
+        # root=self.__root
+        # stack=[self.__root]
+        # while root or stack:
+        #     if root:
+        #         if stack and stack[-1]==root:
+        #             if root.right:
+        #                 stack.append(root.right)
+        #                 stack.append(root.right)
+        #             if root.left:
+        #                 stack.append(root.left)
+        #             root=root.left
+        #         else:
+        #             print(root)
+        #             root=None
+        #     else:
+        #         root=stack.pop()
+
     def BFS(self):
         count=0   # 结点个数
         if self.__root:
