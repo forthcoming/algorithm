@@ -150,13 +150,12 @@ class Graph:  #邻接表存储
     
     def find_path_stack(self,start,end):
         if start==end:
-            return [start]
+            yield [start]
         else:
             flag=True
             pos=[]
             vertices=set()
             path=[]
-            result=[]
             path.append(start)
             vertices.add(start)
             while True:
@@ -173,7 +172,7 @@ class Graph:  #邻接表存储
                         path.append(start)
                         vertices.add(start)
                         if start==end:
-                            result.append(path[:])
+                            yield path[:]
                             vertices.remove(path.pop())
                         else:
                             pos.append(edge.right)
@@ -182,7 +181,6 @@ class Graph:  #邻接表存储
                 else:
                     vertices.remove(path.pop())
                     flag=False
-            return result
         
     def find_path(self,start,end):  # 回溯法,常与DFS配合使用
         vertices=set()
