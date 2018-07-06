@@ -9,18 +9,17 @@ uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bi
         const uint64_t * data = (const uint64_t *)key;  //  const int* a  表示*a是常量
         const uint64_t * end = data + (len>>3);         //  int* const a  表示a是常量
 
-        while(data != end)
-        {
-                uint64_t k = *data++;
-                k *= m;
-                k ^= k >> r;
-                k *= m;
-                h ^= k;
-                h *= m;
+        while(data != end){
+            uint64_t k = *data++;
+            k *= m;
+            k ^= k >> r;
+            k *= m;
+            h ^= k;
+            h *= m;
         }
         const unsigned char * data2 = (const unsigned char*)data;
 
-        switch(len & 7){  // pay attention,no break here
+        switch(len & 7){  // pay attention,no break here,deal with all the remain elements
             case 7: 
                 h ^= (uint64_t)data2[6] << 48;
             case 6: 
