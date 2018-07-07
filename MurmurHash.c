@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdint.h>
 
-uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bit hash for 64-bit platforms
+uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bit hash for 64-bit platforms,void *指向任意类型
 {
         const uint64_t m = 0xc6a4a7935bd1e995;
         const int r = 47;
