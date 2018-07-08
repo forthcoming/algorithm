@@ -18,7 +18,7 @@ uint32_t fmix32 ( uint32_t h )
 
 uint32_t MurmurHash3_x86_32 ( const void * key, int len, uint32_t seed)
 {
-  const uint8_t * data = (const uint8_t *)key;
+  const uint8_t * data = (const uint8_t*)key;
   const int nblocks = len >>2;
   uint32_t h1 = seed;
   const uint32_t c1 = 0xcc9e2d51;
@@ -64,8 +64,8 @@ uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bi
   const uint64_t m = 0xc6a4a7935bd1e995;
   const int r = 47;
   uint64_t h = seed ^ (len * m);
-  const uint8_t * data = (const uint8_t *)key;  //  const int* a  表示*a是常量
-  const uint8_t * end = data + (len>>3);         //  int* const a  表示a是常量
+  const uint64_t * data = (const uint64_t *)key;  //  const int* a  表示*a是常量
+  const uint64_t * end = data + (len>>3);         //  int* const a  表示a是常量
 
   while(data != end)
   {
@@ -76,23 +76,24 @@ uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bi
     h ^= k;
     h *= m;
   }
+  const unsigned char * data2 = (const unsigned char*)data;
 
   switch(len & 7)
   {  // pay attention,no break here,deal with all the remain elements
     case 7: 
-      h ^= (uint64_t)data[6] << 48;
+      h ^= (uint64_t)data2[6] << 48;
     case 6: 
-      h ^= (uint64_t)data[5] << 40;
+      h ^= (uint64_t)data2[5] << 40;
     case 5: 
-      h ^= (uint64_t)data[4] << 32;
+      h ^= (uint64_t)data2[4] << 32;
     case 4: 
-      h ^= (uint64_t)data[3] << 24;
+      h ^= (uint64_t)data2[3] << 24;
     case 3: 
-      h ^= (uint64_t)data[2] << 16;
+      h ^= (uint64_t)data2[2] << 16;
     case 2: 
-      h ^= (uint64_t)data[1] << 8;
+      h ^= (uint64_t)data2[1] << 8;
     case 1: 
-      h ^= (uint64_t)data[0];
+      h ^= (uint64_t)data2[0];
       h *= m;
     };
 
