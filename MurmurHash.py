@@ -16,7 +16,7 @@ def murmur_hash( key, seed ):  # Implements MurmurHash3_x86_32 hash.
     c2 = 0x1b873593
 
     for block_start in range( 0, nblocks * 4, 4 ):
-        k1 = key[ block_start + 3 ] << 24 | key[ block_start + 2 ] << 16 |  key[ block_start + 1 ] <<  8 |  key[ block_start + 0 ]             
+        k1 = key[ block_start + 3 ] << 24 | key[ block_start + 2 ] << 16 |  key[ block_start + 1 ] <<  8 |  key[ block_start ]  # little endian           
         k1 = ( c1 * k1 ) & 0xFFFFFFFF
         k1 = ( k1 << 15 | k1 >> 17 ) & 0xFFFFFFFF # inlined ROTL32
         k1 = ( c2 * k1 ) & 0xFFFFFFFF
