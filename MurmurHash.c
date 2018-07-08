@@ -27,7 +27,7 @@ uint32_t MurmurHash3_x86_32 ( const void * key, int len, uint32_t seed)
   const uint32_t * blocks = (const uint32_t *)(data + nblocks*4);
   for(int i = -nblocks; i; i++)
   {
-    uint32_t k1 = blocks[i];
+    uint32_t k1 = blocks[i];  // little endian
 
     k1 *= c1;
     k1 = rotl32(k1,15);
