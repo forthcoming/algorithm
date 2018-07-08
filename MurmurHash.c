@@ -106,10 +106,10 @@ uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bi
 int main()
 {
   char a[3]="fax";
-  uint64_t x=MurmurHash64A(a,sizeof(a)/sizeof(char),0x0);
-  printf("%llx",x);
+  uint64_t v1=MurmurHash64A(a,3,0x0);
+  printf("%llx\n",v1);
         
   char str[11]="qwertyuiop";
-  uint32_t v=MurmurHash3_x86_32 (str,10 , 0x0);
-  printf("%u",v);
+  uint32_t v2=MurmurHash3_x86_32 (str,10 , 0x0);
+  printf("%u\n",v2);
 }
