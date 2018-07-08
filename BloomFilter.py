@@ -9,9 +9,10 @@ class Hash:
 
     def BKDRHash(self,key,radix=31):
         # radix 31 131 1313 13131 131313 etc.
+        key = bytearray(key.encode())   
         hash=0
         for i in key:
-            hash=hash*radix+ord(i)
+            hash=hash*radix+i
         return hash
 
     def DJBHash(self,key):
