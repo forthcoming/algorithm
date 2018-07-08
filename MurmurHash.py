@@ -44,4 +44,8 @@ def murmur_hash( key, seed ):  # Implements MurmurHash3_x86_32 hash.
 
 
 if __name__ == "__main__":
+    '''
+    https://github.com/forthcoming/algorithm/blob/master/MurmurHash.c#L19
+    https://github.com/wc-duck/pymmh3/blob/master/pymmh3.py#L34    
+    '''
     print(murmur_hash('qwertyuiop',0x0))
