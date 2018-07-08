@@ -64,7 +64,7 @@ uint64_t MurmurHash64A ( const void * key, int len, unsigned int seed ) // 64-bi
   const uint64_t m = 0xc6a4a7935bd1e995;
   const int r = 47;
   uint64_t h = seed ^ (len * m);
-  const uint8_t * data = (const uint64_t *)key;  //  const int* a  表示*a是常量
+  const uint8_t * data = (const uint8_t *)key;  //  const int* a  表示*a是常量
   const uint8_t * end = data + (len>>3);         //  int* const a  表示a是常量
 
   while(data != end)
