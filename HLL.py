@@ -6,6 +6,8 @@ def fmix( h ):
     h ^= h >> 16
     return h
 
+# https://github.com/forthcoming/algorithm/blob/master/MurmurHash3.c
+# https://github.com/wc-duck/pymmh3/blob/master/pymmh3.py#L34  
 def murmur_hash( key, seed ):  # Implements MurmurHash3_x86_32 hash.
     key = bytearray(key.encode())  # pay attention
     length = len( key )
@@ -42,10 +44,15 @@ def murmur_hash( key, seed ):  # Implements MurmurHash3_x86_32 hash.
         h1 ^= k1
     return fmix( h1 ^ length )
 
+# https://github.com/antirez/redis/blob/unstable/src/hyperloglog.c#L339
+def hll_dense_get_register(p,regnum):
+    hll_bits=6
+    p=bytearray(p.encode())
+    binary=''.join('{:08b}'.format(each)[::-1] for each in p)
+    # print(binary)
+    left=regnum*hll_bits
+    return int(binary[left:left+hll_bits][::-1],2)
 
 if __name__ == "__main__":
-    '''
-    https://github.com/forthcoming/algorithm/blob/master/MurmurHash.c#L19
-    https://github.com/wc-duck/pymmh3/blob/master/pymmh3.py#L34    
-    '''
     print(murmur_hash('qwertyuiop',0x0))
+    print(hll_dense_get_register('abcdefgh',8))
