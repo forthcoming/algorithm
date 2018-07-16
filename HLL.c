@@ -1,6 +1,6 @@
 #include<stdio.h>
-#include <stdint.h>
-#include <math.h>
+#include<stdint.h>
+#include<math.h>
 
 #define HLL_BITS 6 // Enough to count up to 63 leading zeroes.
 #define HLL_REGISTER_MAX ((1<<HLL_BITS)-1)
