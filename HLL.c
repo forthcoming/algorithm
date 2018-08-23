@@ -106,7 +106,7 @@ int hllPatLen(unsigned char *ele, size_t elesize, long *regp) {
         ++count;
     }
     *regp = (int) index;
-    return ++count;
+    return ++count;  // ++ here since we count the "00000...1" pattern.
 }
 
 // Compute the register histogram in the dense representation. 
