@@ -8,10 +8,11 @@
 #define HLL_Q (64-HLL_P) // The number of bits of the hash value used for determining the number of leading zeros.
 #define HLL_REGISTERS (1<<HLL_P) // With P=14, 16384 registers.
 #define HLL_P_MASK (HLL_REGISTERS-1) // Mask to index register.
+#define HLL_ALPHA_INF 0.721347520444481703680 /* constant for 0.5/ln(2) */
 
 /*
 The use of 16384 6-bit registers for a great level of accuracy, using a total of 12k per key.
-
+hllSigma,hllTau,hllCount三个函数没看懂,有时间再研究
 Note: if we access the last counter, we will also access the b+1 byte
 that is out of the array, but sds strings always have an implicit null
 term, so the byte exists, and we can skip the conditional (or the need
@@ -159,6 +160,55 @@ void hllDenseRegHisto(uint8_t *registers, int* reghisto) {
             reghisto[reg]++;
         }
     }
+}
+
+double hllSigma(double x) {  // 0<x<1
+    if (x == 1.) return INFINITY;
+    double zPrime;
+    double y = 1;
+    double z = x;
+    do {
+        x *= x;
+        zPrime = z;
+        z += x * y;
+        y += y;
+    } while(zPrime != z);
+    return z;
+}
+
+double hllTau(double x) { // 0<x<1
+    if (x == 0. || x == 1.) return 0.;
+    double zPrime;
+    double y = 1.0;
+    double z = 1 - x;
+    do {
+        x = sqrt(x);
+        zPrime = z;
+        y *= 0.5;
+        z -= pow(1 - x, 2)*y;
+    } while(zPrime != z);
+    return z / 3;
+}
+
+uint64_t hllCount(struct hllhdr *hdr, int *invalid) {
+    double m = HLL_REGISTERS;
+    double E;
+    int j;
+    int reghisto[HLL_Q+2] = {0};
+    if (hdr->encoding == HLL_DENSE) {
+        hllDenseRegHisto(hdr->registers,reghisto);
+    } 
+    else {
+        printf("Unknown HyperLogLog encoding in hllCount()");
+    }
+    double z = m * hllTau((m-reghisto[HLL_Q+1])/(double)m);
+    for (j = HLL_Q; j >= 1; --j) {
+        z += reghisto[j];
+        z *= 0.5;
+    }
+    z += m * hllSigma(reghisto[0]/(double)m);
+    E = llroundl(HLL_ALPHA_INF*m*m/z);
+    return (uint64_t) E;
 }
 
 int main()
