@@ -9,7 +9,15 @@
 #define HLL_REGISTERS (1<<HLL_P) // With P=14, 16384 registers.
 #define HLL_P_MASK (HLL_REGISTERS-1) // Mask to index register.
 #define HLL_ALPHA_INF 0.721347520444481703680 /* constant for 0.5/ln(2) */
+#define HLL_DENSE 0 /* Dense encoding. */
 
+typedef struct {
+    char magic[4];      /* "HYLL" */
+    uint8_t encoding;   /* HLL_DENSE or HLL_SPARSE. */
+    uint8_t notused[3]; /* Reserved for future use, must be zero. */
+    uint8_t card[8];    /* Cached cardinality, little endian. */
+    uint8_t registers[]; /* Data bytes. */
+} hllhdr;
 /*
 The use of 16384 6-bit registers for a great level of accuracy, using a total of 12k per key.
 hllSigma,hllTau,hllCount三个函数没看懂,有时间再研究
@@ -209,6 +217,18 @@ uint64_t hllCount(struct hllhdr *hdr, int *invalid) {
     z += m * hllSigma(reghisto[0]/(double)m);
     E = llroundl(HLL_ALPHA_INF*m*m/z);
     return (uint64_t) E;
+}
+
+int hllMerge(uint8_t *max, hllhdr *hdr) {
+    if (hdr->encoding == HLL_DENSE) {
+        uint8_t val;
+        for (int i = 0; i < HLL_REGISTERS; i++) {
+            HLL_DENSE_GET_REGISTER(val,hdr->registers,i);
+            if (val > max[i]) max[i] = val;
+        }
+        return 1;
+    }
+    return 0;
 }
 
 int main()
