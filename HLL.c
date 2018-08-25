@@ -235,7 +235,7 @@ int hllMerge(uint8_t *max, hllhdr *hdr) {
 
 int main()
 {
-    char str[3]="fax";
+    char str[4]="fax";
     uint64_t result=MurmurHash64A(str,3,0xadc83b19ULL);
     printf("%llx\n",result);  // 13fb26a624822b1c  1001111111011001001101010011000100100100000100010101100011100
 
