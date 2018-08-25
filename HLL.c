@@ -240,9 +240,8 @@ int main()
     printf("%llx\n",result);  // 13fb26a624822b1c  1001111111011001001101010011000100100100000100010101100011100
 
     uint8_t p[]={97,98,99,100,101,102,103,104};  // 1000011001000110110001100010011010100110011001101110011000010110
-    long index=8;
     uint8_t oldcount;
-    HLL_DENSE_GET_REGISTER(oldcount,p,index);
+    HLL_DENSE_GET_REGISTER(oldcount,p,8);
     printf("%d\n",oldcount);  // 39
 
     long regp;
