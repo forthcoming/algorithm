@@ -92,18 +92,6 @@ uint64_t MurmurHash64A( const void * key, int len, unsigned int seed ) // 64-bit
     return h;
 }
 
-int hllDenseSet(uint8_t *registers, long index, uint8_t count) {
-    uint8_t oldcount;
-
-    HLL_DENSE_GET_REGISTER(oldcount,registers,index);
-    if (count > oldcount) {
-        HLL_DENSE_SET_REGISTER(registers,index,count);
-        return 1;
-    } else {
-        return 0;
-    }
-}
-
 int hllPatLen(unsigned char *ele, size_t elesize, long *regp) {
     uint64_t hash, index;
     hash = MurmurHash64A(ele,elesize,0xadc83b19ULL);
@@ -116,6 +104,20 @@ int hllPatLen(unsigned char *ele, size_t elesize, long *regp) {
     }
     *regp = (int) index;
     return ++count;  // ++ here since we count the "00000...1" pattern.
+}
+
+int hllDenseAdd(uint8_t *registers, unsigned char *ele, size_t elesize) {
+    long index;
+    uint8_t count = hllPatLen(ele,elesize,&index);
+    uint8_t oldcount;
+    HLL_DENSE_GET_REGISTER(oldcount,registers,index);
+    if (count > oldcount) {
+        HLL_DENSE_SET_REGISTER(registers,index,count);
+        return 1;
+    }
+    else {
+        return 0;
+    } 
 }
 
 // Compute the register histogram in the dense representation. 
