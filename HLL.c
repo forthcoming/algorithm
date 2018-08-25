@@ -241,13 +241,9 @@ int main()
 
     uint8_t p[]={97,98,99,100,101,102,103,104};  // 1000011001000110110001100010011010100110011001101110011000010110
     long index=8;
-    uint8_t count=40;
     uint8_t oldcount;
     HLL_DENSE_GET_REGISTER(oldcount,p,index);
     printf("%d\n",oldcount);  // 39
-    printf("%d\n",hllDenseSet(p,index,count));  // 1
-    HLL_DENSE_GET_REGISTER(oldcount,p,index);
-    printf("%d\n",oldcount);  // 40
 
     long regp;
     int number=hllPatLen("fax",3,&regp);
