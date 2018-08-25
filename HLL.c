@@ -214,7 +214,7 @@ uint64_t hllCount(hllhdr *hdr, int *invalid) {
         z += reghisto[j];
         z *= 0.5;
     }
-    z += m * hllSigma(reghisto[0]/(double)m);
+    z += m * hllSigma(reghisto[0]/(double)m);  // Dense模式可忽略
     uint64_t E = (uint64_t) llroundl(HLL_ALPHA_INF*m*m/z);
     return E;
 }
