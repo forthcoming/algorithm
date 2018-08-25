@@ -201,9 +201,7 @@ double hllTau(double x) { // 0<x<1
 }
 
 uint64_t hllCount(hllhdr *hdr, int *invalid) {
-    double m = HLL_REGISTERS;
-    double E;
-    int j;
+    double m = HLL_REGISTERS;  // 不能直接把HLL_REGISTERS进行计算
     int reghisto[HLL_Q+2] = {0};
     if (hdr->encoding == HLL_DENSE) {
         hllDenseRegHisto(hdr->registers,reghisto);
@@ -212,13 +210,13 @@ uint64_t hllCount(hllhdr *hdr, int *invalid) {
         printf("Unknown HyperLogLog encoding in hllCount()");
     }
     double z = m * hllTau((m-reghisto[HLL_Q+1])/(double)m);
-    for (j = HLL_Q; j >= 1; --j) {
+    for (int j = HLL_Q; j >= 1; --j) {
         z += reghisto[j];
         z *= 0.5;
     }
     z += m * hllSigma(reghisto[0]/(double)m);
-    E = llroundl(HLL_ALPHA_INF*m*m/z);
-    return (uint64_t) E;
+    uint64_t E = (uint64_t) llroundl(HLL_ALPHA_INF*m*m/z);
+    return E;
 }
 
 int hllMerge(uint8_t *max, hllhdr *hdr) {
