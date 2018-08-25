@@ -198,7 +198,7 @@ double hllTau(double x) { // 0<x<1
     return z / 3;
 }
 
-uint64_t hllCount(struct hllhdr *hdr, int *invalid) {
+uint64_t hllCount(hllhdr *hdr, int *invalid) {
     double m = HLL_REGISTERS;
     double E;
     int j;
