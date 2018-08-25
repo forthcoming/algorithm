@@ -185,7 +185,7 @@ double hllSigma(double x) {  // 0<x<1,修正最大值误差
     return z;
 }
 
-double hllTau(double x) { // 0<x<1,,修正最小值误差
+double hllTau(double x) { // 0<x<1,修正最小值误差
     if (x == 0. || x == 1.) return 0.;
     double zPrime;
     double y = 1.0;
@@ -214,7 +214,7 @@ uint64_t hllCount(hllhdr *hdr, int *invalid) {
         z *= 0.5;
     }
     z += m * hllSigma(reghisto[0]/(double)m);  // Dense模式可忽略
-    uint64_t E = (uint64_t) llroundl(HLL_ALPHA_INF*m*m/z);  // 使用调和平均数来代替几何平均数
+    uint64_t E = (uint64_t) llroundl(HLL_ALPHA_INF*m*m/z);  // 使用调和平均数来代替几何平均数,以减少对离群值的敏感性
     return E;
 }
 
