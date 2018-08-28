@@ -14,12 +14,13 @@ class HashRing:    # Implements consistent hashing that can be used when the num
         k = md5(bytes(value,'utf8')).digest()
         return unpack("<I", k[:4])[0]
 
-    def add_item(self,item):
+    def add_items(self,items):
         length=len(self.rings)
         if length:
-            hash_value = self._hash(item)
-            pos = bisect_left(self.rings, hash_value) % length  # 注意这里跟bisect_right的区别
-            self.storage[self.mapping[self.rings[pos]]].append(item)
+            for item in items:
+                hash_value = self._hash(item)
+                pos = bisect_left(self.rings, hash_value) % length  # 注意这里跟bisect_right的区别
+                self.storage[self.mapping[self.rings[pos]]].append(item)
 
     def add_node(self,node):
         if node not in self.storage:
@@ -33,14 +34,10 @@ class HashRing:    # Implements consistent hashing that can be used when the num
                         pos=bisect_left(self.rings, hash_value) % length
                         _node=self.mapping[self.rings[pos]]
                         insort_right(self.rings,hash_value)
-                        length+=1
                         if _node!=node:
                             items=self.storage[_node]
                             self.storage[_node]=[]
-                            for item in items:
-                                _hash_value = self._hash(item)
-                                _pos = bisect_left(self.rings, _hash_value) % length
-                                self.storage[self.mapping[self.rings[_pos]]].append(item)
+                            self.add_items(items)
                     else:
                         self.rings.append(hash_value) 
 
@@ -49,7 +46,6 @@ class HashRing:    # Implements consistent hashing that can be used when the num
 
 if __name__=='__main__':
     ring = HashRing()
-    for node in range(20):
+    for node in range(50):
         ring.add_node(node)
-    for item in range(1000000):
-        ring.add_item(str(item))
+    ring.add_items([str(i) for i in range(1000000)])
