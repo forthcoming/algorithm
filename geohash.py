@@ -1,7 +1,8 @@
 __base32 = '0123456789bcdefghjkmnpqrstuvwxyz'
 __mapping = {letter:index for index,letter in enumerate(__base32)}
 
-def geo_encode(longitude, latitude, geolength=8):
+def geo_encode(longitude, latitude, geolength=11):
+    assert -180<=longitude<=180 and -85.05112878<=latitude<=85.05112878
     lon_interval,lat_interval = (-180.0, 180.0),(-90.0, 90.0)
     geohash = 0
     even=True
@@ -42,5 +43,4 @@ def geo_decode(geohash):
                 else:
                     lat_interval = (lat_interval[0], (lat_interval[0]+lat_interval[1])/2)
             even = not even
-    
     return (lon_interval[0] + lon_interval[1]) / 2,(lat_interval[0] + lat_interval[1]) / 2
