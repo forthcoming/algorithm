@@ -19,6 +19,7 @@ class ObjectId:
     def __init__(self, oid=None):
         """
         Note that the timestamp and counter fields must be stored big endian,cause they are compared byte-by-byte and we want to ensure a mostly increasing order
+        如果想用小端模式也行,则oid每一部分都得用小端模式并且oid += struct.pack("<i", ObjectId._inc)[:3]
         An ObjectId is a 12-byte unique identifier consisting of:
         4-byte value representing the seconds since the Unix epoch,
         3-byte machine identifier,
