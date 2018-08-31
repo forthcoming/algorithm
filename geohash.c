@@ -5,6 +5,9 @@
 #define RANGEISZERO(r) (!(r).max && !(r).min)
 #define RANGEPISZERO(r) (r == NULL || RANGEISZERO(*r))
 #define GEO_STEP_MAX 26 /* 26*2 = 52 bits. */
+#define GZERO(s) s.bits = s.step = 0;
+#define GISZERO(s) (!s.bits && !s.step)
+#define GISNOTZERO(s) (s.bits || s.step)
 
 /**
 所有未加static前缀的全局变量和函数都具有全局可见性,其它的源文件也能访问,访问前需通过extern关键字声明
@@ -50,6 +53,15 @@ typedef struct {
     GeoHashBits north_west;
     GeoHashBits south_west;
 } GeoHashNeighbors;
+
+typedef uint64_t GeoHashFix52Bits;
+typedef uint64_t GeoHashVarBits;
+
+typedef struct {
+    GeoHashBits hash;
+    GeoHashArea area;
+    GeoHashNeighbors neighbors;
+} GeoHashRadius;
 
 /**
  * Hashing works like this:
@@ -280,5 +292,7 @@ int main(){
     uint32_t x=0;
     uint32_t y=0b11111111111111111111111111111111;
     printf("%llu\n",deinterleave64(interleave64(x, y)));
+    double lat_offset = .8;
+    lat_offset *= (1ULL << 10);
+    printf("%u\n",(uint32_t)lat_offset);
 }
-
