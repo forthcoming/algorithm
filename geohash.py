@@ -3,7 +3,7 @@ __mapping = {letter:index for index,letter in enumerate(__base32)}
 
 def geo_encode(longitude, latitude, geo_length=11):
     assert -180<=longitude<=180 and -85.05112878<=latitude<=85.05112878
-    lon_interval,lat_interval = (-180.0, 180.0),(-90.0, 90.0)
+    lon_interval,lat_interval = (-180.0, 180.0),(-85.05112878,85.05112878)  # 与redis保持一致
     geohash = 0
     _geohash=[]
     even=True
