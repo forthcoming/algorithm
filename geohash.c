@@ -174,7 +174,7 @@ int geohashEncodeWGS84(double longitude, double latitude, uint8_t step,GeoHashBi
     return geohashEncode(&r[0], &r[1], longitude, latitude, step, hash);
 }
 
-int geohash_slow_encode(GeoHashRange lon_range,GeoHashRange lat_range,double latitude, double longitude, uint8_t step, GeoHashBits* hash)
+int geohash_slow_encode(GeoHashRange lon_range,GeoHashRange lat_range,double longitude, double latitude, uint8_t step, GeoHashBits* hash)
 {
     if (NULL == hash || step > 32 || step == 0 ||
 	    latitude < lat_range.min || latitude > lat_range.max|| longitude < lon_range.min || longitude > lon_range.max
@@ -219,7 +219,7 @@ static inline uint8_t get_bit(uint64_t bits, uint8_t pos)
     return (bits >> pos) & 0x01;
 }
 
-int geohash_slow_decode(GeoHashRange lat_range, GeoHashRange lon_range, GeoHashBits hash, GeoHashArea* area)
+int geohash_slow_decode(GeoHashRange lon_range, GeoHashRange lat_range, GeoHashBits hash, GeoHashArea* area)
 {
     if (NULL == area)
     {
