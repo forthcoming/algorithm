@@ -81,7 +81,6 @@ typedef struct {
     /*
     Interleave lower bits of x and y, so the bits of x are in the even positions and bits from y in the odd(奇数);
     x and y must initially be less than 2**32 (65536). From: https://graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN
-    if x=x1,x2,...x32 and y=y1,y2,...y32 then return y1,x1,y2,x2,...y32,x32
     0x5555555555555555ULL=0b0101010101010101010101010101010101010101010101010101010101010101
     0x3333333333333333ULL=0b0011001100110011001100110011001100110011001100110011001100110011
     0x0F0F0F0F0F0F0F0FULL=0b0000111100001111000011110000111100001111000011110000111100001111
@@ -107,8 +106,13 @@ typedef struct {
 
     x = (x | (x << S[0])) & B[0];
     y = (y | (y << S[0])) & B[0];
-
+    
     return x | (y << 1);
+    /*
+    if x=x1,x2,...x32 and y=y1,y2,...y32 
+    then x=0,x1,0,x2,...0,x32 and y=0,y1,0,y2,...0,y32
+    return y1,x1,y2,x2,...y32,x32
+    */ 
 }
 
 static inline uint64_t deinterleave64(uint64_t interleaved) {
@@ -162,7 +166,19 @@ int geohashEncode(const GeoHashRange *long_range, const GeoHashRange *lat_range,
     hash->step = step;
     double lat_offset =(latitude - lat_range->min) / (lat_range->max - lat_range->min);
     double long_offset =(longitude - long_range->min) / (long_range->max - long_range->min);
-    lat_offset *= (1ULL << step);
+    /*
+    eg:
+    longitude=100,(long_range->min,long_range->max)=(-180,180)
+    1. longitude ∈ (0,180)         左边占了.5    0.1
+    2. longitude ∈ (90,180)        左边占了1*0.5+1*0.5^2    0.11
+    3. longitude ∈ (90,135)        左边占了1*0.5+1*0.5^2+0*0.5^3    0.110
+    4. longitude ∈ (90,112.5)      左边占了1*0.5+1*0.5^2+0*0.5^3+0*0.5^4    0.1100
+    5. longitude ∈ (90,101.25)     左边占了1*0.5+1*0.5^2+0*0.5^3+0*0.5^4+0*0.5^5    0.11000
+    6. longitude ∈ (95.625,101.25) 左边占了1*0.5+1*0.5^2+0*0.5^3+0*0.5^4+0*0.5^5+1*0.5^6    0.110001
+    ......
+    long_offset =(longitude - long_range->min) / (long_range->max - long_range->min)=0.110001110001......
+    */
+    lat_offset *= (1ULL << step); // 必须要加ULL,应为当step=31or32时符号位会变成负数or1直接溢出使结果变为0
     long_offset *= (1ULL << step);
     hash->bits = interleave64(lat_offset, long_offset);  // 隐式转换:double => uint32_t
     return 1;
