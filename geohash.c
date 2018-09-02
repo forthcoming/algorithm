@@ -228,16 +228,14 @@ static void geohash_move_x(GeoHashBits *hash, int8_t d) {
 
     uint64_t x = hash->bits & 0xaaaaaaaaaaaaaaaaULL;
     uint64_t y = hash->bits & 0x5555555555555555ULL;
-
     uint64_t zz = 0x5555555555555555ULL >> (64 - hash->step * 2);
-
     if (d > 0) {
         x = x + (zz + 1);
-    } else {
+    } 
+    else {
         x = x | zz;
         x = x - (zz + 1);
     }
-
     x &= (0xaaaaaaaaaaaaaaaaULL >> (64 - hash->step * 2));
     hash->bits = (x | y);
 }
@@ -248,7 +246,6 @@ static void geohash_move_y(GeoHashBits *hash, int8_t d) {
 
     uint64_t x = hash->bits & 0xaaaaaaaaaaaaaaaaULL;
     uint64_t y = hash->bits & 0x5555555555555555ULL;
-
     uint64_t zz = 0xaaaaaaaaaaaaaaaaULL >> (64 - hash->step * 2);
     if (d > 0) {
         y = y + (zz + 1);
@@ -262,7 +259,7 @@ static void geohash_move_y(GeoHashBits *hash, int8_t d) {
 }
 
 void geohashNeighbors(const GeoHashBits *hash, GeoHashNeighbors *neighbors) {
-    neighbors->east = *hash;
+    neighbors->east = *hash;    // 类型相同的结构体之间可以直接赋值
     neighbors->west = *hash;
     neighbors->north = *hash;
     neighbors->south = *hash;
@@ -271,7 +268,7 @@ void geohashNeighbors(const GeoHashBits *hash, GeoHashNeighbors *neighbors) {
     neighbors->north_east = *hash;
     neighbors->north_west = *hash;
 
-    geohash_move_x(&neighbors->east, 1);
+    geohash_move_x(&neighbors->east, 1);  // 0,1是根据直角坐标系及方向共同确定
     geohash_move_y(&neighbors->east, 0);
 
     geohash_move_x(&neighbors->west, -1);
