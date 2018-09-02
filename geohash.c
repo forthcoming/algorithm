@@ -6,15 +6,6 @@
 #define RANGEPISZERO(r) (r == NULL || RANGEISZERO(*r))
 #define GEO_STEP_MAX 26 /* 26*2 = 52 bits. */
 #define GZERO(s) s.bits = s.step = 0;
-#define GISZERO(s) (!s.bits && !s.step)
-#define GISNOTZERO(s) (s.bits || s.step)
-
-/**
-所有未加static前缀的全局变量和函数都具有全局可见性,其它的源文件也能访问,访问前需通过extern关键字声明
-静态函数和静态全局变量作用域仅限于所在的源文件,可以在不同的文件中定义同名函数和同名变量而不必担心命名冲突
-静态局部变量只初始化一次,存放在静态存储区,所以它具备持久性和默认值0(全局变量也存储在静态数据区,在静态数据区内存中所有的字节默认值都是0x00)
-同时编译多个文件方法:gcc file1.c file2.c -o run
-*/
 
 typedef struct {
     uint64_t bits;
@@ -63,9 +54,14 @@ typedef struct {
  *  |       |       |
  *  | 0,0   | 1,0   |
  *  -----------------
- */
+ 
+所有未加static前缀的全局变量和函数都具有全局可见性,其它的源文件也能访问,访问前需通过extern关键字声明
+静态函数和静态全局变量作用域仅限于所在的源文件,可以在不同的文件中定义同名函数和同名变量而不必担心命名冲突
+静态局部变量只初始化一次,存放在静态存储区,所以它具备持久性和默认值0(全局变量也存储在静态数据区,在静态数据区内存中所有的字节默认值都是0x00)
+同时编译多个文件方法:gcc file1.c file2.c -o run
+*/
 
- static inline uint64_t interleave64(uint32_t xlo, uint32_t ylo) {
+static inline uint64_t interleave64(uint32_t xlo, uint32_t ylo) {
     /*
     Interleave lower bits of x and y, so the bits of x are in the even positions and bits from y in the odd(奇数);
     x and y must initially be less than 2**32 (65536). From: https://graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN
