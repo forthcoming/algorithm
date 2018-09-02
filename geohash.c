@@ -252,27 +252,17 @@ void geohashNeighbors(const GeoHashBits *hash, GeoHashNeighbors *neighbors) {
     neighbors->north_east = *hash;
     neighbors->north_west = *hash;
 
-    geohash_move_x(&neighbors->east, 1);  // 0,1是根据直角坐标系及方向共同确定
-    geohash_move_y(&neighbors->east, 0);
-
+    geohash_move_x(&neighbors->east, 1);  // -1,1是根据直角坐标系及方向共同确定
     geohash_move_x(&neighbors->west, -1);
-    geohash_move_y(&neighbors->west, 0);
-
-    geohash_move_x(&neighbors->south, 0);
     geohash_move_y(&neighbors->south, -1);
-
-    geohash_move_x(&neighbors->north, 0);
     geohash_move_y(&neighbors->north, 1);
 
     geohash_move_x(&neighbors->north_west, -1);
     geohash_move_y(&neighbors->north_west, 1);
-
     geohash_move_x(&neighbors->north_east, 1);
     geohash_move_y(&neighbors->north_east, 1);
-
     geohash_move_x(&neighbors->south_east, 1);
     geohash_move_y(&neighbors->south_east, -1);
-
     geohash_move_x(&neighbors->south_west, -1);
     geohash_move_y(&neighbors->south_west, -1);
 }
