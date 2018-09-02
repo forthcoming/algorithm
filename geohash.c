@@ -211,19 +211,11 @@ int geohashDecode(const GeoHashRange long_range, const GeoHashRange lat_range,co
     return 1;
 }
 
-int geohashDecodeType(const GeoHashBits hash, GeoHashArea *area) {
-    GeoHashRange r[2] = {{0}};
-    geohashGetCoordRange(&r[0], &r[1]);
-    return geohashDecode(r[0], r[1], hash, area);
-}
-
-int geohashDecodeWGS84(const GeoHashBits hash, GeoHashArea *area) {
-    return geohashDecodeType(hash, area);
-}
-
 int geohashDecodeToLongLatWGS84(const GeoHashBits hash, double *xy) {
     GeoHashArea area = {{0}};
-    if (!xy || !geohashDecodeType(hash, &area))
+    GeoHashRange r[2] = {{0}};
+    geohashGetCoordRange(&r[0], &r[1]);
+    if (!xy || !geohashDecode(r[0], r[1], hash, &area))
         return 0;
     xy[0] = (area.longitude.min + area.longitude.max) / 2;
     xy[1] = (area.latitude.min + area.latitude.max) / 2;
