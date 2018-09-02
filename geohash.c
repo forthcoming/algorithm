@@ -16,17 +16,6 @@
 同时编译多个文件方法:gcc file1.c file2.c -o run
 */
 
-typedef enum {
-    GEOHASH_NORTH = 0,
-    GEOHASH_EAST,
-    GEOHASH_WEST,
-    GEOHASH_SOUTH,
-    GEOHASH_SOUTH_WEST,
-    GEOHASH_SOUTH_EAST,
-    GEOHASH_NORT_WEST,
-    GEOHASH_NORT_EAST
-} GeoDirection;
-
 typedef struct {
     uint64_t bits;
     uint8_t step;
@@ -55,7 +44,6 @@ typedef struct {
 } GeoHashNeighbors;
 
 typedef uint64_t GeoHashFix52Bits;
-typedef uint64_t GeoHashVarBits;
 
 typedef struct {
     GeoHashBits hash;
