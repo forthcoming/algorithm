@@ -212,7 +212,7 @@ static void geohash_move_x(GeoHashBits *hash, int8_t d) {  // 更改经度
     uint64_t x;
     uint64_t y = hash->bits & 0x5555555555555555ULL; // 0b0101010101010101010101010101010101010101010101010101010101010101
     if (d > 0)
-        x = (hash->bits | 0x5555555555555555ULL) + 1; // 使经度位二进制数加1,超出长度step则x=0
+        x = (hash->bits | 0x5555555555555555ULL) + 1; // 使经度位二进制数加1(参考geohashEncode中的计算模型),超出长度step则x=0,相当于从180走到了-180
     else
         x = (hash->bits & 0xaaaaaaaaaaaaaaaaULL) - 1;// 0b1010101010101010101010101010101010101010101010101010101010101010
     x &= (0xaaaaaaaaaaaaaaaaULL >> (64 - hash->step * 2));
