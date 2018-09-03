@@ -261,7 +261,8 @@ int main(){
     uint32_t x=0;
     uint32_t y=0b11111111111111111111111111111111;
     printf("%llu\n",deinterleave64(interleave64(x, y)));
-    double lat_offset = .8;
-    lat_offset *= (1ULL << 10);
-    printf("%u\n",(uint32_t)lat_offset);
+
+    GeoHashBits hash={ .bits=1234567,.step=20};
+    GeoHashNeighbors neighbors;
+    geohashNeighbors(&hash,&neighbors);
 }
