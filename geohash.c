@@ -59,7 +59,6 @@ typedef struct {
  *  |       |       |
  *  | 0,0   | 1,0   |
  *  -----------------
-
 所有未加static前缀的全局变量和函数都具有全局可见性,其它的源文件也能访问,访问前需通过extern关键字声明
 静态函数和静态全局变量作用域仅限于所在的源文件,可以在不同的文件中定义同名函数和同名变量而不必担心命名冲突
 静态局部变量只初始化一次,存放在静态存储区,所以它具备持久性和默认值0(全局变量也存储在静态数据区,在静态数据区内存中所有的字节默认值都是0x00)
@@ -266,6 +265,31 @@ void geohashNeighbors(const GeoHashBits *hash, GeoHashNeighbors *neighbors) {
     geohash_move_y(&neighbors->south_west, -1);
 }
 
+// 计算地球两点间弧长距离,using haversin great circle distance formula.
+double geohashGetDistance(double lon1d, double lat1d, double lon2d, double lat2d) {
+    /*
+    整体思想是把经纬度(球坐标系)转换成空间直角坐标系,利用三角函数计算两点间的弧度,从而计算出弧长
+    a=(lo1,la1) and b=(lo2,la2)
+    A=r(SIN(90-la1)COS(180-lo1),SIN(90-la1)SIN(180-lo1),COS(90-la1))
+     =r(-COSla1COSlo1,COSla1SINlo1,SINla1)
+    B=r(-COSla2COSlo2,COSla2SINlo2,SINla2)
+    COS<aob=COSla1COSlo1*COSla2COSlo2+COSla1SINlo1*COSla2SINlo2+SINla1*SINla2
+           =COSla1*COSla2*COS(lo2-lo1)+SINla1*SINla2
+           =COSla1*COSla2*(1-2v^2)+SINla1*SINla2
+           =COS(la2-la1)-2v^2*COSla1COSla2
+           =1-2u^2-2v^2*COSla1COSla2
+    <aob=2*asin(sqrt(u^2 + v^2*COSla1COSla2))  # 弧度
+    */
+    double lat1r, lon1r, lat2r, lon2r, u, v;
+    lat1r = deg_rad(lat1d);
+    lon1r = deg_rad(lon1d);
+    lat2r = deg_rad(lat2d);
+    lon2r = deg_rad(lon2d);
+    u = sin((lat2r - lat1r) / 2);  // 三角函数参数是弧度而非角度
+    v = sin((lon2r - lon1r) / 2);
+    return 2.0 * EARTH_RADIUS_IN_METERS * asin(sqrt(u * u + cos(lat1r) * cos(lat2r) * v * v));
+}
+
 // This function is used in order to estimate the step (bits precision) of the 9 search area boxes during radius queries.
 uint8_t geohashEstimateStepsByRadius(double range_meters, double lat) {
     if (range_meters == 0) return 26;
@@ -355,14 +379,11 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
         geohashDecode(long_range, lat_range, neighbors.east, &east);
         geohashDecode(long_range, lat_range, neighbors.west, &west);
 
-        if (geohashGetDistance(longitude,latitude,longitude,north.latitude.max)
-            < radius_meters) decrease_step = 1;
-        if (geohashGetDistance(longitude,latitude,longitude,south.latitude.min)
-            < radius_meters) decrease_step = 1;
-        if (geohashGetDistance(longitude,latitude,east.longitude.max,latitude)
-            < radius_meters) decrease_step = 1;
-        if (geohashGetDistance(longitude,latitude,west.longitude.min,latitude)
-            < radius_meters) decrease_step = 1;
+        if (geohashGetDistance(longitude,latitude,longitude,north.latitude.max)< radius_meters ||
+            geohashGetDistance(longitude,latitude,longitude,south.latitude.min)< radius_meters ||
+            geohashGetDistance(longitude,latitude,east.longitude.max,latitude)< radius_meters ||
+            geohashGetDistance(longitude,latitude,west.longitude.min,latitude)< radius_meters
+        ) decrease_step = 1;
     }
 
     if (steps > 1 && decrease_step) {
@@ -405,31 +426,6 @@ GeoHashFix52Bits geohashAlign52Bits(const GeoHashBits hash) {
     uint64_t bits = hash.bits;
     bits <<= (52 - hash.step * 2);
     return bits;
-}
-
-// 计算地球两点间弧长距离,using haversin great circle distance formula.
-double geohashGetDistance(double lon1d, double lat1d, double lon2d, double lat2d) {
-    /*
-    整体思想是把经纬度(球坐标系)转换成空间直角坐标系,利用三角函数计算两点间的弧度,从而计算出弧长
-    a=(lo1,la1) and b=(lo2,la2)
-    A=r(SIN(90-la1)COS(180-lo1),SIN(90-la1)SIN(180-lo1),COS(90-la1))
-     =r(-COSla1COSlo1,COSla1SINlo1,SINla1)
-    B=r(-COSla2COSlo2,COSla2SINlo2,SINla2)
-    COS<aob=COSla1COSlo1*COSla2COSlo2+COSla1SINlo1*COSla2SINlo2+SINla1*SINla2
-           =COSla1*COSla2*COS(lo2-lo1)+SINla1*SINla2
-           =COSla1*COSla2*(1-2v^2)+SINla1*SINla2
-           =COS(la2-la1)-2v^2*COSla1COSla2
-           =1-2u^2-2v^2*COSla1COSla2
-    <aob=2*asin(sqrt(u^2 + v^2*COSla1COSla2))  # 弧度
-    */
-    double lat1r, lon1r, lat2r, lon2r, u, v;
-    lat1r = deg_rad(lat1d);
-    lon1r = deg_rad(lon1d);
-    lat2r = deg_rad(lat2d);
-    lon2r = deg_rad(lon2d);
-    u = sin((lat2r - lat1r) / 2);  // 三角函数参数是弧度而非角度
-    v = sin((lon2r - lon1r) / 2);
-    return 2.0 * EARTH_RADIUS_IN_METERS * asin(sqrt(u * u + cos(lat1r) * cos(lat2r) * v * v));
 }
 
 int geohashGetDistanceIfInRadiusWGS84(double x1, double y1, double x2, double y2, double radius, double *distance) {
