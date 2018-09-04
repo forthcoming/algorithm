@@ -8,7 +8,7 @@
 #define D_R (M_PI / 180.0)
 
 const double EARTH_RADIUS_IN_METERS = 6372797.560856;    // Earth's quatratic mean radius for WGS-84
-const double MERCATOR_MAX = 20037726.37;
+const double MERCATOR_MAX = 20037726.37;                 // lat_range.max
 
 typedef struct {
     uint64_t bits;
