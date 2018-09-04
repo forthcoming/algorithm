@@ -344,7 +344,6 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     GeoHashRadius radius;
     GeoHashBits hash;
     GeoHashNeighbors neighbors;
-    GeoHashArea area;
     double min_lon, max_lon, min_lat, max_lat;
     double bounds[4];
     uint8_t step=geohashEstimateStepsByRadius(radius_meters,latitude);
@@ -358,7 +357,6 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     geohashGetCoordRange(&long_range,&lat_range);
     geohashEncode(&long_range,&lat_range,longitude,latitude,step,&hash);
     geohashNeighbors(&hash,&neighbors);
-    geohashDecode(long_range,lat_range,hash,&area);
 
     /*
     Check if the step is enough at the limits of the covered area.Sometimes when the search area is near an edge of the area,
@@ -384,11 +382,10 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
         --step;
         geohashEncode(&long_range,&lat_range,longitude,latitude,step,&hash);
         geohashNeighbors(&hash,&neighbors);
-        geohashDecode(long_range,lat_range,hash,&area);
     }
-
-    /* Exclude the search areas that are useless. */
-    if (step >= 2) {
+   
+    GeoHashArea area = geohashDecode(long_range,lat_range,hash,&area);
+    if (step >= 2) {  // Exclude the search areas that are useless.
         if (area.latitude.min < min_lat) {
             GZERO(neighbors.south);
             GZERO(neighbors.south_west);
