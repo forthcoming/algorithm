@@ -338,7 +338,10 @@ int geohashBoundingBox(double longitude, double latitude, double radius_meters, 
     return 1;
 }
 
-/* Return a set of areas (center + 8) that are able to cover a range query for the specified position and radius. */
+/* 
+Return a set of areas (center + 8) that are able to cover a range query for the specified position and radius.
+TODO:此函数还有很多疑问,日后有时间再整理
+*/
 GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, double radius_meters) {
     GeoHashRange long_range, lat_range;
     GeoHashRadius radius;
