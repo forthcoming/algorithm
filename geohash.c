@@ -364,8 +364,8 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     the estimated step is not small enough, since one of the north / south / west / east square is too near to the search area to cover everything.
     */
     int decrease_step = 0;
-    {
-        GeoHashArea north, south, east, west;
+    { 
+        GeoHashArea north, south, east, west;  // 大括号内部的变量仅仅用于检测,不想被外面访问
 
         geohashDecode(long_range, lat_range, neighbors.north, &north);
         geohashDecode(long_range, lat_range, neighbors.south, &south);
