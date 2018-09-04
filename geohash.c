@@ -3,8 +3,6 @@
 #include <math.h>
 
 #define HASHISZERO(r) (!(r).bits && !(r).step)
-#define RANGEISZERO(r) (!(r).max && !(r).min)
-#define RANGEPISZERO(r) (r == NULL || RANGEISZERO(*r))
 #define GEO_STEP_MAX 26 /* 26*2 = 52 bits. */
 #define GZERO(s) s.bits = s.step = 0;
 #define D_R (M_PI / 180.0)
@@ -147,10 +145,7 @@ void geohashGetCoordRange(GeoHashRange *long_range, GeoHashRange *lat_range) {
 }
 
 int geohashEncode(const GeoHashRange *long_range, const GeoHashRange *lat_range,double longitude, double latitude, uint8_t step,GeoHashBits *hash) {
-    // long_range地址非空,并且long_range.max和long_range.min都不能为0,类似的还有lat_range
-    // TODO:这里判断需要精简
-    if (hash == NULL || step > 32 || step == 0 || RANGEPISZERO(lat_range) || RANGEPISZERO(long_range) ||
-        longitude > 180 || longitude < -180 || latitude > 85.05112878 || latitude < -85.05112878 ||
+    if (hash == NULL || step > 32 || step == 0 || lat_range == NULL || long_range == NULL ||
         latitude < lat_range->min || latitude > lat_range->max || longitude < long_range->min || longitude > long_range->max
     ) return 0;
 
@@ -183,7 +178,7 @@ int geohashEncodeWGS84(double longitude, double latitude, uint8_t step,GeoHashBi
 }
 
 int geohashDecode(const GeoHashRange long_range, const GeoHashRange lat_range,const GeoHashBits hash, GeoHashArea *area) {
-    if (HASHISZERO(hash) || NULL == area || RANGEISZERO(lat_range) || RANGEISZERO(long_range))
+    if (HASHISZERO(hash) || NULL == area || long_range.max || long_range.min || lat_range.max || lat_range.min)
         return 0;
     area->hash = hash;
     uint8_t step = hash.step;
