@@ -288,7 +288,7 @@ double geohashGetDistance(double lon1d, double lat1d, double lon2d, double lat2d
 // This function is used in order to estimate the step (bits precision) of the 9 search area boxes during radius queries.
 uint8_t geohashEstimateStepsByRadius(double range_meters, double lat) {
     if (range_meters == 0) return 26;  // 按指定搜索半径估计geohashEncode所需步长,最大不超过26
-    int step = 1;
+    uint8_t step = 1;
     while (range_meters < MERCATOR_MAX) {
         range_meters *= 2;
         ++step;
@@ -347,18 +347,16 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     GeoHashArea area;
     double min_lon, max_lon, min_lat, max_lat;
     double bounds[4];
-    int steps;
+    uint8_t step=geohashEstimateStepsByRadius(radius_meters,latitude);
 
     geohashBoundingBox(longitude, latitude, radius_meters, bounds);
     min_lon = bounds[0];
     min_lat = bounds[1];
     max_lon = bounds[2];
     max_lat = bounds[3];
-
-    steps = geohashEstimateStepsByRadius(radius_meters,latitude);
-
+    
     geohashGetCoordRange(&long_range,&lat_range);
-    geohashEncode(&long_range,&lat_range,longitude,latitude,steps,&hash);
+    geohashEncode(&long_range,&lat_range,longitude,latitude,step,&hash);
     geohashNeighbors(&hash,&neighbors);
     geohashDecode(long_range,lat_range,hash,&area);
 
@@ -382,15 +380,15 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
         ) decrease_step = 1;
     }
 
-    if (steps > 1 && decrease_step) {
-        --steps;
-        geohashEncode(&long_range,&lat_range,longitude,latitude,steps,&hash);
+    if (step > 1 && decrease_step) {
+        --step;
+        geohashEncode(&long_range,&lat_range,longitude,latitude,step,&hash);
         geohashNeighbors(&hash,&neighbors);
         geohashDecode(long_range,lat_range,hash,&area);
     }
 
     /* Exclude the search areas that are useless. */
-    if (steps >= 2) {
+    if (step >= 2) {
         if (area.latitude.min < min_lat) {
             GZERO(neighbors.south);
             GZERO(neighbors.south_west);
