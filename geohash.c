@@ -292,11 +292,11 @@ double geohashGetDistance(double lon1d, double lat1d, double lon2d, double lat2d
 
 // This function is used in order to estimate the step (bits precision) of the 9 search area boxes during radius queries.
 uint8_t geohashEstimateStepsByRadius(double range_meters, double lat) {
-    if (range_meters == 0) return 26;
+    if (range_meters == 0) return 26;  // 按指定搜索半径估计geohashEncode所需步长,最大不超过26
     int step = 1;
     while (range_meters < MERCATOR_MAX) {
         range_meters *= 2;
-        step++;
+        ++step;
     }
     step -= 2; /* Make sure range is included in most of the base cases. */
 
@@ -304,8 +304,9 @@ uint8_t geohashEstimateStepsByRadius(double range_meters, double lat) {
      * than this approximation by computing the distance between meridians
      * at this latitude, but this does the trick for now. */
     if (lat > 66 || lat < -66) {
-        step--;
-        if (lat > 80 || lat < -80) step--;
+        --step;
+        if (lat > 80 || lat < -80) 
+            --step;
     }
 
     /* Frame to valid range. */
@@ -335,7 +336,7 @@ uint8_t geohashEstimateStepsByRadius(double range_meters, double lat) {
 int geohashBoundingBox(double longitude, double latitude, double radius_meters, double *bounds) {
     if (!bounds) return 0;
 
-    bounds[0] = longitude - rad_deg(radius_meters/EARTH_RADIUS_IN_METERS/cos(deg_rad(latitude)));
+    bounds[0] = longitude - rad_deg(radius_meters/EARTH_RADIUS_IN_METERS/cos(deg_rad(latitude))); // EARTH_RADIUS_IN_METERS*cos(deg_rad(latitude)):维度所在的平行赤道的圆半径
     bounds[2] = longitude + rad_deg(radius_meters/EARTH_RADIUS_IN_METERS/cos(deg_rad(latitude)));
     bounds[1] = latitude - rad_deg(radius_meters/EARTH_RADIUS_IN_METERS);
     bounds[3] = latitude + rad_deg(radius_meters/EARTH_RADIUS_IN_METERS);
