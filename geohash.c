@@ -344,6 +344,7 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     GeoHashRadius radius;
     GeoHashBits hash;
     GeoHashNeighbors neighbors;
+    GeoHashArea area;
     double min_lon, max_lon, min_lat, max_lat;
     double bounds[4];
     uint8_t step=geohashEstimateStepsByRadius(radius_meters,latitude);
@@ -378,13 +379,13 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
         ) decrease_step = 1;
     }
 
-    if (step > 1 && decrease_step) {
+    if (step > 1 && decrease_step) {  // 保证相临的八个点(其实只需要东南西北四个点)落在搜索半径之外
         --step;
         geohashEncode(&long_range,&lat_range,longitude,latitude,step,&hash);
         geohashNeighbors(&hash,&neighbors);
     }
    
-    GeoHashArea area = geohashDecode(long_range,lat_range,hash,&area);
+    geohashDecode(long_range,lat_range,hash,&area);
     if (step >= 2) {  // Exclude the search areas that are useless.
         if (area.latitude.min < min_lat) {
             GZERO(neighbors.south);
