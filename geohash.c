@@ -178,7 +178,7 @@ int geohashEncodeWGS84(double longitude, double latitude, uint8_t step,GeoHashBi
 }
 
 int geohashDecode(const GeoHashRange long_range, const GeoHashRange lat_range,const GeoHashBits hash, GeoHashArea *area) {
-    if (HASHISZERO(hash) || NULL == area || long_range.max || long_range.min || lat_range.max || lat_range.min)
+    if (HASHISZERO(hash) || NULL == area || !long_range.max || !long_range.min || !lat_range.max || !lat_range.min)
         return 0;
     area->hash = hash;
     uint8_t step = hash.step;
