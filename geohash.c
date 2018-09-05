@@ -3,7 +3,6 @@
 #include <math.h>
 
 #define HASHISZERO(r) (!(r).bits && !(r).step)
-#define GEO_STEP_MAX 26 /* 26*2 = 52 bits. */
 #define GZERO(s) s.bits = s.step = 0;
 #define D_R (M_PI / 180.0)
 
@@ -36,8 +35,6 @@ typedef struct {
     GeoHashBits north_west;
     GeoHashBits south_west;
 } GeoHashNeighbors;
-
-typedef uint64_t GeoHashFix52Bits;
 
 typedef struct {
     GeoHashBits hash;
@@ -391,7 +388,7 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     geohashDecode(long_range,lat_range,hash,&area);
     if (step >= 2) {  // Exclude the search areas that are useless.
         if (area.latitude.min < min_lat) {
-            GZERO(neighbors.south);
+            GZERO(neighbors.south);  // 被GZERO清掉的neighbor后续不再使用
             GZERO(neighbors.south_west);
             GZERO(neighbors.south_east);
         }
@@ -415,18 +412,6 @@ GeoHashRadius geohashGetAreasByRadiusWGS84(double longitude, double latitude, do
     radius.neighbors = neighbors;
     radius.area = area;
     return radius;
-}
-
-GeoHashFix52Bits geohashAlign52Bits(const GeoHashBits hash) {
-    uint64_t bits = hash.bits;
-    bits <<= (52 - hash.step * 2);
-    return bits;
-}
-
-int geohashGetDistanceIfInRadiusWGS84(double x1, double y1, double x2, double y2, double radius, double *distance) {
-    *distance = geohashGetDistance(x1, y1, x2, y2);
-    if (*distance > radius) return 0;
-    return 1;
 }
 
 int main(){
