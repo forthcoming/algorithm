@@ -22,12 +22,9 @@ list *listCreate()
 {
     list *list = malloc(sizeof(list));
     if (list == NULL) return NULL;
-
     list->head = list->tail = NULL;
     list->len = 0;
-    list->dup = NULL;
     list->free = NULL;
-    list->match = NULL;
     return list;
 }
 
