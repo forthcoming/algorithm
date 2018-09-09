@@ -14,9 +14,6 @@ typedef struct list {
     unsigned long len;
 } list;
 
-#define listLength(l) ((l)->len)
-#define listNodeValue(n) ((n)->value)
-
 /*
 Create a new list. The created list can be freed with AlFreeList(),
 but private value of every node need to be freed by the user before to call AlFreeList().
@@ -142,7 +139,7 @@ void listDelNode(list *list, listNode *node)
 }
 
 void listRotate(list *list) {  /* Rotate the list removing the tail node and inserting it to the head. */
-    if (listLength(list) > 1){
+    if (list->len > 1){
         listNode *tail = list->tail;
         /* Detach current tail */
         list->tail = tail->prev;
