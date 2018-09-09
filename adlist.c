@@ -10,7 +10,7 @@ typedef struct listNode {
 typedef struct list {
     listNode *head;
     listNode *tail;
-	void (*free)(void *ptr);  // 函数指针,必须加()
+    void (*free)(void *ptr);  // 函数指针,必须加()
     unsigned long len;
 } list;
 
