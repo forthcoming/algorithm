@@ -85,9 +85,11 @@ def power(x,y):  # y为任意整数
         return x
     elif y==-1:
         return 1/x
+    elif y&1:
+        return x*power(x,y-1)
     else:
-        mid=y>>1
-        return power(x,mid)*power(x,y-mid)
+        _=power(x,y>>1)
+        return _*_
 
 '''
 牛顿/二分法求平方根问题(幂级数展开也能求近似值)
