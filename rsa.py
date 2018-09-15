@@ -32,9 +32,9 @@ class RSA:
         # 每次的底a是不一样的，只要有一次未通过测试，则判定为合数
         for i in range(trials):
             a = random.randrange(2, n)
-            if pow(a, d, n) != 1: # 相当于(a^d)%n
+            if RSA.power(a, d, n) != 1: # 相当于(a^d)%n
                 for r in range(s):
-                    if pow(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
+                    if RSA.power(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
                         break
                 else:
                     return False  # 以上条件都满足时,n一定是合数
@@ -47,6 +47,16 @@ class RSA:
             prime+=2
         return prime
 
+    @staticmethod
+    def power(a,b,r):  # a**b%r or pow(a,b,r) 
+        res=1
+        while b:
+            if b&1:
+                res=res*a%r  # 防止数字过大导致越界
+            b>>=1 # 隐式的减去了1
+            a=a*a%r
+        return res
+
     def encode(self,message): 
         '''
         模运算：
@@ -57,17 +67,10 @@ class RSA:
         '''
         message=int(binascii.hexlify(bytes(message,encoding='utf8')),16)
         assert(message<self.module)
-        e=self.e
-        res=1
-        while e:
-            if e&1:
-                res=res*message%self.module  # 防止数字过大导致越界
-            e>>=1 # 隐式的减去了1
-            message=message*message%self.module
-        return res
+        return self.power(message,self.e,self.module)
 
     def decode(self,message):
-        message=pow(message,self.d,self.module) # message**key[0]%key[1] 
+        message=self.power(message,self.d,self.module)
         res=[]
         while message:
             res.append(chr(message&255))
@@ -113,3 +116,4 @@ if __name__ == "__main__":
     message='akatsuki'
     secret=rsa.encode(message)
     print(secret,rsa.decode(secret))
+
