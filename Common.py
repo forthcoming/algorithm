@@ -88,8 +88,7 @@ def power(x,y):  # y为任意整数
     elif y&1:
         return x*power(x,y-1)
     else:
-        _=power(x,y>>1)
-        return _*_
+        return power(x*x,y>>1)
 
 '''
 牛顿/二分法求平方根问题(幂级数展开也能求近似值)
