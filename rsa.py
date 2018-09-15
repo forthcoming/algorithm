@@ -22,17 +22,14 @@ class RSA:
             return True
         if not n&1: # 排除偶数
             return False
-        # 把n-1写成(2^s)*d的形式
         s = 0
         d = n - 1
-        while not d&1:
+        while not d&1:  # 把n-1写成(2^s)*d的形式
             s+=1
             d>>=1
-        
-        # trials为测试次数，默认测试5次
-        # 每次的底a是不一样的，只要有一次未通过测试，则判定为合数
+         
         for i in range(trials):
-            a = random.randrange(2, n)
+            a = random.randrange(2, n)  # 每次的底a是不一样的，只要有一次未通过测试，则判定为合数
             if RSA.power(a, d, n) != 1: # 相当于(a^d)%n
                 for r in range(s):
                     if RSA.power(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
@@ -54,20 +51,13 @@ class RSA:
         while b:
             if b&1:
                 res=res*a%r  # 防止数字过大导致越界
-            b>>=1 # 隐式的减去了1
+            b>>=1 # 隐式减去了1
             a=a*a%r
         return res
 
     def encode(self,message): 
-        '''
-        模运算：
-        (a + b) % p = (a % p + b % p) % p
-        (a - b) % p = (a % p - b % p) % p
-        (a * b) % p = (a % p * b % p) % p   
-        a ^ b % p = ((a % p)^b) % p
-        '''
         message=int(binascii.hexlify(bytes(message,encoding='utf8')),16)
-        assert(message<self.module)
+        assert(0<=message<self.module)
         return self.power(message,self.e,self.module)
 
     def decode(self,message):
@@ -86,11 +76,19 @@ class RSA:
                 x , y = y, ( x - (a // b) * y )
                 return x, y, remainder
             return 1, 0, a
-            # return 1, 0, 1
         x,y,remainder=_exgcd(a,b)
         while x<0:  # 此时求的是最小的模反元素,还需要将它转换成正数
             x+=b
         return x,remainder
+        '''
+        和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得x, y使得a' x+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
+        a' x + b' y = gcd(a' , b')
+        ===>
+        bx + (a - a/b *b)y = gcd(a' , b') = Gcd(a, b)  //注意到这里的/是C语言中的出发
+        ===>
+        ay + b(x- a/b *y) = gcd(a, b)
+        因此对于a和b而言，他们的相对应的p，q分别是y和(x-a/b*y)
+        '''
 
     @staticmethod
     def exgcd_slow(a , b):
@@ -112,7 +110,42 @@ class RSA:
         b    1  0   1  0          1  0   0
         '''
 
+    @staticmethod
+    def gcd(x,y):
+        while y:
+            x,y=y,x%y
+        return x
+    # 递归版  
+    # if y:
+    #     return gcd(y,x%y)
+    # return x
+
 if __name__ == "__main__":
     rsa=RSA() 
     message='akatsuki'
     print(rsa.decode(rsa.encode(message)))
+
+'''
+比n小但与n互素的正整数个数φ(n)称为n的欧拉函数
+对任一素数p,有φ(n)＝p-1,对于两个不同的素数p和q则φ(pq)=(p-1)(q-1)=φ(p)*φ(q)
+
+二个整數a、b,必存在整數x、y使得ax + by = gcd(a,b),可由矩阵推导证明
+对a,b进行辗转相除,可得它们的最大公约数,然后收集辗转相除法中产生的式子,倒回去可以得到ax+by=gcd(a,b)的整数解,可以用来计算模反元素(也叫模逆元)
+如果gcd(a, b) = 1，則稱a和b互素(除了1以外没有其他公因子),a和b是否互素和它们是否素数无关
+
+ax+by=1,则a,b互素
+(ax+by)%b=1%b 
+ax%b=1 
+即求出a模b的逆元为x
+
+# 密钥不能出现负数,明文message满足0<=message<module
+# RSA可靠性:1. 大整数因数分解困难; 2. message**e%module=secret但由secret推导message很难
+# RSA生成的两个大素数除了保证因数分解困难外,还确保了对任意0<=message<module都满足message**(ed)%module=message(分2种情况讨论,需用到欧拉定理)
+
+模运算：
+(a + b) % p = (a % p + b % p) % p
+(a - b) % p = (a % p - b % p) % p
+(a * b) % p = (a % p * b % p) % p   
+a ^ b % p = ((a % p)^b) % p
+
+'''
