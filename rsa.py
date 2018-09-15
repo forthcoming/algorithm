@@ -5,17 +5,18 @@ class RSA:
     def __init__(self):
         P = self.generate_prime()
         Q = self.generate_prime()
+        phi=(P-1) * (Q-1)
+        self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
         self.module = P * Q
         while True:
-            e = 65537  # 跟(P-1)*(Q-1)互质的任意数,这里必须是奇数
-            d,remainder=self.exgcd(e,(P-1) * (Q-1))
+            d,remainder=self.exgcd(self.e,phi)
             if remainder==1:
-                self.e=e # 公钥
                 self.d=d # 私钥
                 break
+            self.e+=2
 
     @staticmethod
-    def is_probable_prime(n, trials = 50): # Miller-Rabin检测,error_rate=.25**trials
+    def is_probable_prime(n, trials = 10): # Miller-Rabin检测,error_rate=.25**trials
         assert n > 1
         if n == 2: # 2是素数
             return True
@@ -42,8 +43,8 @@ class RSA:
     
     @staticmethod
     def generate_prime():
-        prime=random.randrange((1<<100)-1,1<<200,2)
-        while not RSA.is_probable_prime(prime, trials = 50):
+        prime=random.randrange((1<<200)-1,1<<300,2)
+        while not RSA.is_probable_prime(prime):
             prime+=2
         return prime
 
@@ -115,5 +116,3 @@ if __name__ == "__main__":
     rsa=RSA() 
     message='akatsuki'
     print(rsa.decode(rsa.encode(message)))
-
-
