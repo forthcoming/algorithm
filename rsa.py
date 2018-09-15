@@ -137,9 +137,9 @@ ax+by=1,则a,b互素
 ax%b=1 
 即求出a模b的逆元为x
 
-# 密钥不能出现负数,明文message满足0<=message<module
-# RSA可靠性:1. 大整数因数分解困难; 2. message**e%module=secret但由secret推导message很难
-# RSA生成的两个大素数除了保证因数分解困难外,还确保了对任意0<=message<module都满足message**(ed)%module=message(分2种情况讨论,需用到欧拉定理)
+密钥不能出现负数,明文message满足0<=message<module
+RSA可靠性:1. 大整数因数分解困难; 2. message**e%module=secret但由secret推导message很难
+RSA生成的两个大素数除了保证因数分解困难外,还确保了对任意0<=message<module都满足message**(ed)%module=message(分2种情况讨论,需用到欧拉定理)
 
 模运算：
 (a + b) % p = (a % p + b % p) % p
