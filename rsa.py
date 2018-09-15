@@ -70,11 +70,10 @@ class RSA:
         message=pow(message,self.d,self.module) # message**key[0]%key[1] 
         res=[]
         while message:
-        	res.append(chr(message&255))
-        	message>>=8
+            res.append(chr(message&255))
+            message>>=8
         return ''.join(res[::-1])
 
-        
     @staticmethod
     def exgcd(a,b):
         def _exgcd( a , b ):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
@@ -92,7 +91,7 @@ class RSA:
     @staticmethod
     def exgcd_slow(a , b):
         import numpy as np
-        M=np.eye(2,dtype=int)
+        M=np.eye(2,dtype=np.int64)
         while b:
             M=M@np.array([[a//b,1],[1,0]])  # 注意不能用*
             a,b=b,a%b
