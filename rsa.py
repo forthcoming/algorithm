@@ -1,7 +1,6 @@
 import random,binascii
 
 class RSA:
-
     def __init__(self):
         P = self.generate_prime()
         Q = self.generate_prime()
@@ -55,12 +54,12 @@ class RSA:
             a=a*a%r
         return res
 
-    def encode(self,message): 
+    def encryption(self,message): 
         message=int(binascii.hexlify(bytes(message,encoding='utf8')),16)
         assert(0<=message<self.module)
         return self.power(message,self.e,self.module)
 
-    def decode(self,message):
+    def decryption(self,message):
         message=self.power(message,self.d,self.module)
         res=[]
         while message:
@@ -123,7 +122,7 @@ class RSA:
 if __name__ == "__main__":
     rsa=RSA() 
     message='akatsuki'
-    print(rsa.decode(rsa.encode(message)))
+    print(rsa.decryption(rsa.encryption(message)))
 
 '''
 比n小但与n互素的正整数个数φ(n)称为n的欧拉函数
