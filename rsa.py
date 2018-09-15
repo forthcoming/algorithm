@@ -114,6 +114,6 @@ class RSA:
 if __name__ == "__main__":
     rsa=RSA() 
     message='akatsuki'
-    secret=rsa.encode(message)
-    print(secret,rsa.decode(secret))
+    print(rsa.decode(rsa.encode(message)))
+
 
