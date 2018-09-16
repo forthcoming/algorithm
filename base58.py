@@ -53,7 +53,7 @@ def _encode_base58(v):
     origlen = len(v)    
     v = v.lstrip(b'\0') # Skip & count leading zeroes.
     newlen=len(v) 
-    size=(newlen*138//100+1) # log(256) / log(58), rounded up.    // Allocate enough space in big-endian base58 representation.
+    size=(newlen*138//100+1) # log(256) / log(58), rounded up.Allocate enough space in big-endian base58 representation.
     buffer=[0]*size
     length=0
     for carry in v:
