@@ -1,45 +1,50 @@
-# Implementations of Base58 and Base58Check endcodings that are compatible with the bitcoin network.
+'''
+Implementations of Base58 and Base58Check endcodings that are compatible with the bitcoin network.
+经过Base58编码的数据为原始的数据长度的8/log(2,58)倍,稍稍多于Base64的8/6=1.33倍
+'''
 
 from hashlib import sha256
 import binascii
 
 alphabet = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
+sha=lambda message:sha256(sha256(message).digest()).digest()
 
 def encode_base58(v):
     if isinstance(v, str):
         v = v.encode('utf8')
     origlen = len(v)    
     v = v.lstrip(b'\0') # Skip & count leading zeroes.
-    acc = int(binascii.hexlify(v),16) # big-endian,if v=b'ab' then acc=0b0110000101100010
-    string = b""
+    string = bytearray()
+    acc=0
+    for each in v:
+    	acc=(acc<<8)+each
+    # acc = int(binascii.hexlify(v),16) # big-endian,if v=b'ab' then acc=0b0110000101100010
     while acc:
         acc, idx = divmod(acc, 58)
-        string = alphabet[idx:idx+1] + string
-    return alphabet[0:1] * (origlen-len(v)) + string
+        string.insert(0,alphabet[idx])
+    return b'1' * (origlen-len(v)) + string
 
 def decode_base58(v):
     origlen = len(v)
-    v = v.lstrip(alphabet[0:1])
+    v = v.lstrip(b'1')
     acc = 0
     for char in v:
         acc = acc * 58 + alphabet.index(char)
-    result = []
-    while acc > 0:
+    result = bytearray()
+    while acc:
         acc, mod = divmod(acc, 256)
         result.append(mod)
-    return (b'\0' * (origlen - len(v)) + bytes(result[::-1]))
+    return (b'\0' * (origlen - len(v)) + result[::-1])
 
 def encode_check(v):
     if isinstance(v, str):
         v = v.encode('utf8')
-    digest = sha256(sha256(v).digest()).digest()
-    return encode_base58(v + digest[:4])
+    return encode_base58(v + sha(v)[:4])
 
 def decode_check(v):
     v = decode_base58(v)
     result, check = v[:-4], v[-4:]
-    digest = sha256(sha256(result).digest()).digest()
-    if check != digest[:4]:
+    if check != sha(result)[:4]:
         raise ValueError("Invalid checksum")
     return result
 
