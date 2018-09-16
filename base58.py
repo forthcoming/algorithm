@@ -10,7 +10,7 @@ def encode_base58(v):
         v = v.encode('utf8')
     origlen = len(v)    
     v = v.lstrip(b'\0') # Skip & count leading zeroes.
-    acc = int(binascii.hexlify(v),16) # if v=b'ab' then acc=0b0110000101100010
+    acc = int(binascii.hexlify(v),16) # big-endian,if v=b'ab' then acc=0b0110000101100010
     string = b""
     while acc:
         acc, idx = divmod(acc, 58)
