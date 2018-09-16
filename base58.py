@@ -44,8 +44,8 @@ def decode_base58(v):
     result = bytearray()
     while acc:
         acc, mod = divmod(acc, 256)
-        result.append(mod)
-    return b'\0' * ones + result[::-1]
+        result.insert(0,mod)
+    return b'\0' * ones + result
 
 def encode_check(v):
     if isinstance(v, str):
