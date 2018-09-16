@@ -1,9 +1,9 @@
-#Implementations of Base58 and Base58Check endcodings that are compatible with the bitcoin network.
+# Implementations of Base58 and Base58Check endcodings that are compatible with the bitcoin network.
 
 from hashlib import sha256
 import binascii
 
-alphabet = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'  # 58 character alphabet used
+alphabet = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 
 def b58encode(v):
     v = v.encode('utf8')
