@@ -4,7 +4,6 @@ Implementations of Base58 and Base58Check endcodings that are compatible with th
 '''
 
 from hashlib import sha256
-import binascii
 
 alphabet = b'123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz'
 mapping = [
