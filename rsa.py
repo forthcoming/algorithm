@@ -61,6 +61,7 @@ class RSA:
 
     def decryption(self,message):
         message=self.power(message,self.d,self.module)
+        # return binascii.unhexlify(bytes(hex(message),encoding='utf8')[2:])
         res=[]
         while message:
             res.append(chr(message&255))
