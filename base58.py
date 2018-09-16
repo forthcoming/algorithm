@@ -47,6 +47,30 @@ def decode_base58(v):
         result.insert(0,mod)
     return b'\0' * ones + result
 
+def _encode_base58(v):
+    if isinstance(v, str):
+        v = v.encode('utf8')
+    origlen = len(v)    
+    v = v.lstrip(b'\0') # Skip & count leading zeroes.
+    newlen=len(v) 
+    size=(newlen*138//100+1) # log(256) / log(58), rounded up.    // Allocate enough space in big-endian base58 representation.
+    buffer=[0]*size
+    length=0
+    for carry in v:
+        right=size-1
+        _length=0
+        while carry or _length<length:
+            carry+=buffer[right]<<8
+            buffer[right]=carry%58
+            carry//=58
+            right-=1
+            _length+=1
+        length=_length
+    string = bytearray(b'1'*(origlen-newlen))
+    for idx in buffer[right+1:]:
+        string.append(alphabet[idx])
+    return string
+
 def encode_check(v):
     if isinstance(v, str):
         v = v.encode('utf8')
@@ -61,6 +85,7 @@ def decode_check(v):
 
 if __name__ == '__main__':
     print(encode_base58('hello world'))                    # bytearray(b'StV1DL6CwTryKyV')
+    print(_encode_base58('hello world'))                   # bytearray(b'StV1DL6CwTryKyV')
     print(decode_base58(bytearray(b'StV1DL6CwTryKyV')))    # b'hello world'
     print(encode_check('akatsuki'))                        # bytearray(b'2qdLm9BNJAkjpnXz3')
     print(decode_check(bytearray(b'2qdLm9BNJAkjpnXz3')))   # b'akatsuki'
