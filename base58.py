@@ -23,27 +23,29 @@ def encode_base58(v):
         v = v.encode('utf8')
     origlen = len(v)    
     v = v.lstrip(b'\0') # Skip & count leading zeroes.
-    string = bytearray()
+    zeroes=origlen-len(v)
+    string = bytearray(b'1'*zeroes)
     acc=0
     for each in v:
         acc=(acc<<8)+each
     # acc = int(binascii.hexlify(v),16) # big-endian,if v=b'ab' then acc=0b0110000101100010
     while acc:
         acc, idx = divmod(acc, 58)
-        string.insert(0,alphabet[idx])
-    return b'1' * (origlen-len(v)) + string
+        string.insert(zeroes,alphabet[idx])
+    return string
 
 def decode_base58(v):
-    origlen = len(v)
-    v = v.lstrip(b'1')
+    ones=0
+    while v[ones]==49: # '1'的ascii码
+        ones+=1
     acc = 0
-    for char in v:
+    for char in v[ones:]:
         acc = acc * 58 + mapping[char]
     result = bytearray()
     while acc:
         acc, mod = divmod(acc, 256)
         result.append(mod)
-    return (b'\0' * (origlen - len(v)) + result[::-1])
+    return b'\0' * ones + result[::-1]
 
 def encode_check(v):
     if isinstance(v, str):
@@ -58,8 +60,8 @@ def decode_check(v):
     return result
 
 if __name__ == '__main__':
-    print(encode_base58('hello world'))            # b'StV1DL6CwTryKyV'
-    print(decode_base58(b'StV1DL6CwTryKyV'))       # b'hello world'
-    print(encode_check('hello world'))             # b'3vQB7B6MrGQZaxCuFg4oh'
-    print(decode_check(b'3vQB7B6MrGQZaxCuFg4oh'))  # b'hello world'
-    # decode_check(b'4vQB7B6MrGQZaxCuFg4oh')       # ValueError: Invalid checksum
+    print(encode_base58('hello world'))                    # bytearray(b'StV1DL6CwTryKyV')
+    print(decode_base58(bytearray(b'StV1DL6CwTryKyV')))    # b'hello world'
+    print(encode_check('akatsuki'))                        # bytearray(b'2qdLm9BNJAkjpnXz3')
+    print(decode_check(bytearray(b'2qdLm9BNJAkjpnXz3')))   # b'akatsuki'
+    # print(decode_check(bytearray(b'3qdLm9BNJAkjpnXz3'))) # ValueError: Invalid checksum
