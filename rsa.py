@@ -14,7 +14,7 @@ class RSA:
                 break
             self.e+=2
 
-        @staticmethod
+    @staticmethod
     def is_probable_prime(n, trials = 10): # Miller-Rabin检测,error_rate=.25**trials
         assert n > 1
         if n == 2: # 2是素数
