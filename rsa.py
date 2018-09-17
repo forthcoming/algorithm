@@ -39,7 +39,7 @@ class RSA:
     
     @staticmethod
     def generate_prime():
-        prime=random.randrange((1<<200)-1,1<<300,2)
+        prime=random.randrange((1<<199)+1,1<<300,2)
         while not __class__.is_probable_prime(prime):
             prime+=2
         return prime
