@@ -13,21 +13,22 @@ class DSA:
             self.p=factor*self.q+1
 
         self.g=pow(random.randrange(2,self.p-1),factor,self.p)  # 公钥
-
         self.x=random.randrange(1,self.q)  # 私钥
-
         self.y=pow(self.g,self.x,self.p)  # 公钥
+   
+    def sha(self,message):
+        return int(hashlib.sha256(message.encode('utf8')).hexdigest(),16)
 
     def sign(self,message):
         k=random.randrange(1,self.q)
         r=pow(self.g,k,self.p)%self.q
-        Hm=int(hashlib.sha256(message.encode('utf8')).hexdigest(),16)
+        Hm=self.sha(message)
         s=(Hm+self.x*r)*self.exgcd(k,self.q)[0]
         return r,s
 
     def check(self,message,r,s):
         w=self.exgcd(s,self.q)[0]
-        Hm=int(hashlib.sha256(message.encode('utf8')).hexdigest(),16)
+        Hm=self.sha(message)
         u1=Hm*w%self.q
         u2=r*w%self.q
         v=pow(self.g,u1,self.p)*pow(self.y,u2,self.p)%self.p%self.q
