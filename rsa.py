@@ -28,7 +28,7 @@ class RSA:
             d>>=1
          
         for i in range(trials):
-            a = random.randrange(2, n)  # 每次的底a是不一样的，只要有一次未通过测试，则判定为合数
+            a = random.randrange(2, n)  # 每次的底a是不一样的,只要有一次未通过测试,则判定为合数
             if __class__.power(a, d, n) != 1: # 相当于(a^d)%n
                 for r in range(s):
                     if __class__.power(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
