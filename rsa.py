@@ -14,7 +14,7 @@ class RSA:
                 break
             self.e+=2
 
-    @staticmethod
+        @staticmethod
     def is_probable_prime(n, trials = 10): # Miller-Rabin检测,error_rate=.25**trials
         assert n > 1
         if n == 2: # 2是素数
@@ -29,9 +29,9 @@ class RSA:
          
         for i in range(trials):
             a = random.randrange(2, n)  # 每次的底a是不一样的，只要有一次未通过测试，则判定为合数
-            if RSA.power(a, d, n) != 1: # 相当于(a^d)%n
+            if __class__.power(a, d, n) != 1: # 相当于(a^d)%n
                 for r in range(s):
-                    if RSA.power(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
+                    if __class__.power(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
                         break
                 else:
                     return False  # 以上条件都满足时,n一定是合数
@@ -40,7 +40,7 @@ class RSA:
     @staticmethod
     def generate_prime():
         prime=random.randrange((1<<200)-1,1<<300,2)
-        while not RSA.is_probable_prime(prime):
+        while not __class__.is_probable_prime(prime):
             prime+=2
         return prime
 
