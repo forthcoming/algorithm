@@ -124,14 +124,13 @@ class RSA(Base):
         P = self.generate_prime()
         Q = self.generate_prime()
         phi=(P-1) * (Q-1)
+        self.module = P * Q  # 公钥
         self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.module = P * Q
-        while True:
-            d,remainder=self.exgcd(self.e,phi)
-            if remainder==1:
-                self.d=d # 私钥
-                break
+        self.d,remainder=self.exgcd(self.e,phi) # 私钥
+        while remainder!=1:
             self.e+=2
+            self.d,remainder=self.exgcd(self.e,phi)
+        del P,Q
     
     @staticmethod
     def generate_prime():
