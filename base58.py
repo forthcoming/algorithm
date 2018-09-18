@@ -27,7 +27,7 @@ def encode_base58(v):
     string = bytearray(b'1'*zeroes)
     acc=0
     for each in v:
-        acc=(acc<<8)+each
+        acc=acc<<8)|each
     # acc = int(binascii.hexlify(v),16) # big-endian,if v=b'ab' then acc=0b0110000101100010
     while acc:
         acc, idx = divmod(acc, 58)
