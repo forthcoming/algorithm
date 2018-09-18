@@ -121,6 +121,7 @@ class Base:
 
 class RSA(Base):
     def __init__(self):
+        # P,Q在初始化后应当被销毁,防止外泄
         P = self.generate_prime()
         Q = self.generate_prime()
         phi=(P-1) * (Q-1)
@@ -130,7 +131,6 @@ class RSA(Base):
         while remainder!=1:
             self.e+=2
             self.d,remainder=self.exgcd(self.e,phi)
-        del P,Q
     
     @staticmethod
     def generate_prime():
