@@ -71,10 +71,10 @@ class Base:
         和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得x, y使得a' x+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
         a' x + b' y = gcd(a' , b')
         ===>
-        bx + (a - a/b *b)y = gcd(a' , b') = Gcd(a, b)  //注意到这里的/是C语言中的出发
+        bx + (a - a/b *b)y = gcd(a' , b') = gcd(a, b)  //注意到这里的/是C语言中的出发
         ===>
         ay + b(x- a/b *y) = gcd(a, b)
-        因此对于a和b而言，他们的相对应的p，q分别是y和(x-a/b*y)
+        因此对于a和b而言,他们的相对应的p,q分别是y和(x-a/b*y)
         '''
 
     @staticmethod
@@ -144,13 +144,13 @@ class RSA(Base):
         assert(0<=message<self.module)
         return self.power(message,self.e,self.module)
 
-    def decryption(self,message):
-        message=self.power(message,self.d,self.module)
-        # return binascii.unhexlify(bytes(hex(message),encoding='utf8')[2:])
+    def decryption(self,cipher):
+        cipher=self.power(cipher,self.d,self.module)
+        # return binascii.unhexlify(bytes(hex(cipher),encoding='utf8')[2:])
         res=[]
-        while message:
-            res.append(chr(message&255))
-            message>>=8
+        while cipher:
+            res.append(chr(cipher&255))
+            cipher>>=8
         return ''.join(res[::-1])
 
 class DSA(Base):
