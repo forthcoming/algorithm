@@ -104,8 +104,8 @@ def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
 def RecurMergeSort(li,left,right):  #递归版归并排序,包含left,right边界
     if left<right:
         mid = (left+right)>>1
-        MergeSort(li,left,mid)
-        MergeSort(li,mid+1,right)
+        RecurMergeSort(li,left,mid)
+        RecurMergeSort(li,mid+1,right)
         merge(li,left,mid,right)
     
 def IterMergeSort(li):   #迭代版归并排序
