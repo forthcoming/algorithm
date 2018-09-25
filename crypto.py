@@ -60,7 +60,7 @@ class Base:
         def _exgcd( a , b ):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
             if b:
                 x , y , remainder = _exgcd( b , a % b )
-                x , y = y, ( x - (a // b) * y )
+                x , y = y, x - (a // b) * y
                 return x, y, remainder
             return 1, 0, a
         x,y,remainder=_exgcd(a,b)
