@@ -99,7 +99,7 @@ class Base:
         '''
 
     @staticmethod
-    def exgcd_slow(a , b):
+    def exgcdmat(a , b):  # 矩阵版
         import numpy as np
         M=np.eye(2,dtype=np.int64)
         while b:
@@ -148,10 +148,10 @@ class RSA(Base):
         phi=(P-1) * (Q-1)
         self.module = P * Q  # 公钥
         self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.d,_,remainder=self.exgcd(self.e,phi) # 私钥
+        self.d,_,remainder=self.exgcditer(self.e,phi) # 私钥
         while remainder!=1:
             self.e+=2
-            self.d,_,remainder=self.exgcd(self.e,phi)
+            self.d,_,remainder=self.exgcditer(self.e,phi)
     
     @staticmethod
     def generate_prime():
@@ -197,11 +197,11 @@ class DSA(Base):
         k=random.randrange(1,self.q)
         r=pow(self.g,k,self.p)%self.q
         Hm=self.sha(message)
-        s=(Hm+self.x*r)*self.exgcd(k,self.q)[0]
+        s=(Hm+self.x*r)*self.exgcditer(k,self.q)[0]
         return r,s
 
     def check(self,message,r,s):
-        w=self.exgcd(s,self.q)[0]
+        w=self.exgcditer(s,self.q)[0]
         Hm=self.sha(message)
         u1=Hm*w%self.q
         u2=r*w%self.q
