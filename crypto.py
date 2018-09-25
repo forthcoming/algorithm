@@ -174,7 +174,7 @@ class RSA(Base):
             cipher>>=8
         return ''.join(res[::-1])
 
-class DSA(Base):
+class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,也不能进行密钥交换,只用于签名,它比RSA要快很多
     def __init__(self):
         self.q=random.randrange((1<<159)+1,1<<160,2) # 公钥,160bit位奇数里面挑选
         while not self.is_probable_prime(self.q):
