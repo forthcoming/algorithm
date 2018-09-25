@@ -56,6 +56,25 @@ class Base:
         return res
 
     @staticmethod
+    def exgcditer(a, b): # Iterateive Version is faster and uses much less stack space
+        x = 0
+        y = 1
+        lx = 1
+        ly = 0
+        oa = a
+        ob = b
+        while b != 0:
+            q = a // b
+            a, b = b, a % b
+            x, lx = lx - q * x, x
+            y, ly = ly - q * y, y
+        if lx < 0:
+            lx += ob
+        if ly < 0:
+            ly += oa 
+        return lx, ly, a
+    
+    @staticmethod
     def exgcd(a,b):
         def _exgcd( a , b ):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
             if b:
@@ -66,7 +85,9 @@ class Base:
         x,y,remainder=_exgcd(a,b)
         while x<0:  # 此时求的是最小的模反元素,还需要将它转换成正数
             x+=b
-        return x,remainder
+        while y<0:
+            y+=a
+        return x,y,remainder
         '''
         和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得x, y使得a' x+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
         a' x + b' y = gcd(a' , b')
@@ -127,10 +148,10 @@ class RSA(Base):
         phi=(P-1) * (Q-1)
         self.module = P * Q  # 公钥
         self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.d,remainder=self.exgcd(self.e,phi) # 私钥
+        self.d,_,remainder=self.exgcd(self.e,phi) # 私钥
         while remainder!=1:
             self.e+=2
-            self.d,remainder=self.exgcd(self.e,phi)
+            self.d,_,remainder=self.exgcd(self.e,phi)
     
     @staticmethod
     def generate_prime():
