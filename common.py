@@ -187,3 +187,17 @@ def maxSum(li,left,right,count=0):
             count=0
         return maxSum(li,left+1,right,count) #应为这里用了return,so下面不需要else可以直接跟return
     return count
+
+# 寻找和为定值的两个数(towsum([1,3,4,5,6,7,8,9,10,11],12))
+def towsum(l,num): #前提是l有序，如果无序，可考虑先线性排序（参照桶排序），或者直接边哈希边判断(Python可以使用set)
+    begin,end=0,len(l)-1
+    while begin<end:
+        total=l[begin]+l[end]
+        if total==num:
+            print('begin:{},end:{},l[begin]:{},l[end]:{}'.format(begin,end,l[begin],l[end]))
+            end-=1
+            begin+=1
+        elif total>num:
+            end-=1
+        else:
+            begin+=1
