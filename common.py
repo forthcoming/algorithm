@@ -1,5 +1,16 @@
 from collections import deque
 
+# 筛选素数
+def prime(num):
+    a=[1 for i in range(0,num+1)]
+    for i in range(2,int(num**.5)+1):
+        if a[i]:
+            j=i
+            while j*i<=num:
+                a[i*j]=0
+                j+=1
+    return [i for i in range(2,num+1) if a[i]]
+
 # 广度优先遍历,查找无权图最短路径
 def shortest_path():
     class Node:
