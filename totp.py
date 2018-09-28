@@ -9,9 +9,10 @@ def hotp(secret,intervals_no,digest_method=hashlib.sha1,token_length=6):
     """
     secret: the base32-encoded string acting as secret key
     intervals_no: interval number used for getting different tokens, it is incremented with each use
+    refer:https://github.com/google/google-authenticator-libpam/blob/master/src/google-authenticator.c#L49
     """
     key = base64.b32decode(secret)
-    challenge = struct.pack('>Q', intervals_no)
+    challenge = struct.pack('>Q', intervals_no)  # unsigned long long,8bytes
     hmac_digest = hmac.new(key, challenge, digest_method).digest()
     offset = hmac_digest[len(hmac_digest)-1] & 0b1111
     token_base = struct.unpack('>I', hmac_digest[offset:offset + 4])[0] & 0x7fffffff  # 舍弃最高位的符号位
