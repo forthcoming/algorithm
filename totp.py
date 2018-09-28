@@ -1,5 +1,4 @@
 # designed to work for one-time passwords - HMAC-based and time-based. It is compatible with Google Authenticator application and applications based on it.
-
 import base64,hashlib,hmac,struct,time
 
 def _is_possible_token(token, token_length=6):
@@ -18,7 +17,6 @@ def hotp(secret,intervals_no,digest_method=hashlib.sha1,token_length=6):
     token_base = struct.unpack('>I', hmac_digest[o:o + 4])[0] & 0x7fffffff
     token = token_base % (10 ** token_length)
     return token
-
 
 def totp(secret,digest_method=hashlib.sha1,token_length=6,interval_length=30,clock=None):
     if clock is None:
