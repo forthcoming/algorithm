@@ -11,12 +11,11 @@ def hotp(secret,intervals_no,digest_method=hashlib.sha1,token_length=6):
     intervals_no: interval number used for getting different tokens, it is incremented with each use
     """
     key = base64.b32decode(secret)
-    msg = struct.pack('>Q', intervals_no)  # unsigned long long,8bytes
-    hmac_digest = hmac.new(key, msg, digest_method).digest()
-    o = hmac_digest[19] & 0b1111
-    token_base = struct.unpack('>I', hmac_digest[o:o + 4])[0] & 0x7fffffff
-    token = token_base % (10 ** token_length)
-    return token
+    challenge = struct.pack('>Q', intervals_no)
+    hmac_digest = hmac.new(key, challenge, digest_method).digest()
+    offset = hmac_digest[len(hmac_digest)-1] & 0b1111
+    token_base = struct.unpack('>I', hmac_digest[offset:offset + 4])[0] & 0x7fffffff  # 舍弃最高位的符号位
+    return token_base % (10 ** token_length)
 
 def totp(secret,digest_method=hashlib.sha1,token_length=6,interval_length=30,clock=None):
     if clock is None:
