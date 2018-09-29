@@ -71,4 +71,5 @@ class Redlock:
 if __name__=='__main__':
     dlm = Redlock([{"host": "localhost", "port": 6379, "db": 0} ])
     my_lock = dlm.lock("my_resource_name",10000)  # 10s
+    # do something...
     dlm.unlock(my_lock)
