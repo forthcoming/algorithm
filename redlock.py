@@ -1,5 +1,6 @@
-import logging,random,time,redis
+import logging,time,redis
 from redis.exceptions import RedisError
+from os import urandom
 
 class Redlock:
     # https://redis.io/topics/distlock
@@ -37,7 +38,7 @@ class Redlock:
     def lock(self, resource, ttl):  # ttl is the number of milliseconds for the validity time.
         assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
         retry = 0
-        val = ''.join(random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for _ in range(22))
+        val = urandom(16)
         # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
         drift = int(ttl * self.clock_drift_factor) + 2
 
