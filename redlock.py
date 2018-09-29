@@ -30,7 +30,7 @@ class Redlock:
                 self.servers.append(server)
         except Exception as e:
             raise Warning(e)
-        self.quorum = (len(connection_list) // 2) + 1
+        self.quorum = len(connection_list) // 2 + 1
         self.retry_count = retry_count or self.default_retry_count
         self.retry_delay = retry_delay or self.default_retry_delay            
 
