@@ -38,19 +38,18 @@ class Redlock:
         assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
         retry = 0
         val = ''.join(random.choice('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789') for _ in range(22))
-
         # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
         drift = int(ttl * self.clock_drift_factor) + 2
 
         while retry < self.retry_count:
             n = 0
             start_time = time.time()
-            for server in self.servers:
-                try:
+            try:
+                for server in self.servers:
                     if server.set(resource, val, nx=True, px=ttl):
                         n += 1
-                except RedisError as e:
-                    logging.exception(e)
+            except RedisError as e:
+                logging.exception(e)
             elapsed_time = int((time.time() - start_time) * 1000)
             validity = int(ttl - elapsed_time - drift)
             mutex={'validity':validity, 'resource':resource, 'val':val}
@@ -63,11 +62,11 @@ class Redlock:
         return False
 
     def unlock(self, mutex):
-        for server in self.servers:
-            try:
+        try:
+            for server in self.servers:
                 server.eval(self.unlock_script, 1, mutex['resource'], mutex['val'])
-            except RedisError as e:
-                logging.exception("Error unlocking resource {mutex['resource']} in server {mutex['server']}")
+        except RedisError as e:
+            logging.exception("Error unlocking resource {mutex['resource']} in server {mutex['server']}")
 
 if __name__=='__main__':
     dlm = Redlock([{"host": "localhost", "port": 6379, "db": 0} ])
