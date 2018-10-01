@@ -27,11 +27,11 @@ def combination1(weight):
             index+=1   
         index=stack.pop()+1
         
-def combination2(s):
-    length=len(s)
+def combination2(li):
+    length=len(li)
     num=1<<length
     for i in range(1,num):
-        print([s[j] for j in range(length) if i>>j&1])
+        print([li[j] for j in range(length) if i>>j&1])
 
 # 利用位运算进行部分组合,思想参考nextPermutation
 def bi_part_combination(li,m): 
@@ -43,3 +43,7 @@ def bi_part_combination(li,m):
         b=minimum & -minimum
         t=minimum+b
         minimum=(minimum^t)//b>>2|t
+
+def combination3(li):
+    for i in range(1,len(li)+1):
+        bi_part_combination(li,i)
