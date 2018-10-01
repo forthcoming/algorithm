@@ -32,3 +32,14 @@ def combination2(s):
     num=1<<length
     for i in range(1,num):
         print([s[j] for j in range(length) if i>>j&1])
+
+# 利用位运算进行部分组合,思想参考nextPermutation
+def bi_part_ombination(li,m): 
+    length=len(li)
+    minimum=(1<<m)-1
+    maximum=minimum<<(length-m)
+    while minimum<=maximum:
+        print([li[i] for i in range(length) if minimum>>i&1])
+        b=minimum & -minimum
+        t=minimum+b
+        minimum=(minimum^t)//b>>2|t
