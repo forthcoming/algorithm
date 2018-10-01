@@ -1,5 +1,14 @@
 from collections import deque
+import random
 
+f=lambda:random.randrange(0,8)  # 等概率產生[0-7]
+def fun():    # 等概率产生[1-30] 
+    total=(f()<<3)+f()-2   # [-2,61]
+    if total<=1:        
+        return fun()    
+    else:        
+        return total>>1
+    
 # 筛选素数
 def prime(num):
     a=[1 for i in range(0,num+1)]
