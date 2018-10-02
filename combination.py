@@ -42,7 +42,21 @@ def part_combination(li,m,left=0,stack=[]):  # C(m,n+1)= C(m,n)+C(m-1,n)
         part_combination(li,m-1,left+1)
         stack.pop()
         part_combination(li,m,left+1)
-        
+
+def part_combination1(li,m,left=0,stack=[]):  # 注意stack的位置,C(m,n)
+    n=len(li)
+    if m>0:
+        for i in range(left,n-m+1):
+            for j in range(left,i):  # 去重
+                if li[i]==li[j]:
+                    break
+            else:
+                stack.append(i)
+                part_combination(li,m-1,i+1)
+                stack.pop()
+    else:
+        print([li[i] for i in stack])
+
 # 利用位运算进行部分组合,思想参考nextPermutation
 def bi_part_combination(li,m): 
     length=len(li)
