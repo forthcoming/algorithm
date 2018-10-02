@@ -43,7 +43,7 @@ def part_combination(li,m,left=0,stack=[]):  # C(m,n+1)= C(m,n)+C(m-1,n)
         stack.pop()
         part_combination(li,m,left+1)
 
-def part_combination1(li,m,left=0,stack=[]):  # 注意stack的位置,C(m,n)
+def part_combination1(li,m,left=0,stack=[]):  # 注意stack的位置,C(m,n),与part_combination相比就是把C(m-1,n)展开了
     n=len(li)
     if m>0:
         for i in range(left,n-m+1):
@@ -52,7 +52,7 @@ def part_combination1(li,m,left=0,stack=[]):  # 注意stack的位置,C(m,n)
                     break
             else:
                 stack.append(i)
-                part_combination(li,m-1,i+1)
+                part_combination1(li,m-1,i+1)
                 stack.pop()
     else:
         print([li[i] for i in stack])
