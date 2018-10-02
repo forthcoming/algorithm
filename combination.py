@@ -33,6 +33,16 @@ def combination2(li):
     for i in range(1,num):
         print([li[j] for j in range(length) if i>>j&1])
 
+def part_combination(li,m,left=0,stack=[]):  # C(m,n+1)= C(m,n)+C(m-1,n)
+    n=len(li)
+    if m==0:
+        print([li[_] for _ in stack])
+    elif 0<m<=n-left:
+        stack.append(left)
+        part_combination(li,m-1,left+1)
+        stack.pop()
+        part_combination(li,m,left+1)
+        
 # 利用位运算进行部分组合,思想参考nextPermutation
 def bi_part_combination(li,m): 
     length=len(li)
