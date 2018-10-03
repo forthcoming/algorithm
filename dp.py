@@ -1,5 +1,5 @@
 # 给定币值n,找出由coins=[1,2,5,10]硬币的所有组合数
-def coin(n):
+def coin_combination(n):
     coins=[1,2,5,10]
     dp=[0]*(n+1)
     dp[0]=1
