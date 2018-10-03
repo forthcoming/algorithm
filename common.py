@@ -1,6 +1,21 @@
 from collections import deque
 import random
 
+# Josephus problem
+class Node:
+    def __init__(self,data,right=None):
+        self.data=data
+        self.right=right
+def josephus(L,num):
+    for i in range(10):
+        for i in range(num-1):
+            L=L.right
+        print(L.right.data)
+        L.right=L.right.right
+L=Node(0)
+L.right=Node(1,Node(2,Node(3,Node(4,Node(5,Node(6,Node(7,Node(8,Node(9,L)))))))))
+josephus(L,3)
+
 f=lambda:random.randrange(0,8)  # 等概率產生[0-7]
 def fun():    # 等概率产生[1-30] 
     total=(f()<<3)+f()-2   # [-2,61]
