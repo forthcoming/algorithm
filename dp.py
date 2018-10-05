@@ -1,6 +1,6 @@
 # 给定币值n,找出由coins=[1,2,5,10]硬币的所有组合数
 def coin_combination(n):
-    coins=[1,2,5,10]
+    coins=[1,2,5,10] # 硬币大小可随意排列,但初始化dp[0]=1,其余为0
     dp=[0]*(n+1)
     dp[0]=1
     for coin in coins:  # 第i次循环后,dp[j]的值为用前i种硬币组成金额j的方法数,复杂度是O(mn),m是多少种钱币
