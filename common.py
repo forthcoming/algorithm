@@ -67,7 +67,30 @@ def shortest_path():
             Y=y+j
             if 0<=X<m and 0<=Y<n and maze[X][Y]:
                 queue.append(Node(X,Y,node))
-             
+
+# 对于一对正整数a,b,对a只能进行加1,减1,乘2操作,最少对a进行几次操作能得到b
+def atob(a,b): # BFS 
+    result=deque([a,'#'])
+    cnt=0
+    visited={a}
+    while result:
+        data=result.popleft()
+        if data=='#':
+            cnt+=1
+            result.append('#')
+        elif data==b:
+            return cnt
+        else:
+            if data-1 not in visited:
+                result.append(data-1)
+                visited.add(data-1)
+            if data+1 not in visited:
+                result.append(data+1)
+                visited.add(data+1)
+            if data<<1 not in visited:
+                result.append(data<<1)
+                visited.add(data<<1)
+                
 '''
 选择数组中最大的k个数
 1.构建一个大顶堆
