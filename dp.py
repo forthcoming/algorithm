@@ -40,8 +40,17 @@ def LCS(x='abcbdab',y='bdcaba'):
                 dp[i+1][j+1]=dp[i][j]+1
             else:
                 dp[i+1][j+1]=max(dp[i+1][j],dp[i][j+1])
-    for i in dp:
-        print(i)
+    result=[]
+    while xlen>0 and ylen>0:
+        if dp[xlen][ylen]==dp[xlen-1][ylen]:
+            xlen-=1
+        elif dp[xlen][ylen]==dp[xlen][ylen-1]:
+            ylen-=1
+        else:
+            result.append(x[xlen-1])
+            xlen-=1
+            ylen-=1
+    print(result[::-1])
         
 # 带备忘录版递归
 def LCS(x='abcbdab',y='bdcaba'):
