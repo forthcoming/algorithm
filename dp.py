@@ -29,3 +29,51 @@ def coin_number(n):
     for idx in range(6,n+1):
         dp.append(min(dp[idx-1],dp[idx-2],dp[idx-5])+1)
     print(dp[-1])
+
+def LCS(x='abcbdab',y='bdcaba'):
+    xlen=len(x)
+    ylen=len(y)
+    dp=[[0]*(ylen+1) for i in range(xlen+1)]
+    for i in range(xlen):
+        for j in range(ylen):
+            if x[i]==y[j]:
+                dp[i+1][j+1]=dp[i][j]+1
+            else:
+                dp[i+1][j+1]=max(dp[i+1][j],dp[i][j+1])
+    for i in dp:
+        print(i)
+        
+# 带备忘录版递归
+def LCS(x='abcbdab',y='bdcaba'):
+    xlen=len(x)
+    ylen=len(y)
+    dp=[[0]*(ylen+1) for i in range(xlen+1)]
+
+    def _solve(x,y,xlen,ylen):
+        if xlen and ylen and not dp[xlen][ylen]:
+            if x[xlen-1]==y[ylen-1]:
+                dp[xlen][ylen]=_solve(x,y,xlen-1,ylen-1)+1
+            else:
+                dp[xlen][ylen]=max(_solve(x,y,xlen-1,ylen),_solve(x,y,xlen,ylen-1))
+        return dp[xlen][ylen]
+
+    _solve(x,y,xlen,ylen)
+    for i in dp:
+        print(i)
+        
+#空间压缩法
+def LCS(x='abcbdab',y='bdcaba'):
+    if len(x)<len(y):
+        x,y=y,x
+    dp=[0]*(len(y)+1)
+    for i in range(len(x)):
+        t=[0,0]
+        for j in range(len(y)):
+            if x[i]==y[j]:
+                t[1]=dp[j]+1
+            else:
+                t[1]=max(t[0],dp[j+1])
+            dp[j]=t[0]
+            t[0]=t[1]
+        dp[-1]=t[0]
+    print(dp)
