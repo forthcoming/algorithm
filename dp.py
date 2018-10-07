@@ -70,7 +70,7 @@ def LCS(x='abcbdab',y='bdcaba'):
     for i in dp:
         print(i)
         
-#空间压缩法
+# 空间压缩法(没看懂)
 def LCS(x='abcbdab',y='bdcaba'):
     if len(x)<len(y):
         x,y=y,x
