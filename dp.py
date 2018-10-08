@@ -41,7 +41,7 @@ def LCS(x='abcbdab',y='bdcaba'):
             else:
                 dp[i+1][j+1]=max(dp[i+1][j],dp[i][j+1])
     result=[]
-    while xlen and ylen:
+    while xlen and ylen: # 最长公共子序列不止一个,回溯的不同方向能找到所有解
         if dp[xlen][ylen]==dp[xlen-1][ylen]:
             xlen-=1
         elif dp[xlen][ylen]==dp[xlen][ylen-1]:
@@ -86,3 +86,33 @@ def LCS(x='abcbdab',y='bdcaba'):
             t[0]=t[1]
         dp[-1]=t[0]
     print(dp)
+
+'''
+多源最短路算法时间复杂度是O(V^3),适用于邻接矩阵表示的稠密图,稀疏图则可以迭代调用Dijkstra函数V次即可
+graph=[
+    [0,2,6,4],
+    [float('inf'),0,3,float('inf')],
+    [7,float('inf'),0,1],
+    [5,float('inf'),12,0],
+]
+'''
+def floyd(graph):
+    length=len(graph)
+    path=[[-1]*length for j in range(length)]
+    for k in range(length):  # k要写外面,里面的i,j是对称的,随便嵌套没所谓
+        for i in range(length):
+            for j in range(length):
+                if graph[i][j]>graph[i][k]+graph[k][j]:
+                    graph[i][j]=graph[i][k]+graph[k][j]
+                    path[i][j]=k
+
+    def __show(i,j):
+        if path[i][j]==-1:
+            print(f'{i}=>{j}',end=' ')
+        else:
+            __show(i,path[i][j])
+            __show(path[i][j],j)
+    for i in range(length):
+        for j in range(length):
+            __show(i,j)
+            print(f'shortest path is {graph[i][j]}')
