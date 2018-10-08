@@ -57,7 +57,6 @@ def LCS(x='abcbdab',y='bdcaba'):
     xlen=len(x)
     ylen=len(y)
     dp=[[0]*(ylen+1) for i in range(xlen+1)]
-
     def _solve(x,y,xlen,ylen):
         if xlen and ylen and not dp[xlen][ylen]:
             if x[xlen-1]==y[ylen-1]:
@@ -65,7 +64,6 @@ def LCS(x='abcbdab',y='bdcaba'):
             else:
                 dp[xlen][ylen]=max(_solve(x,y,xlen-1,ylen),_solve(x,y,xlen,ylen-1))
         return dp[xlen][ylen]
-
     _solve(x,y,xlen,ylen)
     for i in dp:
         print(i)
@@ -105,7 +103,6 @@ def floyd(graph):
                 if graph[i][j]>graph[i][k]+graph[k][j]:
                     graph[i][j]=graph[i][k]+graph[k][j]
                     path[i][j]=k
-
     def __show(i,j):
         if path[i][j]==-1:
             print(f'{i}=>{j}',end=' ')
