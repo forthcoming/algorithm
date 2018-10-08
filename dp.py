@@ -100,7 +100,7 @@ def floyd(graph):
     for k in range(length):  # k要写外面,里面的i,j是对称的,随便嵌套没所谓
         for i in range(length):
             for j in range(length):
-                if graph[i][j]>graph[i][k]+graph[k][j]:
+                if graph[i][j]>graph[i][k]+graph[k][j]: # 加=不影响graph结果,但会影响path导致路径出错
                     graph[i][j]=graph[i][k]+graph[k][j]
                     path[i][j]=k
     def __show(i,j):
