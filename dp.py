@@ -109,6 +109,7 @@ def floyd(graph):
         else:
             __show(i,path[i][j])
             __show(path[i][j],j)
+            # print(f'{path[i][j]}=>{j}',end=' ')  # error
     for i in range(length):
         for j in range(length):
             __show(i,j)
