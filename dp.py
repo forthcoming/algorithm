@@ -124,5 +124,5 @@ f(n, k) = (f(n-1, k) + k) % n
 def josephus(n,k): 
     dp=0
     for idx in range(2,n+1):
-        dp=(dp+k)%idx
+        dp=(dp+k)%idx  # 还能优化
     return dp
