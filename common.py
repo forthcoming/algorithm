@@ -4,13 +4,13 @@ import random
 # 杨氏矩阵查找
 # 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
 # 以右上角为例,当右上角大于要查找的数字时排除一行,当右上角大于要查找的数字时排除一列
-def find(l, x):
-    m = len(l) - 1
-    n = len(l[0]) - 1
+def young_search(li, x):
+    m = len(li) - 1
+    n = len(li[0]) - 1
     r = 0
     c = n
     while c >= 0 and r <= m:
-        value = l[r, c]
+        value = li[r, c]
         if value == x:
             return True
         elif value > x:
