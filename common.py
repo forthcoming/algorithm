@@ -2,10 +2,10 @@ from collections import deque
 import random
 
 f=lambda:random.randrange(0,8)  # 等概率產生[0-7]
-def fun():    # 等概率产生[1-30] 
+def generator():    # 等概率产生[1-30] 
     total=(f()<<3)+f()-2   # [-2,61]
     if total<=1:        
-        return fun()    
+        return generator()    
     else:        
         return total>>1
     
@@ -174,7 +174,7 @@ def bisect_right(a, x, lo=0, hi=None):
     return lo
 
 # 二分查找,序列必须有序,ASL=(n+1)*log(n+1)/n - 1
-def BinarySearch(li,left,right,num):
+def binary_search(li,left,right,num):
     while left<=right:
         index=(left+right)>>1
         if li[index]>num:
