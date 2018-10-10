@@ -30,6 +30,19 @@ class LinkedList:
             L = tmp
         self.__head.right = L
 
+    def recur_reverse(self): # 思想直接借鉴
+        def _reverse(node):
+            next_node=node.right
+            if next_node:
+                head=_reverse(next_node)
+                next_node.right=node
+                node.right=None
+                return head
+            else:
+                return node
+        if self.__head.right:
+            self.__head.right=_reverse(self.__head.right)
+            
     def delete(self, node): #带头节点的删除操作更简单
         cur=self.__head
         while cur.right:
