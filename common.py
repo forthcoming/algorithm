@@ -199,21 +199,27 @@ def RecurBinarySearch(li,left,right,num):
          return -1
 
 # 移位有序数组查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
-def search(li,left,right,num):
-    if left<=right:
+def cycle_search(li,target):
+    left=0
+    right=len(li)-1
+    while left<=right:
         mid=(left+right)>>1
+        if li[mid]==target:
+            return mid
         if li[left]<=li[mid]:
-            if li[left]<=num<=li[mid]:
-                return BinarySearch(li,left,mid,num)
+            if li[left]<=target<li[mid]:
+                right=mid-1
             else:
-                return search(li,mid+1,right,num)
+                left=mid+1
         else:
-            return max(search(li,left,mid,num),BinarySearch(li,mid+1,right,num))
-    else:
-        return -1
+            if li[mid]<target<=li[right]:
+                left=mid+1
+            else:
+                right=mid-1
+    return -1
 
 # 求连续子列和的最大值(也可以用分治法,不过时间复杂度是nlogn)
-def maxSum(li):
+def max_sum(li):
     curSum=MAX=0
     for i in li:
         curSum+=i
@@ -224,7 +230,7 @@ def maxSum(li):
     return MAX
 
 # 寻找和为定值的两个数(towsum([1,3,4,5,6,7,8,9,10,11],12))
-def towsum(l,num): #前提是l有序，如果无序，可考虑先线性排序（参照桶排序），或者直接边哈希边判断(Python可以使用set)
+def tow_sum(l,num): #前提是l有序，如果无序，可考虑先线性排序（参照桶排序），或者直接边哈希边判断(Python可以使用set)
     begin,end=0,len(l)-1
     while begin<end:
         total=l[begin]+l[end]
