@@ -245,17 +245,6 @@ def cycle_search(li,target):
                 right=mid-1
     return -1
 
-# 求连续子列和的最大值(也可以用分治法,不过时间复杂度是nlogn)
-def max_sum(li):
-    curSum=MAX=0
-    for i in li:
-        curSum+=i
-        if curSum>MAX:
-            MAX=curSum
-        elif curSum<0:
-            curSum=0
-    return MAX
-
 # 寻找和为定值的两个数(towsum([1,3,4,5,6,7,8,9,10,11],12))
 def tow_sum(l,num): #前提是l有序，如果无序，可考虑先线性排序（参照桶排序），或者直接边哈希边判断(Python可以使用set)
     begin,end=0,len(l)-1
