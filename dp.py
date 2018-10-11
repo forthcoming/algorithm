@@ -1,3 +1,22 @@
+# 求连续子列和的最大值
+def max_subarray(li):
+    value=0
+    maximum=-float('inf')
+    for i in li:
+        value+=i
+        if value>maximum:
+            maximum=value
+        if value<0:
+            value=0
+    return maximum
+    
+def max_subarray(li):
+    dp = maximum = li[0]
+    for x in li[1:]:
+        dp = max(x, dp + x)
+        maximum = max(maximum, dp)
+    return maximum
+
 # 给定币值n,找出由coins=[1,2,5,10]硬币的所有组合数
 def coin_combination(n):
     coins=[1,2,5,10] # 硬币大小可随意排列,但初始化dp[0]=1,其余为0
