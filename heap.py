@@ -7,8 +7,8 @@ class Heap:
         self.buildHeap()   #构建过程时间复杂度是O(n)
 
     def isLeaf(self,pos):
-        return (self.length>>1)-1<pos<self.length
-        # return self.leftChild(pos)==-1
+        # return (self.length>>1)-1<pos<self.length
+        return (pos<<1)+1>=self.length # 叶子结点无左孩子
 
     def leftChild(self,pos): #不存在则返回-1
         pos=(pos<<1)+1
