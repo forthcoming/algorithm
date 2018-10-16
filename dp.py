@@ -49,7 +49,7 @@ def coin_number(n):
         dp.append(min(dp[idx-1],dp[idx-2],dp[idx-5])+1)
     print(dp[-1])
 
-def LCS(x='abcbdab',y='bdcaba'):
+def LCS(x='abcbdab',y='bdcaba'):  # O(m*n)
     xlen=len(x)
     ylen=len(y)
     dp=[[0]*(ylen+1) for i in range(xlen+1)]
@@ -72,7 +72,7 @@ def LCS(x='abcbdab',y='bdcaba'):
     print(result[::-1])
         
 # 带备忘录版递归
-def LCS(x='abcbdab',y='bdcaba'):
+def LCS(x='abcbdab',y='bdcaba'):  # O(m+n)
     xlen=len(x)
     ylen=len(y)
     dp=[[0]*(ylen+1) for i in range(xlen+1)]
