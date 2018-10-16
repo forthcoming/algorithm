@@ -1,4 +1,3 @@
-from random import randint, seed, choice, random
 import itertools
 
 def get_minhash(shingles, n_hashes):
