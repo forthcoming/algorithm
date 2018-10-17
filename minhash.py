@@ -95,5 +95,4 @@ if __name__=='__main__':
     minhash.update(b'minhash1')
     minhash.update(b'1')
     minhash.update(b'2')
-    print(minhash.count())
 '''
