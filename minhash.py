@@ -88,10 +88,6 @@ class MinHash:
     def jaccard(self, other):
         return np.count_nonzero(self.hashvalues==other.hashvalues) / len(self.hashvalues)
 
-    def count(self):
-        # Estimate the cardinality count based on the technique described in this paper <http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=365694>.
-        return self._max_hash*len(self.hashvalues) / np.sum(self.hashvalues) - 1
-
 if __name__=='__main__':
     minhash=MinHash()
     minhash.update(b'minhash')
