@@ -104,6 +104,29 @@ def LCS(x='abcbdab',y='bdcaba'):
         dp[-1]=t[0]
     print(dp)
 
+def LIS(li=[1,-1,2,-3,4,-5,6,-7]): # O(n^2),还可以将li排序得到新的数组与原数组构成LCS问题
+    if not li:
+        return -1
+    maximum=1
+    length=len(li)
+    dp=[1]*length
+    path=[-1]*length
+    for idx in range(1,length):
+        for _idx in range(idx):
+            if li[idx]>=li[_idx] and dp[idx]<dp[_idx]+1:
+                dp[idx]=dp[_idx]+1
+                path[idx]=_idx
+        if maximum<dp[idx]:
+            maximum=dp[idx]
+    
+    for idx in range(length):
+        result=[li[idx]]
+        while path[idx]!=-1:
+            idx=path[idx]
+            result.append(li[idx])
+        print(result[::-1])
+    return maximum
+
 '''
 多源最短路算法时间复杂度是O(V^3),适用于邻接矩阵表示的稠密图,稀疏图则可以迭代调用Dijkstra函数V次即可
 graph=[
