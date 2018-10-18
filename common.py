@@ -1,5 +1,58 @@
 from collections import deque
 import random
+import numpy as np
+
+# ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
+class Edge:
+    def __init__(self,vertex,right=None):
+        self.vertex=vertex
+        self.right=right
+class Graph:
+    def __init__(self):
+        self.__vertices={}
+
+    def add(self,come,to):
+        if come in self.__vertices:
+            self.__vertices[come]=Edge(to,self.__vertices[come])
+        else:
+            self.__vertices[come]=Edge(to)
+
+    def BFS(self,come,to):
+        cnt=0
+        queue=deque()
+        edge=self.__vertices[come]
+        queue.append(edge)
+        queue.append('#')
+        while cnt!=4:
+            edge=queue.popleft()
+            if edge=='#':
+                cnt+=1
+                queue.append('#')
+            else:
+                while edge:
+                    vertex=edge.vertex
+                    queue.append(self.__vertices[vertex])
+                    edge=edge.right
+        method=0
+        while queue:
+            edge=queue.popleft()
+            if edge=='#':
+                break
+            else:
+                while edge:
+                    vertex=edge.vertex
+                    edge=edge.right
+                    if vertex==to:
+                        method+=1
+        return method
+# method 1
+graph=Graph()
+for edge in [('A','C'),('A','D'),('A','E'),('B','C'),('B','D'),('B','E'),('C','D'),('D','A'),('D','B'),('D','C'),('D','E'),('E','A'),('E','B'),('E','D'),]:
+    graph.add(*edge)
+graph.BFS('A','A')
+# method 2
+matrix=np.array([[0,0,1,1,1],[0,0,1,1,1],[0,0,0,1,0],[1,1,1,0,1],[1,1,0,1,0]])
+(matrix@matrix@matrix@matrix@matrix)[0][0]   # 有向图长度为k路径数问题
 
 # 统计阶乘数n末尾0的个数,实质就是统计[1,n]中含多少个因子5
 def zeros(n):
