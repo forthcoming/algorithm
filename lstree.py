@@ -6,9 +6,6 @@ class Node:
         self.left=left
         self.right=right
 
-    def __str__(self):
-        return '_id:{}'.format(self.data)
-
 class Hamming:
     def __init__(self,depth=64): 
         self.__root=Node('#')
