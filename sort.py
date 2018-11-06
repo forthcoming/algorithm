@@ -96,7 +96,7 @@ def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
         else:
             result.append(li[p2])
             p2 += 1
-    if p2==right+1:
+    if p1<=mid:
         p2=right-mid+p1
         li[p2:right+1]=li[p1:mid+1]
     li[left:p2]=result
