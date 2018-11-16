@@ -6,7 +6,7 @@ class UUID4:
     __slots__ = ('value')
 
     def __init__(self):
-        value = int.from_bytes(os.urandom(16), byteorder='big')
+        value = int.from_bytes(os.urandom(16), byteorder='big')  # 还有int.to_bytes
         version = 4
         # Set the variant to RFC 4122.
         value &= ~(0xc000 << 48)
