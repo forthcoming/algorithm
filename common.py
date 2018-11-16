@@ -1,6 +1,27 @@
 from collections import deque
-import random
+import random,os
 import numpy as np
+
+class UUID4:
+    __slots__ = ('value')
+
+    def __init__(self):
+        value = int.from_bytes(os.urandom(16), byteorder='big')
+        version = 4
+        # Set the variant to RFC 4122.
+        value &= ~(0xc000 << 48)
+        value |= 0x8000 << 48
+        # Set the version number.
+        value &= ~(0xf000 << 64)
+        value |= version << 76
+        object.__setattr__(self, 'value', value)
+
+    def __setattr__(self, name, value):
+        raise TypeError('UUID objects are immutable')
+
+    def __str__(self):
+        hex = '%032x' % self.value
+        return f'{hex[:8]}-{hex[8:12]}-{hex[12:16]}-{hex[16:20]}-{hex[20:]}'
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 class Edge:
