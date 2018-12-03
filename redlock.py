@@ -60,7 +60,7 @@ class Redlock:
                 self.unlock(mutex)
                 retry += 1
                 time.sleep(self.retry_delay)
-        return False
+        raise Exception("lock failed")
 
     def unlock(self, mutex):
         try:
