@@ -51,7 +51,7 @@ class BloomFilter:
         return True
 
 if __name__=='__main__':
-    conn = redis.StrictRedis(host='localhost', port=6379, db=0)
+    conn = redis.Redis(host='localhost', port=6379, db=0)
     bf=BloomFilter(conn,'bf',20)
     for key in ['avatar','akatsuki','avatar','10086','wanted','hunter','fork',]:
         bf.add(key)
