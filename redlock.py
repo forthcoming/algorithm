@@ -23,9 +23,9 @@ class Redlock:
         try:
             for connection_info in connection_list:
                 if isinstance(connection_info, str):
-                    server = redis.StrictRedis.from_url(connection_info)
+                    server = redis.Redis.from_url(connection_info)
                 elif isinstance(connection_info, dict):
-                    server = redis.StrictRedis(**connection_info)
+                    server = redis.Redis(**connection_info)
                 else:
                     server = connection_info
                 self.servers.append(server)
