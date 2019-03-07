@@ -47,7 +47,7 @@ class Redlock:
             mutex={'validity':validity, 'resource':resource, 'val':val}
             if validity > 0 and n >= self.quorum:
                 return mutex
-            else:
+            else:  # 如果锁获取失败应立马释放获取的锁定
                 self.unlock(mutex)
                 retry += 1
                 time.sleep(random.uniform(0,.4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
