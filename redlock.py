@@ -17,8 +17,6 @@ class Redlock:
     """
 
     def __init__(self, connection_list, retry_count=None, retry_delay=None):
-        if not connection_list:
-            raise Exception("Failed to connect to the majority of redis servers")
         self.servers = []
         try:
             for connection_info in connection_list:
@@ -65,7 +63,7 @@ class Redlock:
     def unlock(self, mutex):
         try:
             for server in self.servers:
-                server.eval(self.unlock_script, 1, mutex['resource'], mutex['val'])
+                server.eval(self.unlock_script, 1, mutex['resource'], mutex['val'])  # 原子性操作
         except RedisError as e:
             logging.exception("Error unlocking resource {mutex['resource']} in server {mutex['server']}")
 
