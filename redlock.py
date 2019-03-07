@@ -1,13 +1,10 @@
-import logging,time,redis
+import logging,time,redis,random
 from redis.exceptions import RedisError
 from os import urandom
 
 class Redlock:
     # https://redis.io/topics/distlock
     # https://github.com/SPSCommerce/redlock-py
-    default_retry_count = 3
-    default_retry_delay = 0.2
-    clock_drift_factor = 0.01
     unlock_script = """
     if redis.call("get",KEYS[1]) == ARGV[1] then
         return redis.call("del",KEYS[1])
@@ -16,29 +13,25 @@ class Redlock:
     end
     """
 
-    def __init__(self, connection_list, retry_count=None, retry_delay=None):
+    def __init__(self, connection_list, retry_count=None):
         self.servers = []
-        try:
-            for connection_info in connection_list:
-                if isinstance(connection_info, str):
-                    server = redis.Redis.from_url(connection_info)
-                elif isinstance(connection_info, dict):
-                    server = redis.Redis(**connection_info)
-                else:
-                    server = connection_info
-                self.servers.append(server)
-        except Exception as e:
-            raise Warning(e)
+        for connection_info in connection_list:
+            if isinstance(connection_info, str):
+                server = redis.Redis.from_url(connection_info)
+            elif isinstance(connection_info, dict):
+                server = redis.Redis(**connection_info)
+            else:
+                server = connection_info
+            self.servers.append(server)
         self.quorum = len(connection_list) // 2 + 1
-        self.retry_count = retry_count or self.default_retry_count
-        self.retry_delay = retry_delay or self.default_retry_delay            
+        self.retry_count = retry_count or 3
 
     def lock(self, resource, ttl):  # ttl is the number of milliseconds for the validity time.
         assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
         retry = 0
         val = urandom(16)
         # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
-        drift = int(ttl * self.clock_drift_factor) + 2
+        drift = int(ttl * .01) + 2
 
         while retry < self.retry_count:
             n = 0
@@ -57,7 +50,7 @@ class Redlock:
             else:
                 self.unlock(mutex)
                 retry += 1
-                time.sleep(self.retry_delay)
+                time.sleep(random.uniform(0,.4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
         raise Exception("lock failed")
 
     def unlock(self, mutex):
