@@ -26,7 +26,11 @@ class Redlock:
         self.quorum = len(connection_list) // 2 + 1
         self.retry_count = retry_count or 3
 
-    def lock(self, resource, ttl):  # ttl is the number of milliseconds for the validity time.
+    def lock(self, resource, ttl):
+        '''
+        ttl is the number of milliseconds for the validity time.
+        如果担心加锁业务在锁过期时还未执行完,可以给该业务加一个定时任务,定时检测业务是否还存活并决定是否给锁续期
+        '''
         assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
         retry = 0
         val = urandom(16)
