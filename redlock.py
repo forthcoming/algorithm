@@ -51,7 +51,6 @@ class Redlock:
         self.ttl = ttl
         self.blocking_timeout = blocking_timeout
         self.local = threading.local() if thread_local else type('dummy',(),{})
-        self.local.token = None
         self.sha = sha1(bytes(self.unlock_script,encoding='utf8')).hexdigest()  # script_load其实已经返回了lua脚本对应的sha1值
     
     def __enter__(self):
