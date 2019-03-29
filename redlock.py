@@ -58,9 +58,9 @@ class Redlock:
             return self
 
     def __exit__(self, exc_type, exc_value, traceback):
-        if not self.unlock():
-            print('exc_type: {}, exc_value: {}, traceback: {}.'.format(exc_type, exc_value, traceback))
-        return True
+        self.unlock()
+        print('exc_type: {}, exc_value: {}, traceback: {}.'.format(exc_type, exc_value, traceback))
+        return True # 注意
         
     def lock(self):
         self.local.token = urandom(16)
@@ -95,10 +95,14 @@ class Redlock:
 
     def do_something(self):
         print('Im doing something')
+        1/0
 
 if __name__=='__main__':
     connection_list = [
         {"host": "localhost", "port": 6379, "db": 0},
+        {"host": "localhost", "port": 6380, "db": 0},
+        {"host": "localhost", "port": 6381, "db": 0},
     ]
-    with Redlock(connection_list,'my_resource_name',10) as dlm:
+    with Redlock(connection_list,'my_resource_name',100000) as dlm:  # 10s
         dlm.do_something()
+    print('after doing something')
