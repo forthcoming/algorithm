@@ -35,6 +35,7 @@ class Redlock:
         If thread local storage isn't disabled in this case, the worker thread won't see the token set by the thread that acquired the lock. 
         Our assumption is that these cases aren't common and as such default to using thread local storage.
         '''
+        assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
         self.servers = []
         for connection_info in connection_list:
             if isinstance(connection_info, str):
@@ -47,7 +48,6 @@ class Redlock:
             self.servers.append(server)
         self.quorum = len(connection_list) // 2 + 1
         self.name = name
-        assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
         self.ttl = ttl
         self.blocking_timeout = blocking_timeout
         self.local = threading.local() if thread_local else type('dummy',(),{})
