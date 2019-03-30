@@ -15,7 +15,7 @@ class Redlock:
         end
     """
 
-    def __init__(self, connection_list, name, ttl=10, blocking_timeout=20, thread_local=True):
+    def __init__(self, connection_list, name, ttl=10000, blocking_timeout=20, thread_local=True):
         '''
         reference:
             https://redis.io/topics/distlock
@@ -80,7 +80,7 @@ class Redlock:
             if validity > 0 and n >= self.quorum:
                 return True
             else:  # 如果锁获取失败应立马释放获取的锁定
-                self.unlock()
+                self.unlock()  # 如果thread_local=False,在多线程情况下解锁操作会有问题
                 time.sleep(random.uniform(0,.4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
             start_time = time.time()
         raise Exception("lock timeout")
@@ -103,6 +103,6 @@ if __name__=='__main__':
         {"host": "localhost", "port": 6380, "db": 0},
         {"host": "localhost", "port": 6381, "db": 0},
     ]
-    with Redlock(connection_list,'my_resource_name',100000) as dlm:  # 10s
+    with Redlock(connection_list,'my_resource_name',10000) as dlm:  # 10s
         dlm.do_something()
     print('after doing something')
