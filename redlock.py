@@ -1,5 +1,5 @@
 import logging,time,redis,random,threading
-from redis.exceptions import RedisError
+from redis.exceptions import RedisError,NoScriptError
 from os import urandom
 from hashlib import sha1
 
@@ -86,12 +86,15 @@ class Redlock:
         raise Exception("lock timeout")
 
     def unlock(self):
-        try:
-            for server in self.servers:
+        for server in self.servers:
+            try:
                 server.evalsha(self.sha, 1, self.name, self.local.token)  # 原子操作
-            return True
-        except RedisError as e:
-            logging.exception("Error: unlocking lock {}".format(self.name))
+            except NoScriptError:
+                server.eval(self.unlock_script, 1, self.name, self.local.token) 
+            except RedisError as e:
+                logging.exception("Error: unlocking lock {}".format(self.name))
+                raise
+        return True
 
     def do_something(self):
         print('Im doing something')
