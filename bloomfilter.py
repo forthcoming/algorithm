@@ -51,7 +51,7 @@ class BloomFilter:
         return True
 
 if __name__=='__main__':
-    conn = redis.Redis(host='localhost', port=6379, db=0)
+    conn = redis.Redis(host='localhost', port=6379, db=0, socket_connect_timeout=10)  # socket_connect_timeout设置连接超时时间
     bf=BloomFilter(conn,'bf',20)
     for key in ['avatar','akatsuki','avatar','10086','wanted','hunter','fork',]:
         bf.add(key)
