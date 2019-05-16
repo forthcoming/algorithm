@@ -32,7 +32,11 @@ class Hash:
 
 class BloomFilter:
     def __init__(self, conn, name, capacity=1000000000, error_rate=.001):
-        # capacity:预先估计要去重的数量,error_rate:错误率      
+        '''
+        capacity:   预先估计要去重的元素数量
+        error_rate: 错误率
+        m:          所需要的比特位个数
+        '''   
         m = math.ceil(-capacity*math.log2(math.e)*math.log2(error_rate)) # log2(*args, **kwargs) return the base 2 lo garithm of x
         k = math.ceil(-math.log(error_rate,2))                           # log(x, [base=math.e])
         self.name = name
