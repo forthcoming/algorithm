@@ -3,6 +3,7 @@ import random,math,redis,copy
 class BloomFilter:
 
     rds = redis.Redis(host='localhost', port=6379, db=0, socket_connect_timeout=10)  # socket_connect_timeout设置连接超时时间
+    pipeline = rds.pipeline()
 
     def __init__(self, name, capacity=10000000, error_rate=.01):
         '''
@@ -21,7 +22,7 @@ class BloomFilter:
         self.k = math.ceil(-math.log(error_rate,2))                           # log(x, [base=math.e])
         self.rds.delete(self.name)
         self.functions = [__class__.BKDRHash,__class__.DJBHash,__class__.JSHash]
-        print(f'至少需要{self.m}个bit,{self.k}次哈希,内存占用{self.m>>23}M')  # m/8/1024/1024
+        print(f'至少需要{self.m}个bit,{self.k}次哈希,内存占用{self.m/2**23}M')  # m/8/1024/1024
 
     @property 
     def name(self):  # name对外只读
@@ -58,13 +59,17 @@ class BloomFilter:
             hash_function = random.choice(self.functions)
             yield lambda key:(zoomin * hash_function(str(key)) + offset) % self.m # yield用来消除延时绑定带来的副作用,同时节省了内存
 
-    def add(self,key):
-        for hash_function in self.hash_functions():
-            self.rds.setbit(self.name,hash_function(key),1)
+    def add(self,keys):
+        for key in keys:
+            for hash_function in self.hash_functions():
+                self.pipeline.setbit(self.name,hash_function(key),1)
+        self.pipeline.execute()
 
     def check(self,key):
         for hash_function in self.hash_functions():
-            if not self.rds.getbit(self.name,hash_function(key)):
+            self.pipeline.getbit(self.name,hash_function(key))
+        for result in self.pipeline.execute():
+            if not result:
                 return False
         return True
 
@@ -98,17 +103,15 @@ class BloomFilter:
         return (self.count()+other.count())/a_or_b.count() - 1 
 
 if __name__=='__main__':
-    A = BloomFilter('A',10000)
-    B = BloomFilter('B',10000)
-    for i in range(200):
-        A.add(i)
-    for i in range(150,350):
-        B.add(i)
+    A = BloomFilter('A',2000)
+    A.add(range(200))
+    B = BloomFilter('B',2000)
+    B.add(range(150,350))
     A_or_B = A|B
     A_and_B = A&B
 
-    A.check('akatsuki') # False
-    A.check(36)         # True
+    print(A.check(36))         # True
+    print(A.check('akatsuki')) # False
 
     A_cnt = A.count()   
     B_cnt = B.count()
