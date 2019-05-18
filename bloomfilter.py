@@ -1,9 +1,10 @@
-import random,math,redis
-
-conn = redis.Redis(host='localhost', port=6379, db=0, socket_connect_timeout=10)  # socket_connect_timeout设置连接超时时间
+import random,math,redis,copy
 
 class BloomFilter:
-    def __init__(self, conn, name, capacity=10000000, error_rate=.01):
+
+    rds = redis.Redis(host='localhost', port=6379, db=0, socket_connect_timeout=10)  # socket_connect_timeout设置连接超时时间
+
+    def __init__(self, name, capacity=10000000, error_rate=.01):
         '''
         假定m,n固定,当k=ln2*m/n时,错误率p达到最小,此时p=(.5**ln2)**(m/n)=.6185**(m/n)
         若k=m/n,此时p0=(1-1/e)**(m/n)=.6321**(m/n),很显然当k取值不当时,在相同p,n情况下,m必须更大,显然会造成空间浪费
@@ -13,16 +14,19 @@ class BloomFilter:
         error_rate: 错误率
         m:          所需要的比特位个数
         '''   
-        self.conn = conn
-        self.name = f'bloomfilter:{name}'
+        self.__name = f'bloomfilter:{name}'
         self.n = capacity
         self.p = error_rate
         self.m = math.ceil(-capacity*math.log2(math.e)*math.log2(error_rate)) # log2(*args, **kwargs) return the base 2 lo garithm of x
         self.k = math.ceil(-math.log(error_rate,2))                           # log(x, [base=math.e])
-        self.conn.delete(self.name)
+        self.rds.delete(self.name)
         self.functions = [__class__.BKDRHash,__class__.DJBHash,__class__.JSHash]
         print(f'至少需要{self.m}个bit,{self.k}次哈希,内存占用{self.m>>23}M')  # m/8/1024/1024
 
+    @property 
+    def name(self):  # name对外只读
+        return self.__name
+    
     @staticmethod
     def BKDRHash(key,radix=31):
         # radix 31 131 1313 13131 131313 etc.
@@ -56,32 +60,34 @@ class BloomFilter:
 
     def add(self,key):
         for hash_function in self.hash_functions():
-            self.conn.setbit(self.name,hash_function(key),1)
+            self.rds.setbit(self.name,hash_function(key),1)
 
     def check(self,key):
         for hash_function in self.hash_functions():
-            if not self.conn.getbit(self.name,hash_function(key)):
+            if not self.rds.getbit(self.name,hash_function(key)):
                 return False
         return True
 
     def count(self): # Approximating the number of items in a Bloom filter
         # EstimatedCount = -(NumBits * ln(1 – BitsOn / NumBits)) / NumHashes
-        X = self.conn.bitcount(self.name)
+        X = self.rds.bitcount(self.name)
         return math.ceil(-self.m/self.k*math.log(1-X/self.m)) # 注意不要使用其他等价形式计算公式如math.ceil(-self.n*math.log2(1-X/self.m))
 
     def __or__(self,other):  # Calculates the union of the two underlying bitarrays and returns a new bloom filter object
         if self.n != other.n or self.p != other.p:
             raise ValueError("Unioning filters requires both filters to have both the same capacity and error rate")
-        bf = BloomFilter(self.conn,'bloomfilter:or', self.n, self.p)
-        bf.conn.bitop('or',bf.name,self.name,other.name)
+        bf = copy.copy(self)
+        bf.__name = 'bloomfilter:or'
+        self.rds.bitop('or',bf.name,self.name,other.name)
         return bf
 
     def __and__(self,other):  # Calculates the intersection of the two underlying bitarrays and returns a new bloom filter object
         # Count(Intersection(A,B)) = (Count(A) + Count(B)) – Count(Union(A,B))
         if self.n != other.n or self.p != other.p:
             raise ValueError("Intersecting filters requires both filters to have equal capacity and error rate")
-        bf = BloomFilter(self.conn, 'bloomfilter:and', self.n, self.p)
-        bf.conn.bitop('and',bf.name,self.name,other.name)
+        bf = copy.copy(self)
+        bf.__name = 'bloomfilter:and'
+        self.rds.bitop('and',bf.name,self.name,other.name)
         return bf
 
     def jaccard_index(self,other):
@@ -92,8 +98,8 @@ class BloomFilter:
         return (self.count()+other.count())/a_or_b.count() - 1 
 
 if __name__=='__main__':
-    A = BloomFilter(conn,'A',10000)
-    B = BloomFilter(conn,'B',10000)
+    A = BloomFilter('A',10000)
+    B = BloomFilter('B',10000)
     for i in range(200):
         A.add(i)
     for i in range(150,350):
@@ -115,5 +121,3 @@ if __name__=='__main__':
     print(A_and_B_cnt0)       # 51
     print(A_and_B_cnt1)       # 51
     print(A.jaccard_index(B)) # 0.14613180515759305
-
-
