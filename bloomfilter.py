@@ -33,6 +33,10 @@ class Hash:
 class BloomFilter:
     def __init__(self, conn, name, capacity=1000000000, error_rate=.001):
         '''
+        假定m,n固定,当k=ln2*m/n时,错误率p达到最小,此时p=(.5**ln2)**(m/n)=.6185**(m/n)
+        若k=m/n,此时p0=(1-1/e)**(m/n)=.6321**(m/n),很显然当k取值不当时,在相同p,n情况下,m必须更大,显然会造成空间浪费
+        k可进一步化简,k=-log(2,p),由此可见k仅与错误率p有关
+        
         capacity:   预先估计要去重的元素数量
         error_rate: 错误率
         m:          所需要的比特位个数
