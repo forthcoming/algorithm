@@ -21,7 +21,7 @@ class BloomFilter:
         self.m = math.ceil(-capacity*math.log2(math.e)*math.log2(error_rate)) # log2(*args, **kwargs) return the base 2 lo garithm of x
         self.k = math.ceil(-math.log(error_rate,2))                           # log(x, [base=math.e])
         self.rds.delete(self.name)
-        self.functions = [__class__.BKDRHash,__class__.DJBHash,__class__.JSHash]
+        self.hash_functions = self.generate_hash_functions()
         print(f'至少需要{self.m}个bit,{self.k}次哈希,内存占用{self.m/2**23}M')  # m/8/1024/1024
 
     @property 
@@ -50,23 +50,27 @@ class BloomFilter:
         for i in key:
             value ^= ((value << 5) + ord(i) + (value >> 2))
         return value
-
-    def hash_functions(self):
+            
+    def generate_hash_functions(self):
         random.seed(0)  # 重要,保证后面的union和intersection能正确运算
+        functions = [__class__.BKDRHash,__class__.DJBHash,__class__.JSHash]
+        hash_functions = []
         for idx in range(self.k):
             zoomin = random.randint(1,self.m)
             offset = random.randint(1,self.m)
-            hash_function = random.choice(self.functions)
-            yield lambda key:(zoomin * hash_function(str(key)) + offset) % self.m # yield用来消除延时绑定带来的副作用,同时节省了内存
+            function = random.choice(functions)
+            # 也可以通过yield lambda key:(zoomin * hash_function(str(key)) + offset) % self.m消除延时绑定带来的副作用,但每次会重新计算zoomin/offset/function,效率低
+            hash_functions.append(lambda key,z=zoomin,o=offset,f=function:(z * f(str(key)) + o) % self.m)
+        return hash_functions  
 
     def add(self,keys):
         for key in keys:
-            for hash_function in self.hash_functions():
+            for hash_function in self.hash_functions:
                 self.pipeline.setbit(self.name,hash_function(key),1)
         self.pipeline.execute()
 
     def check(self,key):
-        for hash_function in self.hash_functions():
+        for hash_function in self.hash_functions:
             self.pipeline.getbit(self.name,hash_function(key))
         for result in self.pipeline.execute():
             if not result:
@@ -99,28 +103,29 @@ class BloomFilter:
         # Jaccard Index = Count(Intersection(A,B)) / Count(Union(A,B))
         if self.n != other.n or self.p != other.p:
             raise ValueError("jaccard index requires both filters to have equal capacity and error rate")
-        a_or_b = self|other
-        return (self.count()+other.count())/a_or_b.count() - 1 
+        count_or = (self|other).count()
+        if count_or:
+            return (self.count()+other.count())/count_or - 1 
 
 if __name__=='__main__':
-    A = BloomFilter('A',2000)
-    A.add(range(200))
-    B = BloomFilter('B',2000)
-    B.add(range(150,350))
+    A = BloomFilter('A',2000000)
+    A.add(range(20000))
+    B = BloomFilter('B',2000000)
+    B.add(range(15000,35000))
+
     A_or_B = A|B
     A_and_B = A&B
-
-    print(A.check(36))         # True
-    print(A.check('akatsuki')) # False
-
     A_cnt = A.count()   
     B_cnt = B.count()
     A_or_B_cnt = A_or_B.count()
     A_and_B_cnt0 = A_cnt+B_cnt-A_or_B_cnt
     A_and_B_cnt1 = A_and_B.count()
-    print(A_cnt)              # 201
-    print(B_cnt)              # 201
-    print(A_or_B_cnt)         # 351
-    print(A_and_B_cnt0)       # 51
-    print(A_and_B_cnt1)       # 51
-    print(A.jaccard_index(B)) # 0.14613180515759305
+    
+    print(A.check(36))         # True
+    print(A.check('akatsuki')) # False
+    print(A_cnt)              # 19994
+    print(B_cnt)              # 19987
+    print(A_or_B_cnt)         # 34999
+    print(A_and_B_cnt0)       # 4982
+    print(A_and_B_cnt1)       # 5064
+    print(A.jaccard_index(B)) # 0.14234692419783412
