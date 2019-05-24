@@ -65,62 +65,6 @@ def BucketSort(li,radix=10):
         li[:]=sum(bucket,[])
         '''
         
-# 归并排序(稳定排序,时间复杂度永远是nlogn,跟数组的数据无关)
-def reverse(li,left,right): #[::-1] or list.reverse
-    while left<right:
-        li[left],li[right]=li[right],li[left]
-        left+=1
-        right-=1
-
-def InPlaceMerge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界,效率低于merge
-    mid+=1
-    while left<mid and mid<=right:
-        p=mid
-        while left<mid and li[left]<=li[mid]:
-            left+=1
-        while mid<=right and li[mid]<=li[left]:
-            mid+=1
-        reverse(li,left,p-1)    
-        reverse(li,p,mid-1)    
-        reverse(li,left,mid-1)  
-        left+=mid-p
-        
-def merge(li,left,mid,right): # 包含[left,mid],[mid+1,right]边界
-    result=[]
-    p1=left
-    p2=mid+1
-    while p1<=mid and p2<=right:
-        if li[p1] < li[p2]:
-            result.append(li[p1])
-            p1 += 1
-        else:
-            result.append(li[p2])
-            p2 += 1
-    if p1<=mid:
-        p2=right-mid+p1
-        li[p2:right+1]=li[p1:mid+1]
-    li[left:p2]=result
-
-def RecurMergeSort(li,left,right):  #递归版归并排序,包含left,right边界
-    if left<right:
-        mid = (left+right)>>1
-        RecurMergeSort(li,left,mid)
-        RecurMergeSort(li,mid+1,right)
-        merge(li,left,mid,right)
-    
-def IterMergeSort(li):   #迭代版归并排序
-    length=len(li)
-    initmid=0
-    while initmid<length-1:
-        step=(initmid+1)<<1
-        for mid in range(initmid,length,step):
-            left=mid-(step>>1)+1
-            right=mid+(step>>1)  # right=left+step-1            
-            if right>=length:
-                right=length-1
-            merge(li,left,mid,right)
-        initmid=(initmid<<1)+1
-        
 # 快速排序(非稳定排序)
 from random import randrange
 def QuickSort(li,left,right):  # 包含left,right边界
