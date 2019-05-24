@@ -15,7 +15,7 @@ class MergeSort:
             else:
                 result.append(self.li[p2])
                 p2 += 1
-                self.inversion_number+=mid-p1+1
+                self.inversion_number+=mid-p1+1  # 逆序数统计不管两数相等的情况
         if p1<=mid:
             p2=right-mid+p1
             self.li[p2:right+1]=self.li[p1:mid+1]
