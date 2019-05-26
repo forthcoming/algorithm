@@ -62,7 +62,6 @@ class Forest:
                         queue.append(r)  #如果要迭代调用其sibling,则队列里面只能存他的一个左孩子
                     index+=1
 
-
     def level_traverse(self):
         queue=deque([self.__root])
         while queue:
@@ -141,6 +140,7 @@ class Forest:
             queue.pop()
             root=root.sibling
 
+            
 if __name__=='__main__':
     forest=Forest()
     forest.create_forest()
