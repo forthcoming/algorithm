@@ -2,7 +2,7 @@ import random,math,redis,copy
 
 class BloomFilter:
 
-    rds = redis.Redis(host='localhost', port=6379, db=0, socket_timeout=10)  # socket_timeout设置每条命令超时时间
+    rds = redis.Redis(host='localhost', port=6379, db=0, socket_timeout=10)
     pipeline = rds.pipeline()
 
     def __init__(self, name, capacity=10000000, error_rate=.01):
