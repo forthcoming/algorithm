@@ -74,6 +74,10 @@ graph.BFS('A','A')
 # method 2
 matrix=np.array([[0,0,1,1,1],[0,0,1,1,1],[0,0,0,1,0],[1,1,1,0,1],[1,1,0,1,0]])
 (matrix@matrix@matrix@matrix@matrix)[0][0]   # 有向图长度为k路径数问题
+'''
+matrix[i][j]代表经过一次传球i到j所有可能次数
+(matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
+'''
 
 # 统计阶乘数n末尾0的个数,实质就是统计[1,n]中含多少个因子5
 def zeros(n):
