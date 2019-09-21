@@ -61,12 +61,10 @@ class GEO:
         lat_offset = latitude/180 + .5
         lon_offset *= self.scale
         lat_offset *= self.scale
-        return GEO.interleave64(int(lat_offset),int(lon_offset))
-        # return __class__.interleave64(int(lat_offset),int(lon_offset))  # py3
+        return __class__.interleave64(int(lat_offset),int(lon_offset))
 
     def decode(self,geohash):
-        # lon_offset,lat_offset = __class__.deinterleave64(geohash)
-        lon_offset,lat_offset = GEO.deinterleave64(geohash)
+        lon_offset,lat_offset = __class__.deinterleave64(geohash)
         longitude = 360*lon_offset/self.scale-180
         latitude = 180*lat_offset/self.scale-90
         return longitude,latitude 
@@ -80,8 +78,7 @@ class GEO:
         lat2 *= percent
         u = math.sin((lat2 - lat1) / 2)
         v = math.sin((lon2 - lon1) / 2)
-        # return round(2 * __class__._earth_radius * math.asin((u * u + math.cos(lat1) * math.cos(lat2) * v * v)**.5))
-        return round(2 * GEO._earth_radius * math.asin((u * u + math.cos(lat1) * math.cos(lat2) * v * v)**.5))
+        return round(2 * __class__._earth_radius * math.asin((u * u + math.cos(lat1) * math.cos(lat2) * v * v)**.5))
 
     @staticmethod
     def interleave64(x, y):
