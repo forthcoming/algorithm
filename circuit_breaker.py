@@ -216,7 +216,7 @@ def circuit_breaker(threshold=5, timeout=60, default_value=None, fallback=None, 
         name = '{}:{}'.format(f.__module__,f.__name__)
         fuse = Fuses(name, threshold, timeout, policy, logger, enable_sms)  # 装饰f时会被调用,初始化一次
         @wraps(f)
-        def _wrapper(*args, **kwargs):
+        def _wrapper(*args, **kwargs):         # 装饰非类成员函数
         # def _wrapper(self,*args, **kwargs):  # 装饰类成员函数,第一个参数是self,此后可通过self调用类的其他属性和方法
             ret = None
             if fuse.do_fallback():
