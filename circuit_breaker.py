@@ -206,7 +206,7 @@ class Fuses:
     def on_error(self):
         self._cur_state.error()
 
-def circuit_breaker(threshold=5, timeout=60, default_value=None, fallback=None, policy=0, enable_sms=True, logger=None):
+def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=None, fallback=None, policy=0, enable_sms=True, logger=None):
     '''
     连续失败达到threshold次才会由默认的FusesClosedState态转为FusesOpenState态,前提是熔断函数f可以抛出异常
     FusesOpenState态会维持一段时长,由timeout、当前时间、_last_time共同决定,FusesOpenState态下不会再调用熔断函数f
@@ -215,23 +215,30 @@ def circuit_breaker(threshold=5, timeout=60, default_value=None, fallback=None, 
     当circuit_breaker装饰类成员函数时,_wrapper入残第一个参数是self,可以写成_wrapper(self,*args, **kwargs)
     此后可通过self调用类的其他属性和方法,f可通过f(self,*args, **kwargs)调用
     '''
+
+    def fall_back(self,*args, **kwargs):
+        ret = default_value
+        if callable(fallback):
+            if is_member_func:
+                ret = fallback(*args, **kwargs)
+            else:
+                ret = fallback(self,*args, **kwargs)
+        return ret
+
     def circuit_breaker_decorator(f):
         name = '{}:{}'.format(f.__module__,f.__name__)
         fuse = Fuses(name, threshold, timeout, policy, logger, enable_sms)  # 装饰f时会被调用,初始化一次
         @wraps(f)
-        def _wrapper(*args, **kwargs):
-            ret = default_value
+        def _wrapper(self=None,*args, **kwargs):  # 装饰类成员函数时第一个参数是self,此后可通过self调用类的其他属性和方法,self给默认值防止装饰不带入参的非成员函数
             if fuse.do_fallback():
-                if callable(fallback):  
-                    ret = fallback(*args, **kwargs)   # 由FusesClosedState态转为FusesOpenState态执行;FusesOpenState态期间执行
+            	ret = fall_back(self,*args, **kwargs)  # 由FusesClosedState态转为FusesOpenState态执行;FusesOpenState态期间执行  
             else:
                 try:
-                    ret = f(*args, **kwargs)
+                    ret = f(self,*args, **kwargs)
                     fuse.on_success()
                 except Exception as e:
                     fuse.on_error()
-                    if callable(fallback):
-                        ret = fallback(*args, **kwargs)  # FusesClosedState态f抛异常时执行
+                    ret = fall_back(self,*args, **kwargs)  # FusesClosedState态f抛异常时执行
                     print('{} circuit_breaker error,{}'.format(name,e))
                     if logger:
                         logger.error('error within circuit breaker decorator: {}'.format(traceback.format_exc()))
