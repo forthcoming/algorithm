@@ -119,7 +119,7 @@ class FusesHalfOpenState(FusesState):
         self._fuses.open()                    # 改为熔断打开状态
 
 class Fuses:
-    def __init__(self, name, threshold, timeout, policy=0, logger=None, enable_sms=False):
+    def __init__(self, name, threshold, timeout, policy=0, enable_sms=False):
         """
         :param threshold: 触发熔断阈值
         :param timeout: 二次试探等待时间
@@ -133,7 +133,6 @@ class Fuses:
         self._request_queue = [1] * 10
         self._cur_state = FusesClosedState(self)
         self.timeout = timeout
-        self.logger = logger
         self.enable_sms = enable_sms
 
     @property
@@ -206,7 +205,7 @@ class Fuses:
     def on_error(self):
         self._cur_state.error()
 
-def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=None, fallback=None, policy=0, enable_sms=True, logger=None):
+def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=None, fallback=None, policy=0, enable_sms=True):
     '''
     连续失败达到threshold次才会由默认的FusesClosedState态转为FusesOpenState态,前提是熔断函数f可以抛出异常
     FusesOpenState态会维持一段时长,由timeout、当前时间、_last_time共同决定,FusesOpenState态下不会再调用熔断函数f
@@ -227,7 +226,7 @@ def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=
 
     def circuit_breaker_decorator(f):
         name = '{}:{}'.format(f.__module__,f.__name__)
-        fuse = Fuses(name, threshold, timeout, policy, logger, enable_sms)  # 装饰f时会被调用,初始化一次
+        fuse = Fuses(name, threshold, timeout, policy, enable_sms)  # 装饰f时会被调用,初始化一次
         @wraps(f)
         def _wrapper(self=None,*args, **kwargs):  # 装饰类成员函数时第一个参数是self,此后可通过self调用类的其他属性和方法,self给默认值防止装饰不带入参的非成员函数
             if fuse.do_fallback():
@@ -240,8 +239,6 @@ def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=
                     fuse.on_error()
                     ret = fall_back(self,*args, **kwargs)  # FusesClosedState态f抛异常时执行
                     print('{} circuit_breaker error,{}'.format(name,e))
-                    if logger:
-                        logger.error('error within circuit breaker decorator: {}'.format(traceback.format_exc()))
             return ret
         return _wrapper
     return circuit_breaker_decorator
