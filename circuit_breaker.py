@@ -211,14 +211,14 @@ def circuit_breaker(threshold=5, timeout=60, default_value=None, fallback=None, 
     连续失败达到threshold次才会由默认的FusesClosedState态转为FusesOpenState态,前提是熔断函数f可以抛出异常
     FusesOpenState态会维持一段时长,由timeout、当前时间、_last_time共同决定,FusesOpenState态下不会再调用熔断函数f
     随后由FusesOpenState态转为FusesHalfOpenState态,调用一次熔断函数f,成功则转为FusesClosedState态,否则转为FusesOpenState态,依次循环下去
+    注意: 当circuit_breaker装饰类成员函数时,_wrapper入残第一个参数是self,可以写成_wrapper(self,*args, **kwargs),此后可通过self调用类的其他属性和方法
     '''
     def circuit_breaker_decorator(f):
         name = '{}:{}'.format(f.__module__,f.__name__)
         fuse = Fuses(name, threshold, timeout, policy, logger, enable_sms)  # 装饰f时会被调用,初始化一次
         @wraps(f)
-        def _wrapper(*args, **kwargs):         # 装饰非类成员函数
-        # def _wrapper(self,*args, **kwargs):  # 装饰类成员函数,第一个参数是self,此后可通过self调用类的其他属性和方法
-            ret = None
+        def _wrapper(*args, **kwargs):
+            ret = default_value
             if fuse.do_fallback():
                 if callable(fallback):  
                     ret = fallback(*args, **kwargs)   # 由FusesClosedState态转为FusesOpenState态执行;FusesOpenState态期间执行
@@ -236,7 +236,6 @@ def circuit_breaker(threshold=5, timeout=60, default_value=None, fallback=None, 
             return ret
         return _wrapper
     return circuit_breaker_decorator
-
 
 
 @circuit_breaker(timeout=6)
