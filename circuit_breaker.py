@@ -215,34 +215,37 @@ def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=
     此后可通过self调用类的其他属性和方法,f可通过f(self,*args, **kwargs)调用
     '''
 
-    def fall_back(self,*args, **kwargs):
+    def fall_back(*args, **kwargs):
         ret = default_value
         if callable(fallback):
             if is_member_func:
+                args = args[1:]  # 去掉第一个self参数
                 ret = fallback(*args, **kwargs)
             else:
-                ret = fallback(self,*args, **kwargs)
+                ret = fallback(*args, **kwargs)
         return ret
 
     def circuit_breaker_decorator(f):
         name = '{}:{}'.format(f.__module__,f.__name__)
-        fuse = Fuses(name, threshold, timeout, policy, enable_sms)  # 装饰f时会被调用,初始化一次
+        fuse = Fuses(name, threshold, timeout, policy, enable_sms)  # 装饰f时会执行,初始化一次
         @wraps(f)
-        def _wrapper(self=None,*args, **kwargs):  # 装饰类成员函数时第一个参数是self,此后可通过self调用类的其他属性和方法,self给默认值防止装饰不带入参的非成员函数
+        def _wrapper(*args, **kwargs):  # 装饰类成员函数时第一个参数是self,此后可通过self调用类的其他属性和方法
             if fuse.do_fallback():
-            	ret = fall_back(self,*args, **kwargs)  # 由FusesClosedState态转为FusesOpenState态执行;FusesOpenState态期间执行  
+                ret = fall_back(*args, **kwargs)  # 由FusesClosedState态转为FusesOpenState态执行;FusesOpenState态期间执行  
+                print(fuse._cur_state,111111)
             else:
                 try:
-                    ret = f(self,*args, **kwargs)
+                    print(fuse._cur_state,111111)
+                    ret = f(*args, **kwargs)
                     fuse.on_success()
                 except Exception as e:
                     fuse.on_error()
-                    ret = fall_back(self,*args, **kwargs)  # FusesClosedState态f抛异常时执行
+                    print(fuse._cur_state,111111)
+                    ret = fall_back(*args, **kwargs)  # FusesClosedState态f抛异常时执行
                     print('{} circuit_breaker error,{}'.format(name,e))
             return ret
         return _wrapper
     return circuit_breaker_decorator
-
 
 @circuit_breaker(timeout=6)
 def test(idx):
