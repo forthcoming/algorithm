@@ -232,15 +232,12 @@ def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=
         def _wrapper(*args, **kwargs):  # 装饰类成员函数时第一个参数是self,此后可通过self调用类的其他属性和方法
             if fuse.do_fallback():
                 ret = fall_back(*args, **kwargs)  # 由FusesClosedState态转为FusesOpenState态执行;FusesOpenState态期间执行  
-                print(fuse._cur_state,111111)
             else:
                 try:
-                    print(fuse._cur_state,111111)
                     ret = f(*args, **kwargs)
                     fuse.on_success()
                 except Exception as e:
                     fuse.on_error()
-                    print(fuse._cur_state,111111)
                     ret = fall_back(*args, **kwargs)  # FusesClosedState态f抛异常时执行
                     print('{} circuit_breaker error,{}'.format(name,e))
             return ret
