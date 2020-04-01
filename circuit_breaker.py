@@ -84,7 +84,7 @@ class FusesOpenState(FusesState):
     """熔断打开状态"""
     def __init__(self, fuses, name='open'):
         super().__init__(fuses, name)
-        self._fuses.last_time = self._fuses.last_time + self._fuses.timeout
+        self._fuses.last_time = time.time() + self._fuses.timeout
 
     def do_fallback(self):
         if time.time() > self._fuses.last_time:
