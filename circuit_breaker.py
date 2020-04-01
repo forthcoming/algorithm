@@ -84,10 +84,10 @@ class FusesOpenState(FusesState):
     """熔断打开状态"""
     def __init__(self, fuses, name='open'):
         super().__init__(fuses, name)
-        self._fuses.last_time = time.time() + self._fuses.timeout
+        self.last_time = time.time() + self._fuses.timeout
 
     def do_fallback(self):
-        if time.time() > self._fuses.last_time:
+        if time.time() > self.last_time:
             self._fuses.half_open()
             return False
         return True
@@ -128,7 +128,6 @@ class Fuses:
         self._name = name
         self._threshold = threshold
         self._policy = FusesPercentPolicy(threshold) if policy == 1 else FusesCountPolicy(threshold)
-        self._last_time = time.time()
         self._fail_counter = 0
         self._request_queue = [1] * 10
         self._cur_state = FusesClosedState(self)
@@ -136,16 +135,8 @@ class Fuses:
         self.enable_sms = enable_sms
 
     @property
-    def last_time(self):
-        return self._last_time
-
-    @property
     def name(self):
         return self._name
-
-    @last_time.setter
-    def last_time(self, time_):
-        self._last_time = time_
 
     @property
     def cur_state(self):
@@ -208,7 +199,7 @@ class Fuses:
 def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=None, fallback=None, policy=0, enable_sms=True):
     '''
     连续失败达到threshold次才会由默认的FusesClosedState态转为FusesOpenState态,前提是熔断函数f可以抛出异常
-    FusesOpenState态会维持一段时长,由timeout、当前时间、_last_time共同决定,FusesOpenState态下不会再调用熔断函数f
+    FusesOpenState态会维持一段时长,由timeout、当前时间共同决定,FusesOpenState态下不会再调用熔断函数f
     随后由FusesOpenState态转为FusesHalfOpenState态,调用一次熔断函数f,成功则转为FusesClosedState态,否则转为FusesOpenState态,依次循环下去
     注意: 
     当circuit_breaker装饰类成员函数时,_wrapper入残第一个参数是self,可以写成_wrapper(self,*args, **kwargs)
