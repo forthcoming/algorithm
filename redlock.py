@@ -16,6 +16,13 @@ def get_servers(connection_list):
         servers.append(server)
     return servers
 
+def do_something(idx,room_lock,song_lock):
+    print('Im doing something in idx {}'.format(idx))
+    lock = room_lock if idx & 1 else song_lock
+    with lock:
+        time.sleep(1)
+        1 / 0
+        
 class Redlock:
     # KEYS[1] - lock name
     # ARGS[1] - token
@@ -98,18 +105,19 @@ class Redlock:
                 raise
         return True
 
-    def do_something(self):
-        print('Im doing something')
-        1 / 0
-
 servers = get_servers([
     {"host": "localhost", "port": 2345, "db": 0},
     {"host": "localhost", "port": 8002, "db": 0},
     {"host": "localhost", "port": 8003, "db": 0},
 ])
 
+room_lock = Redlock(servers, 'room_lock', 10000)
+song_lock = Redlock(servers, 'song_lock', 20000)
 
 if __name__ == '__main__':
-    with Redlock(servers, 'my_resource_name', 10000) as dlm:  # 10s
-        dlm.do_something()
+    threads = [threading.Thread(target=do_something,args=(idx,room_lock,song_lock)) for idx in range(10)]
+    for thread in threads:
+        thread.start()
+    for thread in threads:
+        thread.join()
     print('after doing something')
