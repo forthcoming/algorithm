@@ -23,8 +23,7 @@ class Redlock:
             https://github.com/andymccurdy/redis-py/blob/master/redis/lock.py
 
         ttl is the number of milliseconds for the validity time.如果担心加锁业务在锁过期时还未执行完,可以给该业务加一个定时任务,定时检测业务是否还存活并决定是否给锁续期
-        thread_local indicates whether the lock token is placed in thread-local storage. By default, the token is placed in thread local storage so that a thread only sees its token, 
-        not a token set by another thread. Consider the following timeline:
+        the token is placed in thread local storage so that a thread only sees its token, not a token set by another thread. Consider the following timeline:
         time: 0, thread-1 acquires `my-lock`, with a timeout of 5 seconds.thread-1 sets the token to "abc"
         time: 1, thread-2 blocks trying to acquire `my-lock` using the Lock instance.
         time: 5, thread-1 has not yet completed. redis expires the lock key.
@@ -80,7 +79,7 @@ class Redlock:
             if validity > 0 and n >= self.quorum:
                 return True
             else:  # 如果锁获取失败应立马释放获取的锁定
-                self.unlock()  # 如果thread_local=False,在多线程情况下解锁操作会有问题
+                self.unlock()
                 time.sleep(random.uniform(0,.4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
             start_time = time.time()
         raise Exception("lock timeout")
