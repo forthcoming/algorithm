@@ -1,7 +1,20 @@
-import logging,time,redis,random,threading
-from redis.exceptions import RedisError,NoScriptError
+import logging, time, redis, random, threading
+from redis.exceptions import RedisError, NoScriptError
 from os import urandom
 from hashlib import sha1
+
+
+def get_servers(connection_list):
+    servers = []
+    for connection_info in connection_list:
+        if isinstance(connection_info, str):
+            server = redis.Redis.from_url(connection_info)
+        elif isinstance(connection_info, dict):
+            server = redis.Redis(**connection_info)
+        else:
+            server = connection_info
+        servers.append(server)
+    return servers
 
 class Redlock:
     # KEYS[1] - lock name
@@ -14,14 +27,14 @@ class Redlock:
             return 0
         end
     """
+    unlock_script_sha = sha1(bytes(unlock_script, encoding='utf8')).hexdigest()
 
-    def __init__(self, connection_list, name, ttl=10000, blocking_timeout=20):
+    def __init__(self, servers, name, ttl=10000, blocking_timeout=20):
         '''
         reference:
             https://redis.io/topics/distlock
             https://github.com/SPSCommerce/redlock-py
             https://github.com/andymccurdy/redis-py/blob/master/redis/lock.py
-
         ttl is the number of milliseconds for the validity time.如果担心加锁业务在锁过期时还未执行完,可以给该业务加一个定时任务,定时检测业务是否还存活并决定是否给锁续期
         the token is placed in thread local storage so that a thread only sees its token, not a token set by another thread. Consider the following timeline:
         time: 0, thread-1 acquires `my-lock`, with a timeout of 5 seconds.thread-1 sets the token to "abc"
@@ -29,29 +42,19 @@ class Redlock:
         time: 5, thread-1 has not yet completed. redis expires the lock key.
         time: 5, thread-2 acquired `my-lock` now that it's available.thread-2 sets the token to "xyz"
         time: 6, thread-1 finishes its work and calls release(). if the token is *not* stored in thread local storage,then thread-1 would see the token value as "xyz" and would be able to successfully release the thread-2's lock.
-        In some use cases it's necessary to disable thread local storage. 
-        For example, if you have code where one thread acquires a lock and passes that lock instance to a worker thread to release later. 
-        If thread local storage isn't disabled in this case, the worker thread won't see the token set by the thread that acquired the lock. 
+        In some use cases it's necessary to disable thread local storage.
+        For example, if you have code where one thread acquires a lock and passes that lock instance to a worker thread to release later.
+        If thread local storage isn't disabled in this case, the worker thread won't see the token set by the thread that acquired the lock.
         Our assumption is that these cases aren't common and as such default to using thread local storage.
         '''
         assert isinstance(ttl, int), 'ttl {} is not an integer'.format(ttl)
-        self.servers = []
-        for connection_info in connection_list:
-            if isinstance(connection_info, str):
-                server = redis.Redis.from_url(connection_info)
-            elif isinstance(connection_info, dict):
-                server = redis.Redis(**connection_info)
-            else:
-                server = connection_info
-            server.script_load(self.unlock_script)
-            self.servers.append(server)
-        self.quorum = len(connection_list) // 2 + 1
+        self.servers = servers
+        self.quorum = len(servers) // 2 + 1
         self.name = name
         self.ttl = ttl
         self.blocking_timeout = blocking_timeout
         self.local = threading.local()
-        self.sha = sha1(bytes(self.unlock_script,encoding='utf8')).hexdigest()  # script_load其实已经返回了lua脚本对应的sha1值
-    
+
     def __enter__(self):
         if self.lock():
             return self
@@ -59,11 +62,12 @@ class Redlock:
     def __exit__(self, exc_type, exc_value, traceback):
         self.unlock()
         print('exc_type: {}, exc_value: {}, traceback: {}.'.format(exc_type, exc_value, traceback))
-        return True # 注意
-        
+        return True  # 注意
+
     def lock(self):
         self.local.token = urandom(16)
-        drift = int(self.ttl * .01) + 2  # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
+        drift = int(
+            self.ttl * .01) + 2  # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
         start_time = time.time()
         stop_at = start_time + self.blocking_timeout
         while start_time < stop_at:
@@ -80,16 +84,17 @@ class Redlock:
                 return True
             else:  # 如果锁获取失败应立马释放获取的锁定
                 self.unlock()
-                time.sleep(random.uniform(0,.4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
+                time.sleep(random.uniform(0,
+                                          .4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
             start_time = time.time()
         raise Exception("lock timeout")
 
     def unlock(self):
         for server in self.servers:
             try:
-                server.evalsha(self.sha, 1, self.name, self.local.token)  # 原子操作
+                server.evalsha(self.unlock_script_sha, 1, self.name, self.local.token)  # 原子操作
             except NoScriptError:
-                server.eval(self.unlock_script, 1, self.name, self.local.token) 
+                server.eval(self.unlock_script, 1, self.name, self.local.token)
             except RedisError as e:
                 logging.exception("Error: unlocking lock {}".format(self.name))
                 raise
@@ -97,14 +102,16 @@ class Redlock:
 
     def do_something(self):
         print('Im doing something')
-        1/0
+        1 / 0
 
-if __name__=='__main__':
-    connection_list = [
-        {"host": "localhost", "port": 6379, "db": 0},
-        {"host": "localhost", "port": 6380, "db": 0},
-        {"host": "localhost", "port": 6381, "db": 0},
-    ]
-    with Redlock(connection_list,'my_resource_name',10000) as dlm:  # 10s
+servers = get_servers([
+    {"host": "localhost", "port": 2345, "db": 0},
+    {"host": "localhost", "port": 8002, "db": 0},
+    {"host": "localhost", "port": 8003, "db": 0},
+])
+
+
+if __name__ == '__main__':
+    with Redlock(servers, 'my_resource_name', 10000) as dlm:  # 10s
         dlm.do_something()
     print('after doing something')
