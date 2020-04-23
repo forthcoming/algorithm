@@ -111,8 +111,12 @@ servers = get_servers([
     {"host": "localhost", "port": 8003, "db": 0},
 ])
 
-room_lock = Redlock(servers, 'room_lock', 10000)
-song_lock = Redlock(servers, 'song_lock', 20000)
+'''
+如果do_something耗时大于锁生存周期ttl,会出现并发问题,总耗时变小
+如果锁内部token未使用threading.local存储,会出现并发问题,总耗时变小
+'''
+room_lock = Redlock(servers, 'room_lock', ttl=500)
+song_lock = Redlock(servers, 'song_lock', ttl=500)
 
 if __name__ == '__main__':
     threads = [threading.Thread(target=do_something,args=(idx,room_lock,song_lock)) for idx in range(10)]
