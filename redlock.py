@@ -15,7 +15,7 @@ class Redlock:
         end
     """
 
-    def __init__(self, connection_list, name, ttl=10000, blocking_timeout=20, thread_local=True):
+    def __init__(self, connection_list, name, ttl=10000, blocking_timeout=20):
         '''
         reference:
             https://redis.io/topics/distlock
@@ -50,7 +50,7 @@ class Redlock:
         self.name = name
         self.ttl = ttl
         self.blocking_timeout = blocking_timeout
-        self.local = threading.local() if thread_local else type('dummy',(),{})
+        self.local = threading.local()
         self.sha = sha1(bytes(self.unlock_script,encoding='utf8')).hexdigest()  # script_load其实已经返回了lua脚本对应的sha1值
     
     def __enter__(self):
