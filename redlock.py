@@ -66,8 +66,7 @@ class Redlock:
 
     def lock(self):
         self.local.token = urandom(16)
-        drift = int(
-            self.ttl * .01) + 2  # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
+        drift = int(self.ttl * .01) + 2  # Add 2 milliseconds to the drift to account for Redis expires precision which is 1 millisecond, plus 1 millisecond min drift for small TTLs.
         start_time = time.time()
         stop_at = start_time + self.blocking_timeout
         while start_time < stop_at:
@@ -84,8 +83,7 @@ class Redlock:
                 return True
             else:  # 如果锁获取失败应立马释放获取的锁定
                 self.unlock()
-                time.sleep(random.uniform(0,
-                                          .4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
+                time.sleep(random.uniform(0,.4))  # a random delay in order to try to desynchronize multiple clients trying to acquire the lock for the same resource at the same time
             start_time = time.time()
         raise Exception("lock timeout")
 
