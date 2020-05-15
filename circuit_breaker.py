@@ -130,7 +130,7 @@ class Fuses:
         self._policy = FusesPercentPolicy(threshold) if policy == 1 else FusesCountPolicy(threshold)
         self._fail_counter = 0
         self._request_queue = [1] * 10
-        self._cur_state = FusesClosedState(self)
+        self._cur_state = FusesClosedState(self)  # 此处是循环引用
         self.timeout = timeout
         self.enable_sms = enable_sms
 
