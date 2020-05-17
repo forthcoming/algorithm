@@ -2,11 +2,12 @@ from collections import deque
 import random,os
 import numpy as np
 
+
 class UUID4:
     __slots__ = ('value')
 
     def __init__(self):
-        value = int.from_bytes(os.urandom(16), byteorder='big')  # 还有int.to_bytes
+        value = int.from_bytes(os.urandom(16), byteorder='big')  # 0 <= value < 1<<128, 还有int.to_bytes
         version = 4
         # Set the variant to RFC 4122.
         value &= ~(0xc000 << 48)
@@ -19,6 +20,14 @@ class UUID4:
     def __setattr__(self, name, value):
         raise TypeError('UUID objects are immutable')
 
+    def __le__(self, other):
+        if isinstance(other, UUID4):
+            return self.value <= other.value
+        return NotImplemented
+    
+    def __int__(self):
+        return self.value
+    
     def __str__(self):
         hex = '%032x' % self.value
         return f'{hex[:8]}-{hex[8:12]}-{hex[12:16]}-{hex[16:20]}-{hex[20:]}'
