@@ -287,6 +287,19 @@ def bisect_right(a, x, lo=0, hi=None):
             lo = mid+1     # 此处必须写作hi = mid + 1, 应为mid只取了整数部分
     return lo
 
+def bisect_left(a, x, lo=0, hi=None):
+    if lo < 0:
+        raise ValueError('lo must be non-negative')
+    if hi is None:
+        hi = len(a)
+    while lo < hi:
+        mid = (lo+hi)>>1
+        if a[mid] < x:
+            lo = mid+1
+        else:
+            hi = mid
+    return lo
+
 # 二分查找,序列必须有序,ASL=(n+1)*log(n+1)/n - 1
 def binary_search(li,left,right,num):
     while left<=right:
