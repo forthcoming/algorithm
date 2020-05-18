@@ -282,9 +282,9 @@ def bisect_right(a, x, lo=0, hi=None):
     while lo < hi:
         mid = (lo+hi)>>1
         if x < a[mid]: 
-            hi = mid
+            hi = mid       # 此处不能写作hi = mid - 1, 可能会越界
         else: 
-            lo = mid+1
+            lo = mid+1     # 此处必须写作hi = mid + 1, 应为mid只取了整数部分
     return lo
 
 # 二分查找,序列必须有序,ASL=(n+1)*log(n+1)/n - 1
