@@ -115,13 +115,23 @@ def young_search(li, x):
             r = r + 1
     return False
 
-f=lambda:random.randrange(0,8)  # 等概率產生[0-7]
-def generator():    # 等概率产生[1-30] 
-    total=(f()<<3)+f()-2   # [-2,61]
-    if total<=1:        
-        return generator()    
-    else:        
-        return total>>1
+# 由随机范围[2,7]得到随机范围[5,12]
+import random
+f=lambda:random.randrange(2,8)  # 等概率產生[2-7]
+
+def range_5_to_12():  # [5,12]
+    # f随机长度是6,range_5_to_12长度是8,f至少需要执行2次才能覆盖[5,12]
+    total = (f()-2)*6 + f()-2  # [0,35]
+    if 32 <=total<= 35:
+        return range_5_to_12()
+    return total//4 + 5
+
+def test(n=1000000):
+    avg = 0
+    for i in range(n):
+        avg+=range_5_to_12()
+    print(avg/n)
+test()    # 8.5
     
 # 筛选素数
 def prime(num):
