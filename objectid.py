@@ -1,7 +1,7 @@
 import binascii,calendar,datetime,hashlib,os,random,socket,struct,threading,time
 
 '''
-代码改编自pymongo的bson.objectid
+代码改编自pymongo的bson.objectid. from bson import objectid
 mongodb的每一条插入语句都会包含if "_id" not in document:document["_id"] = ObjectId()语句
 '''
 def _machine_bytes():
@@ -19,7 +19,6 @@ class ObjectId:
     def __init__(self, oid=None):
         """
         Note that the timestamp and counter fields must be stored big endian,cause they are compared byte-by-byte and we want to ensure a mostly increasing order
-        如果想用小端模式也行,则oid每一部分都得用小端模式并且oid += struct.pack("<i", ObjectId._inc)[:3]
         An ObjectId is a 12-byte unique identifier consisting of:
         4-byte value representing the seconds since the Unix epoch,
         3-byte machine identifier,
