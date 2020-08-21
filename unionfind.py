@@ -25,7 +25,7 @@ class UnionFindSet:
             return True
         return False
 
-    def find(self,i):  #路径压缩算法(查找父亲的同时减小树的深度)
+    def find(self,i):  #路径压缩算法(查找父亲的同时减小树的深度,路径上的子节点在查找完一遍后通通指向父节点)
         if self.__set[i]>=0:
             self.__set[i]=self.find(self.__set[i])
             return self.__set[i]
