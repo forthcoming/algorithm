@@ -31,12 +31,12 @@ class UnionFindSet:
             return self.__set[i]
         return i
     
-    # def find(self,i):  #迭代版路径压缩算法(查找父亲的同时减小树的深度)
-    #     j=i
-    #     while self.__set[j]>=0:
-    #         j=self.__set[j]
-    #     while self.__set[i]>=0:
-    #         k=self.__set[i]
-    #         self.__set[i]=j
-    #         i=k
-    #     return j
+    def find(self,i):   # 迭代版路径压缩算法
+        root = i
+        while self.__set[root]>=0:
+            root=self.__set[root]
+        while root!=i:
+            k=self.__set[i]
+            self.__set[i]=root
+            i=k
+        return root
