@@ -1,16 +1,17 @@
-# 排列
-def arrangement(s,left,right):
-    if left==right:
-        print(s)
-    else:
-        for j in range(left,right+1):
-            for k in range(left,j):   #去重
-                if s[k]==s[j]:
+# 去重全排列
+def full_permutation(arr,left,end):
+    if left<end:
+        for idx in range(left,end+1):
+            for j in range(left,idx):  # 去重
+                if arr[idx] == arr[j]:
                     break
-            else: 
-                s[j],s[left]=s[left],s[j]
-                arrangement(s,left+1,right)
-                s[j],s[left]=s[left],s[j]   #注意此处要还原
+            else:
+                arr[left],arr[idx] = arr[idx],arr[left]
+                full_permutation(arr,left+1,end)
+                arr[idx],arr[left] = arr[left],arr[idx]  # 注意此处要还原
+    else:
+        print(arr)
+
                 
 '''
 相邻两个位置ai < ai+1,ai称作该升序的首位
