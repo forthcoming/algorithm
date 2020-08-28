@@ -55,10 +55,10 @@ def prev_permutation(s):
     
 #当需要排列的对象可比较(如全字符or全数字对象)时,可以通过prev_permutation+next_permutation实现去重全排列permutation
 def permutation(s):  # 去重
-    print(s)
     length=len(s)
-
     right=list(s)
+    print(right)
+    
     while True:
         for i in range(length-2,-1,-1):
             if right[i]<right[i+1]:
