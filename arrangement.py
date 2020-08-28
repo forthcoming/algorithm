@@ -12,34 +12,49 @@ def full_permutation(arr,left,end):
     else:
         print(arr)
 
-                
+        
 '''
 相邻两个位置ai < ai+1,ai称作该升序的首位
 步骤:二找、一交换、一翻转
-找到排列中最后(最右)一个升序的首位位置i,x = ai
-找到排列中第i位右边最后一个比ai大的位置j,y = aj
-交换x,y
-prePermutation只需要将Ⅰ逆序并将Ⅱ,Ⅲ处<变为>即可
+prev_permutation只需要将Ⅰ逆序并将Ⅱ,Ⅲ处<变为>即可
 python中通过from itertools import permutations调用全排列
 '''
-def nextPermutation(s):  #不去重
-    length=len(s)
-    arr=list(range(length))  # Ⅰ
+def next_permutation(s):  # 不去重
+    length = len(s)
+    arr = list(range(length))  # Ⅰ
     while True:
-        print([s[i] for i in arr])
-        for i in range(length-2,-1,-1):
-            if arr[i]<arr[i+1]:   # Ⅱ
+        print([s[pos] for pos in arr])
+        for idx in range(length-1,0,-1):
+            if arr[idx-1]<arr[idx]:   # Ⅱ
+                change_idx = idx-1
+                for i in range(length-1,change_idx,-1):
+                    if arr[i]>arr[change_idx]:   # Ⅲ
+                        arr[i],arr[change_idx] = arr[change_idx],arr[i]
+                        break
+                arr[idx:] = arr[:idx-1:-1]
                 break
         else:
             break
-        for j in range(length-1,i,-1):
-            if arr[i]<arr[j]:  # Ⅲ
-                arr[i],arr[j]=arr[j],arr[i]
+
+def prev_permutation(s):
+    length = len(s)
+    arr = list(range(length-1,-1,-1))
+    while True:
+        print([s[pos] for pos in arr])
+        for idx in range(length-1,0,-1):
+            if arr[idx-1]>arr[idx]:
+                change_idx = idx-1
+                for i in range(length-1,change_idx,-1):
+                    if arr[i]<arr[change_idx]:
+                        arr[i],arr[change_idx] = arr[change_idx],arr[i]
+                        break
+                arr[idx:] = arr[:idx-1:-1]
                 break
-        arr[i+1:]=arr[:i:-1]
+        else:
+            break
     
-#当需要排列的对象可比较(如全字符or全数字对象)时,可以通过prePermutation+nextPermutation实现去重全排列permutation
-def permutation(s):  #去重
+#当需要排列的对象可比较(如全字符or全数字对象)时,可以通过prev_permutation+next_permutation实现去重全排列permutation
+def permutation(s):  # 去重
     print(s)
     length=len(s)
 
