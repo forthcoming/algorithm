@@ -78,9 +78,13 @@ class BloomFilter:
         return True
 
     def count(self): # Approximating the number of items in a Bloom filter
-        # EstimatedCount = -(NumBits * ln(1 – BitsOn / NumBits)) / NumHashes
+        '''
+        EstimatedCount = -(NumBits * ln(1 – BitsOn / NumBits)) / NumHashes
+        EstimatedCount = math.log(1-BitsOn/NumBits , 1-1/NumBits) / NumHashes       Ⅱ
+        Ⅱ推导过程如下: EstimatedCount个元素插入后某个bit位仍然为0的概率 * NumBits = NumBits - BitsOn
+        '''
         X = self.rds.bitcount(self.name)
-        return math.ceil(-self.m/self.k*math.log(1-X/self.m)) # 注意不要使用其他等价形式计算公式如math.ceil(-self.n*math.log2(1-X/self.m))
+        return math.ceil(-self.m/self.k*math.log(1-X/self.m)) 
 
     def __or__(self,other):  # Calculates the union of the two underlying bitarrays and returns a new bloom filter object
         if self.n != other.n or self.p != other.p:
