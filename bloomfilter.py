@@ -82,6 +82,7 @@ class BloomFilter:
         EstimatedCount = -(NumBits * ln(1 – BitsOn / NumBits)) / NumHashes
         EstimatedCount = math.log(1-BitsOn/NumBits , 1-1/NumBits) / NumHashes       Ⅱ
         Ⅱ推导过程如下: EstimatedCount个元素插入后某个bit位仍然为0的概率 * NumBits = NumBits - BitsOn
+        思想是先求出某个量的数学期望,再让他等于实际观测值,从而解出某些未知量
         '''
         X = self.rds.bitcount(self.name)
         return math.ceil(-self.m/self.k*math.log(1-X/self.m)) 
