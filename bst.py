@@ -227,7 +227,7 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
                     queue.append(node.right)
         return count   
     
-    def find_path(self):  #涉及root => leaf路径问题，一律是先序遍历
+    def find_path(self):  # root => leaf路径问题, 此处是先序遍历
         path=[]
         def _find_path(root):
             path.append(root.data)
