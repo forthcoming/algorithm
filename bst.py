@@ -161,9 +161,9 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
     def post_order_stack(self):
         #method 1:  推荐
         root=self.__root
-        stack=[]
-        r_child=None 
-        while root:
+        stack=[]      # 栈中的结点已经不包含左节点
+        r_child=None  # 记录最后一次打印的结点(如果结点有重复值,此方法会失效)
+        while root:   # 这一步必须单独入栈,没法跟下面的入栈代码合并
             stack.append(root)
             root=root.left
         while stack:
