@@ -327,8 +327,7 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
         #     _max_depth(self.__root,1)
         # return depth
         
-    def find_parent(self,child,sibling):   #寻找最低公共父节点
-        # 还有个思路，若child和sibling分别在当前节点的左右子树上,则当前节点即为最低公共父节点,否则递归调用其左子树或右子树
+    def find_common_parent_stack(self,child,sibling):   #寻找最低公共父节点
         root=self.__root
         stack=[]
         path=[]
@@ -364,6 +363,24 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
                     queue.append(node.left)
                 if node.right:
                    queue.append(node.right)      
+
+    def find_common_parent(self,one,another):  # one,another不一定存在,如果最低公共父节点不存在,返回None
+        def _find(root,one,another):
+            if root:
+                if root.data == one or root.data == another:
+                    if (root.data == one) and self.find(another):
+                        return root.data
+                    if (root.data == another) and self.find(one):
+                        return root.data
+                else:
+                    if (one < root.data < another) or (another < root.data < one):
+                        if self.find(one) and self.find(another):
+                            return root.data
+                    elif (one < root.data) and (another < root.data):
+                        return _find(root.left,one,another)
+                    else:
+                       return _find(root.right,one,another)
+        return _find(self.__root,one,another)
                 
 if __name__=='__main__':
     '''
