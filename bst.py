@@ -263,27 +263,27 @@ class BST:  #用于动态查找·删除·增加序列,度为0的个数=度为2�
                         node=path.pop()
                 root=root.right
     
-    def BFS_nth_depth(self,num): #可以求二叉树最大宽度
+    def find_level(self,num):  # 可以求二叉树最大宽度
+        level = -1
         if self.__root:
-            depth=1
-            queue=deque((self.__root,depth))
+            level = 1
+            queue = deque((self.__root,level))
             while queue:
-                node=queue.popleft()
+                node = queue.popleft()
                 if isinstance(node,int):
                     if queue:
-                        depth+=1
-                        queue.append(depth)
+                        level += 1
+                        queue.append(level)
                     else:
-                        return -1
+                        level = -1
                 else:
-                    if node.data==num:
-                        return depth
+                    if node.data == num:
+                        break
                     if node.left:
                         queue.append(node.left)
                     if node.right:
                         queue.append(node.right)
-        else:
-            return -1
+        return level
        
         # 低效版
         # depth=-1
