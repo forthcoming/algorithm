@@ -47,7 +47,7 @@ def part_combination1(li,m,left,right,stack=[]):  # 与part_combination相比就
         print(stack)
     else:
         for idx in range(left,right-m+2):
-            for j in range(left, idx):  # 去重(why)
+            for j in range(left, idx):  # 去重,前提是li中相同元素连在一起(why)
                 if li[idx] == li[j]:
                     break
             else:
