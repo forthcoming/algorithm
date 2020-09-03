@@ -33,32 +33,30 @@ def combination2(li):
     for i in range(1,num):
         print([li[j] for j in range(length) if i>>j&1])
 
-def part_combination(li,m,left=0,stack=[]):  # C(m,n+1)= C(m,n)+C(m-1,n)
-    n=len(li)
-    if m==0:
-        print([li[_] for _ in stack])
-    elif 0<m<=n-left:
-        stack.append(left)
-        part_combination(li,m-1,left+1)
+def part_combination(li,m,left,right,stack=[]):   # li在[left,right]范围内,C(m,n+1)= C(m,n)+C(m-1,n)
+    if 0<m<=right-left+1:
+        stack.append(li[left])
+        part_combination(li,m-1,left+1,right)
         stack.pop()
-        part_combination(li,m,left+1)
+        part_combination(li,m,left+1,right)
+    elif m==0:
+        print(stack)
 
-def part_combination1(li,m,left=0,stack=[]):  # 注意stack的位置,C(m,n),与part_combination相比就是把C(m-1,n)展开了
-    n=len(li)
-    if m>0:
-        for i in range(left,n-m+1):
-            for j in range(left,i):  # 去重
-                if li[i]==li[j]:
+def part_combination1(li,m,left,right,stack=[]):  # 与part_combination相比就是把C(m-1,n)展开了
+    if m==0:  # 注意这里的判断条件
+        print(stack)
+    else:
+        for idx in range(left,right-m+2):
+            for j in range(left, idx):  # 去重(why)
+                if li[idx] == li[j]:
                     break
             else:
-                stack.append(i)
-                part_combination1(li,m-1,i+1)
+                stack.append(li[idx])
+                part_combination1(li,m-1,idx+1,right)
                 stack.pop()
-    else:
-        print([li[i] for i in stack])
 
 # 利用位运算进行部分组合,思想参考next_permutation
-def bi_part_combination(li,m): 
+def bit_part_combination(li,m): 
     length=len(li)
     minimum=(1<<m)-1
     maximum=minimum<<(length-m)
@@ -70,4 +68,4 @@ def bi_part_combination(li,m):
 
 def combination3(li):
     for i in range(1,len(li)+1):
-        bi_part_combination(li,i)
+        bit_part_combination(li,i)
