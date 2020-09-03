@@ -57,15 +57,15 @@ def part_combination1(li,m,left=0,stack=[]):  # 注意stack的位置,C(m,n),与p
     else:
         print([li[i] for i in stack])
 
-# 利用位运算进行部分组合,思想参考nextPermutation
+# 利用位运算进行部分组合,思想参考next_permutation
 def bi_part_combination(li,m): 
     length=len(li)
     minimum=(1<<m)-1
     maximum=minimum<<(length-m)
     while minimum<=maximum:
         print([li[i] for i in range(length) if minimum>>i&1])
-        b=minimum & -minimum
-        t=minimum+b
+        b=minimum & -minimum   
+        t=minimum+b    # 从右到左将首次升序位置的0置为1,其后的1位置0
         minimum=(minimum^t)//b>>2|t
 
 def combination3(li):
