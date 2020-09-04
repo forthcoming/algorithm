@@ -74,7 +74,22 @@ class LinkedList:
             cur = cur.right
         print()
 
-    def reverseK(self,count): #分组反转链表
+    def reverseK(self,count):  # 分组反转链表
+        start = self.__head
+        cur = end = start.right
+        while cur:
+            times = count
+            L = None
+            while cur and times:
+                tmp = cur.right
+                cur.right = L
+                L = cur
+                cur = tmp
+                times -= 1
+            start.right = L
+            start = end
+            end = cur
+
 #         head=self.__head
 #         while head.right:
 #             tail=starts=head.right
@@ -90,21 +105,6 @@ class LinkedList:
 #                 tail.right=ends
 #                 head.right=starts
 #             head=tail
-
-        start=self.__head
-        end=cur=self.__head.right
-        while cur:
-            flag=count
-            L=None
-            while flag and cur:
-                tmp=cur
-                cur=cur.right
-                tmp.right=L
-                L=tmp
-                flag-=1
-            start.right=L
-            start=end
-            end=cur
 
     def init(self,node): #当且仅当链表为空时才有效
         if not self.__length:
