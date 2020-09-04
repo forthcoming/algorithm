@@ -1,31 +1,37 @@
 # 背包问题(要求背包刚好装满,组合问题)
 def knapsack(T,weight):  # T:背包容量 weight:物品的体积集合 knapsack(10,(1,8,4,3,5,2))
-    stack=[]
-    length=len(weight)
-    index=0
-    while stack or (index<length):
+    stack = []
+    index = 0
+    length = len(weight)
+    while True:
         while T and index<length:
-            if T>=weight[index]:
+            if T >= weight[index]:
                 stack.append(index)
                 T-=weight[index]
-            index+=1   
+            index+=1
         if not T:
             print([weight[idx] for idx in stack])
-        index=stack.pop()
-        T+=weight[index]
-        index+=1
+        if stack:
+            index = stack.pop()
+            T += weight[index]
+            index += 1
+        else:
+            break
 
 # 组合,背包问题的变形
 def combination1(weight): 
     stack=[]
     length=len(weight)
     index=0
-    while stack or (index<length):
+    while True:
         while index<length:
             stack.append(index)
             print([weight[idx] for idx in stack])
-            index+=1   
-        index=stack.pop()+1
+            index+=1
+        if stack:
+            index=stack.pop()+1
+        else:
+            break
         
 def combination2(li):
     length=len(li)
