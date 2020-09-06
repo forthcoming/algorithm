@@ -297,6 +297,17 @@ def bisect_right(a, x, lo=0, hi=None):
             lo = mid+1     # 此处必须写作hi = mid + 1, 应为mid只取了整数部分
     return lo
 
+def bisect_right_v1(a, x):
+    lo = 0
+    hi = len(a)-1
+    while lo<=hi:
+        mid = (lo+hi)>>1
+        if x<a[mid]:
+            hi=mid-1
+        else:
+            lo=mid+1
+    return lo
+
 def bisect_left(a, x, lo=0, hi=None):
     if lo < 0:
         raise ValueError('lo must be non-negative')
