@@ -121,9 +121,9 @@ f=lambda:random.randrange(2,8)  # 等概率產生[2-7]
 
 def range_5_to_12():  # [5,12]
     # f随机长度是6,range_5_to_12长度是8,f至少需要执行2次才能覆盖[5,12]
-    total = (f()-2)*6 + f()-2  # [0,35]
+    total = (f()-2)*6 + f()-2  # [0,35],两个f()不能合并,必须调用2次
     if 32 <=total<= 35:
-        return range_5_to_12()
+        return range_5_to_12()    # 此处可以用for循环代替
     return total//4 + 5
 
 def test(n=1000000):
