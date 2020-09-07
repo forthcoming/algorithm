@@ -2,7 +2,42 @@ from collections import deque
 import random,os
 import numpy as np
 
+# 汉诺塔
+def hanoi(n,left='left',middle='middle',right='right'):
+    if n==1:
+        print('{} --> {}'.format(left,right))
+    else:
+        hanoi(n-1,left,right,middle)
+        print('{} --> {}'.format(left,right))
+        hanoi(n-1,middle,left,right)
 
+def hanoi_stack(n):  # 类似于二叉树中序遍历
+    stack = []
+    args = [n,'left','middle','right']
+    while True:
+        number,left,middle,right = args
+        if number>1:
+            stack.append([number-1,middle,left,right])
+            stack.append([1,left,middle,right])
+            args = [number-1,left,right,middle]
+        else:
+            print('{} --> {}'.format(left,right))
+            if stack:
+                args = stack.pop()
+            else:
+                break
+                
+    # stack = [[n,'left','middle','right']]
+    # while stack:
+    #     args = stack.pop()
+    #     number,left,middle,right = args
+    #     if number>1:
+    #         stack.append([number-1,middle,left,right])
+    #         stack.append([1,left,middle,right])
+    #         stack.append([number-1,left,right,middle])
+    #     else:
+    #         print('{} --> {}'.format(left,right))
+    
 class UUID4:
     __slots__ = ('value')
 
