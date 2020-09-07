@@ -2,6 +2,20 @@ from collections import deque
 import random,os
 import numpy as np
 
+'''
+牛顿/二分法求平方根问题(幂级数展开也能求近似值)
+# Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
+x=1  # x也可以是2
+for i in range(10):
+    x=(3*x**4+10)/(4*x**3+1)
+'''
+def sqrt(t,precision=20):
+    assert t>0 and type(precision)==int and precision>0
+    border=t  # border也可以是2t等
+    for i in range(precision):
+        border=.5*(border+t/border)   # 牛顿法,收敛速度快,优于二分法
+    print(border)
+    
 # 汉诺塔
 def hanoi(n,left='left',middle='middle',right='right'):
     if n==1:
