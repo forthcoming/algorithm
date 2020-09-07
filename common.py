@@ -257,6 +257,19 @@ def power(x,y):  # y为任意整数
     else:
         return power(x*x,y>>1)
 
+def power_stack(x,y):
+    result = 1
+    if y<0:
+        x=1/x
+        y=-y
+    x_contribute = x
+    while y:
+        if y&1:
+            result*=x_contribute
+        x_contribute*=x_contribute
+        y>>=1
+    return result
+
 '''
 牛顿/二分法求平方根问题(幂级数展开也能求近似值)
 # Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
