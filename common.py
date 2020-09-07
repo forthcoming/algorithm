@@ -415,3 +415,55 @@ def triangles_lazy():
         yield L
         L.append(0)
         L = [L[i - 1] + L[i] for i in range(len(L))]
+
+        
+# 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'ddddftddjh' => '4dft2djh')
+def encryption(string):
+    result = ''
+    number = 0
+    tmp = ''
+    for char in string:
+        if char==tmp:
+            number+=1
+        else:
+            if number==1:
+                result+=tmp
+            elif number>1:
+                result += '{}{}'.format(number, tmp)
+            number = 1
+            tmp = char
+    if number == 1:
+        result += tmp
+    elif number > 1:
+        result += '{}{}'.format(number, tmp)
+    return result
+
+
+# 奇偶调序/rgb排序
+def oddEvenSort(l):
+    # i,j=0,len(l)-1
+    # while i<j:
+    #     if not l[i]&1:
+    #         l[i],l[j]=l[j],l[i]
+    #         j-=1
+    #     else:
+    #         i+=1
+
+    i=-1
+    for j in range(len(l)-1):
+        if l[j]&1:
+            i+=1
+            l[i],l[j]=l[j],l[i]
+
+def rgb(l):
+    index,start,end=0,0,len(l)-1
+    while index<end:
+        if l[index]=='r':
+            l[index],l[start]=l[start],l[index]
+            start+=1
+            index+=1
+        elif l[index]=='b':
+            l[index],l[end]=l[end],l[index]
+            end-=1
+        else:
+            index+=1
