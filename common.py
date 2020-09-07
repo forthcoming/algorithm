@@ -438,7 +438,6 @@ def encryption(string):
         result += '{}{}'.format(number, tmp)
     return result
 
-
 # 奇偶调序/rgb排序
 def oddEvenSort(l):
     # i,j=0,len(l)-1
@@ -467,3 +466,62 @@ def rgb(l):
             end-=1
         else:
             index+=1
+
+# 蛇形填数
+# def python(n=4):
+#     RIGHT,DOWN,LEFT,UP=0,1,2,3
+#     direct=RIGHT
+#     count=1
+#     x=0
+#     y=-1
+#     lists=[[0]*n for _ in range(n)]
+#     for i in range(2*n-1,0,-1):
+#         for _ in range((i+1)>>1,0,-1):
+#             if direct==RIGHT:
+#                 y+=1
+#             elif direct==DOWN:
+#                 x+=1
+#             elif direct==LEFT:
+#                 y-=1
+#             else:
+#                 x-=1
+#             lists[x][y]=count
+#             count+=1
+#         direct=(direct+1)&3
+#     for i in lists:
+#         print(i)
+
+def python(n=4):  # 更常规
+    count=1
+    x=0
+    y=0
+    lists=[[0]*n for _ in range(n)]
+    while count<=n**2:
+        while y<n and not lists[x][y]:
+            lists[x][y]=count
+            y+=1
+            count+=1
+        y-=1
+        x+=1
+        while x<n and not lists[x][y]:
+            lists[x][y]=count
+            x+=1
+            count+=1
+        x-=1
+        y-=1
+        while y>=0 and not lists[x][y]:
+            lists[x][y]=count
+            y-=1
+            count+=1
+        y+=1
+        x-=1
+        while x>=0 and not lists[x][y]:
+            lists[x][y]=count
+            x-=1
+            count+=1
+        x+=1
+        y+=1
+    for i in lists:
+        print(i)
+        
+            
