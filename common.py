@@ -395,9 +395,8 @@ def tow_sum(l,num): #前提是l有序，如果无序，可考虑先线性排序�
 
 from collections import deque
 def triangles(n):   # 杨辉三角
-    print(' '*(n-1)+'1')
-    queue=deque([0,1])
-    for k in range(1,n):
+    queue=deque([1])
+    for k in range(n):
         print(' '*(n-k-1),end='')
         queue.append(0)
         while True:
