@@ -2,19 +2,25 @@ from collections import deque
 import random,os
 import numpy as np
 
-'''
-牛顿/二分法求平方根问题(幂级数展开也能求近似值)
-# Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
-x=1  # x也可以是2
-for i in range(10):
-    x=(3*x**4+10)/(4*x**3+1)
-'''
-def sqrt(t,precision=20):
-    assert t>0 and type(precision)==int and precision>0
-    border=t  # border也可以是2t等
-    for i in range(precision):
-        border=.5*(border+t/border)   # 牛顿法,收敛速度快,优于二分法
-    print(border)
+# 杨氏矩阵查找
+# 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
+# 以右上角为例,当右上角大于要查找的数字时排除一行,当右上角大于要查找的数字时排除一列
+def young_search(li, x):
+    m = len(li) - 1
+    n = len(li[0]) - 1
+    r = 0
+    c = n
+    flag = False
+    while c >= 0 and r <= m:
+        value = li[r, c]
+        elif value > x:
+            c = c - 1
+        elif value < x:
+            r = r + 1
+        else:
+            flag = True
+            break
+    return flag
     
 # 汉诺塔
 def hanoi(n,left='left',middle='middle',right='right'):
@@ -324,23 +330,15 @@ def power_stack(x,y):
 # Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
 x=1  # x也可以是2
 for i in range(10):
-    # x-=(x**4+x-10)/(4*x**3+1)
     x=(3*x**4+10)/(4*x**3+1)
 '''
-def sqrt(t,precision=10):
+def sqrt(t,precision=20):
     assert t>0 and type(precision)==int and precision>0
     border=t  # border也可以是2t等
-    left=0
-    right=t
     for i in range(precision):
-        border=.5*(border+t/border)   #牛顿法,收敛速度快
-        mid=(left+right)/2  #二分法,收敛速度很慢
-        if mid**2>=t:
-            right=mid
-        else:
-            left=mid
-    print(f'牛顿法结果:{border}\n二分法结果:{mid}')
-
+        border=.5*(border+t/border)   # 牛顿法,收敛速度快,优于二分法
+    print(border)
+  
 def bisect_right(a, x, lo=0, hi=None):
     """
     Return the index where to insert item x in list a, assuming a is sorted.
