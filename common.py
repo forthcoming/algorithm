@@ -152,24 +152,6 @@ def zeros(n):
         step*=5
     return cnt
 
-# 杨氏矩阵查找
-# 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
-# 以右上角为例,当右上角大于要查找的数字时排除一行,当右上角大于要查找的数字时排除一列
-def young_search(li, x):
-    m = len(li) - 1
-    n = len(li[0]) - 1
-    r = 0
-    c = n
-    while c >= 0 and r <= m:
-        value = li[r, c]
-        if value == x:
-            return True
-        elif value > x:
-            c = c - 1
-        elif value < x:
-            r = r + 1
-    return False
-
 # 由随机范围[2,7]得到随机范围[5,12]
 import random
 f=lambda:random.randrange(2,8)  # 等概率產生[2-7]
