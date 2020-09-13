@@ -21,6 +21,7 @@ def eight_queen(num=8,stack=[],row=0,left=0,right=0):   # 基于位运算,效率
             
 def eight_queen(number=8):
     _ = [0]*number
+    # stack = []    # 回溯法
     def _solve(level):
         if level<number:
             for i in range(number):
@@ -28,8 +29,10 @@ def eight_queen(number=8):
                     if i==_[j] or level-j == abs(i-_[j]):  # 注意这里需要对列方向和斜方向做判断
                         break
                 else:
+                    # stack.append(i)
                     _[level] = i
                     _solve(level+1)
+                    # stack.pop()
         else:
             tmp=[0]*number
             for k in _:
