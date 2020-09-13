@@ -21,7 +21,27 @@ def eight_queen(number=8):  # 低效
                 print(tmp)
                 tmp[k]=0
             print()
-            
+
+def eight_queen(number=8):
+    _ = [0]*number
+    def _solve(level):
+        if level<8:
+            for i in range(number):
+                for j in range(level):
+                    if i==_[j] or level-j == abs(i-_[j]):  # 注意这里需要对列方向和斜方向做判断
+                        break
+                else:
+                    _[level] = i
+                    _solve(level+1)
+        else:
+            tmp=[0]*number
+            for k in _:
+                tmp[k]=1
+                print(tmp)
+                tmp[k]=0
+            print()
+    _solve(0)
+    
 # 杨氏矩阵查找
 # 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
 # 以右上角为例,当右上角大于要查找的数字时排除一行,当右上角大于要查找的数字时排除一列
