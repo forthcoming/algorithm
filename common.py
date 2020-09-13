@@ -4,7 +4,7 @@ import numpy as np
 from itertools import permutations
 
 # 八皇后问题
-def eight_queen(num=8,stack=[],row=0,left=0,right=0):   # 基于位运算，效率最高
+def eight_queen(num=8,stack=[],row=0,left=0,right=0):   # 基于位运算,效率最高
     uplimit=(1<<num)-1
     if row==uplimit:
         for i in stack:
