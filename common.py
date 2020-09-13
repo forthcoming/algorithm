@@ -4,6 +4,41 @@ import numpy as np
 from itertools import permutations
 
 # 八皇后问题
+def eight_queen(num=8,stack=[],row=0,left=0,right=0):   # 基于位运算，效率最高
+    uplimit=(1<<num)-1
+    if row==uplimit:
+        for i in stack:
+            print([int(j) for j in '{:b}'.format(i).rjust(num,'0')])
+        print()
+    else:
+        position=uplimit & ~(row|left|right)
+        while position:
+            pos=position & -position
+            position^=pos
+            stack.append(pos)
+            eight_queen(num,stack,row|pos,(left|pos)<<1,(right|pos)>>1)
+            stack.pop()
+            
+def eight_queen(number=8):
+    _ = [0]*number
+    def _solve(level):
+        if level<number:
+            for i in range(number):
+                for j in range(level):
+                    if i==_[j] or level-j == abs(i-_[j]):  # 注意这里需要对列方向和斜方向做判断
+                        break
+                else:
+                    _[level] = i
+                    _solve(level+1)
+        else:
+            tmp=[0]*number
+            for k in _:
+                tmp[k]=1
+                print(tmp)
+                tmp[k]=0
+            print()
+    _solve(0)
+    
 def eight_queen(number=8):  # 低效
     for _ in permutations(range(number)):
         for column in range(1,number):  # 第一行不用检测
@@ -21,26 +56,6 @@ def eight_queen(number=8):  # 低效
                 print(tmp)
                 tmp[k]=0
             print()
-
-def eight_queen(number=8):
-    _ = [0]*number
-    def _solve(level):
-        if level<8:
-            for i in range(number):
-                for j in range(level):
-                    if i==_[j] or level-j == abs(i-_[j]):  # 注意这里需要对列方向和斜方向做判断
-                        break
-                else:
-                    _[level] = i
-                    _solve(level+1)
-        else:
-            tmp=[0]*number
-            for k in _:
-                tmp[k]=1
-                print(tmp)
-                tmp[k]=0
-            print()
-    _solve(0)
     
 # 杨氏矩阵查找
 # 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
