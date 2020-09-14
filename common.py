@@ -610,5 +610,16 @@ def python(n=4):  # 更常规
         y+=1
     for i in lists:
         print(i)
-        
-            
+           
+# 大小写互转
+# 已知正整数a,判断a是否为2的n次方 a&(a-1)或者a-(a&-a)是否等于0
+# ^运算符满足交换律, 结合律, x^y^x=y x^x=0 x^0=x
+int main() {
+    char a='b';
+    int five=1<<5;
+    a^=five;        //指定位取反
+    if (a & five)
+        a &= ~five; //指定位取0        //01 0 00001  01 0 11010   'A' ~ 'Z'
+    else
+        a |= five;  //指定位取1        //01 1 00001  01 1 11010   'a' ~ 'z'
+}
