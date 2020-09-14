@@ -22,18 +22,19 @@ def hamming_weight_64(number):
     return number & 0x0000007F
 
 def count_leading_zeros_64(number):  # 2分查找思想
-    mid = 32
-    half_mid = 32
     zeros = 0
-    if not number:
-        zeros = 64
-    while half_mid:
-        if not(number>>mid):
-            _ = 64-mid
-            zeros+= _
-            number<<= _
-        half_mid>>=1
-        mid+=half_mid
+    if number==0:
+        zeros=64
+    else:
+        mid = 32
+        half_mid = 32
+        while half_mid:
+            if not(number>>mid):
+                _ = 64-mid
+                zeros+= _
+                number<<= _
+            half_mid>>=1
+            mid+=half_mid
     return zeros
 
 # 八皇后问题
