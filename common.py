@@ -3,6 +3,39 @@ import random,os
 import numpy as np
 from itertools import permutations
 
+def hamming_weight_64(number):
+    # number = (number & 0x5555555555555555) + ((number >> 1) & 0x5555555555555555)
+    # number = (number & 0x3333333333333333) + ((number >> 2) & 0x3333333333333333)
+    # number = (number & 0x0F0F0F0F0F0F0F0F) + ((number >> 4) & 0x0F0F0F0F0F0F0F0F)
+    # number = (number & 0x00FF00FF00FF00FF) + ((number >> 8) & 0x00FF00FF00FF00FF)
+    # number = (number & 0x0000FFFF0000FFFF) + ((number >>16) & 0x0000FFFF0000FFFF)
+    # number = (number & 0x00000000FFFFFFFF) + ((number >>32) & 0x00000000FFFFFFFF)
+    # return number
+
+    # 进阶版
+    number = number - ((number >> 1) & 0x5555555555555555)
+    number = (number & 0x3333333333333333) + ((number >> 2) & 0x3333333333333333)
+    number = (number + (number >> 4)) & 0x0F0F0F0F0F0F0F0F
+    number = number + (number >> 8)
+    number = number + (number >> 16)
+    number = number + (number >> 32)
+    return number & 0x0000007F
+
+def count_leading_zeros_64(number):  # 2分查找思想
+    mid = 32
+    half_mid = 32
+    zeros = 0
+    if not number:
+        zeros = 64
+    while half_mid:
+        if not(number>>mid):
+            _ = 64-mid
+            zeros+= _
+            number<<= _
+        half_mid>>=1
+        mid+=half_mid
+    return zeros
+
 # 八皇后问题
 # 程序一行一行地寻找可以放皇后的地方,过程带三个参数row、ld和rd,分别表示在纵列和两个对角线方向的限制条件下这一行的哪些地方不能放
 def eight_queen(num=8,stack=[],row=0,ld=0,rd=0):   # 效率最高
