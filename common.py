@@ -4,19 +4,20 @@ import numpy as np
 from itertools import permutations
 
 # 八皇后问题
-def eight_queen(num=8,stack=[],row=0,left=0,right=0):   # 基于位运算,效率最高
-    uplimit=(1<<num)-1
-    if row==uplimit:
+# 程序一行一行地寻找可以放皇后的地方,过程带三个参数row、ld和rd,分别表示在纵列和两个对角线方向的限制条件下这一行的哪些地方不能放
+def eight_queen(num=8,stack=[],row=0,ld=0,rd=0):   # 效率最高
+    uplimit = (1<<num)-1
+    if row == uplimit:
         for i in stack:
             print([int(j) for j in '{:b}'.format(i).rjust(num,'0')])
         print()
     else:
-        position=uplimit & ~(row|left|right)
+        position = uplimit & ~(row|ld|rd)  # 每个1比特位代表当前行的对应列可以放皇后
         while position:
-            pos=position & -position
-            position^=pos
+            pos = position & -position  # 取最低位1
+            position ^= pos             # 最低位1置为0
             stack.append(pos)
-            eight_queen(num,stack,row|pos,(left|pos)<<1,(right|pos)>>1)
+            eight_queen(num,stack,row|pos,(ld|pos)<<1,(rd|pos)>>1)  # 神来之笔
             stack.pop()
             
 def eight_queen(number=8):
