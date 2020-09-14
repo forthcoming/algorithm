@@ -623,3 +623,41 @@ int main() {
     else
         a |= five;  //指定位取1        //01 1 00001  01 1 11010   'a' ~ 'z'
 }
+
+# 划分最大无冲突子集问题
+def division(R):
+    length=len(R)
+    A=deque(range(length))
+    pre=length
+    groupindex=0
+    result=[0]*length
+    while A:
+        index=A.popleft()
+        if index<=pre:    # 这里必须要有等号,否则当只剩最后一个元素时会陷入死循环
+            groupindex+=1
+            clash=0
+            #clash=set()  # 对应的R=[{1,5},{0,4,5,7,8},{5,6},{4,8},{1,3,6,8},{0,1,2,6},{2,4,5},{1},{1,3,4}]
+        if clash>>index&1:
+        #if index in clash:
+            A.append(index)
+        else:
+            result[index]=groupindex
+            clash|=R[index]
+        pre=index
+    return result
+'''
+项目A = {0, 1, 2, 3, 4, 5, 6, 7, 8}
+冲突集合R = { (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
+'''
+R=[
+    0b000100010,
+    0b110110001,
+    0b001100000,
+    0b100010000,
+    0b101001010,
+    0b001000111,
+    0b000110100,
+    0b000000010,
+    0b000011010,
+]
+print(division(R))
