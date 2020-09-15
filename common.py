@@ -3,6 +3,13 @@ import random,os
 import numpy as np
 from itertools import permutations
 
+def count_bit_64(number):   # 计算某个自然数中比特位为1的个数是基数还是偶数
+    base = 1
+    for _ in range(6):
+        number ^= number >> base  # 第一次执行完,number最低位表示之前末2位1的奇偶性,第二次执行完,number最低位表示之前末4位1的奇偶性
+        base <<= 1
+    return number&1
+
 def hamming_weight_64(number):
     # number = (number & 0x5555555555555555) + ((number >> 1) & 0x5555555555555555)
     # number = (number & 0x3333333333333333) + ((number >> 2) & 0x3333333333333333)
