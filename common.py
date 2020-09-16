@@ -6,7 +6,7 @@ from itertools import permutations
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 def BFS_search():  # 也可以用邻接表实现
     method = 0
-    queue = deque([0,-1])
+    queue = deque([0,-1]) # 0代表A,-1代表第一层
     matrix =[
         [0,0,1,1,1],
         [0,0,1,1,1],
