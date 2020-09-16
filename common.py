@@ -3,6 +3,41 @@ import random,os
 import numpy as np
 from itertools import permutations
 
+# ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
+def BFS_search():  # 也可以用邻接表实现
+    method = 0
+    queue = deque([0,-1])
+    matrix =[
+        [0,0,1,1,1],
+        [0,0,1,1,1],
+        [0,0,0,1,0],
+        [1,1,1,0,1],
+        [1,1,0,1,0],
+    ]
+    length = len(matrix)
+    while True:
+        member = queue.popleft()
+        if member<=-5:  # 绝对值代表对应层数
+            break
+        elif member<0:
+            queue.append(member-1)
+        else:
+            row = matrix[member]
+            for idx in range(length):
+                if row[idx]:
+                    queue.append(idx)
+    while queue:
+        if queue.pop() == 0:
+            method+=1
+    return method
+
+matrix=np.array([[0,0,1,1,1],[0,0,1,1,1],[0,0,0,1,0],[1,1,1,0,1],[1,1,0,1,0]])
+(matrix@matrix@matrix@matrix@matrix)[0][0]   # 有向图长度为k路径数问题
+'''
+matrix[i][j]代表经过一次传球i到j所有可能次数
+(matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
+'''
+
 def catalan_number(m,n):
     '''
     背景: m+n个人排队买票,并且满足m≥n,票价为50元,其中m个人有且仅有一张50元钞票,n个人有且仅有一张100元钞票,初始时候售票窗口没有钱,问有多少种排队的情况数能够让大家都买到票
@@ -256,62 +291,6 @@ class UUID4:
     def __str__(self):
         hex = '%032x' % self.value
         return f'{hex[:8]}-{hex[8:12]}-{hex[12:16]}-{hex[16:20]}-{hex[20:]}'
-
-# ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
-class Edge:
-    def __init__(self,vertex,right=None):
-        self.vertex=vertex
-        self.right=right
-class Graph:
-    def __init__(self):
-        self.__vertices={}
-
-    def add(self,come,to):
-        if come in self.__vertices:
-            self.__vertices[come]=Edge(to,self.__vertices[come])
-        else:
-            self.__vertices[come]=Edge(to)
-
-    def BFS(self,come,to):
-        cnt=0
-        queue=deque()
-        edge=self.__vertices[come]
-        queue.append(edge)
-        queue.append('#')
-        while cnt!=4:
-            edge=queue.popleft()
-            if edge=='#':
-                cnt+=1
-                queue.append('#')
-            else:
-                while edge:
-                    vertex=edge.vertex
-                    queue.append(self.__vertices[vertex])
-                    edge=edge.right
-        method=0
-        while queue:
-            edge=queue.popleft()
-            if edge=='#':
-                break
-            else:
-                while edge:
-                    vertex=edge.vertex
-                    edge=edge.right
-                    if vertex==to:
-                        method+=1
-        return method
-# method 1
-graph=Graph()
-for edge in [('A','C'),('A','D'),('A','E'),('B','C'),('B','D'),('B','E'),('C','D'),('D','A'),('D','B'),('D','C'),('D','E'),('E','A'),('E','B'),('E','D'),]:
-    graph.add(*edge)
-graph.BFS('A','A')
-# method 2
-matrix=np.array([[0,0,1,1,1],[0,0,1,1,1],[0,0,0,1,0],[1,1,1,0,1],[1,1,0,1,0]])
-(matrix@matrix@matrix@matrix@matrix)[0][0]   # 有向图长度为k路径数问题
-'''
-matrix[i][j]代表经过一次传球i到j所有可能次数
-(matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
-'''
 
 # 统计阶乘数n末尾0的个数,实质就是统计[1,n]中含多少个因子5
 def zeros(n):
