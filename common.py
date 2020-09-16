@@ -3,6 +3,36 @@ import random,os
 import numpy as np
 from itertools import permutations
 
+def catalan_number(m,n):
+    '''
+    背景: m+n个人排队买票,并且满足m≥n,票价为50元,其中m个人有且仅有一张50元钞票,n个人有且仅有一张100元钞票,初始时候售票窗口没有钱,问有多少种排队的情况数能够让大家都买到票
+    catalan_number(m,n) = catalan_number(m-1,n) + catalan_number(m,n-1) 
+    递归出口: catalan_number(m,0) = 1; catalan_number(m,n) = 0,m<n
+    
+    通项公式catalan_number(m,n) = C(n,m+n) - C(m+1,m+n)
+    利用翻折思想,把第一个不符合要求的地方后面的排列互换,就能得到一个新的排列,且该排列跟原先不符合的排列一一对应
+    '''
+    # result = [[0] * (n+1) for _ in range(m+1)]
+    # for i in range(m+1):
+    #     for j in range(n+1):
+    #         if j==0:
+    #             result[i][j] = 1
+    #         elif i>=j:
+    #             result[i][j] = result[i-1][j] + result[i][j-1]
+    # return result[m][n]
+
+    result = [0] * (n+1)
+    result[0] = 1
+    for i in range(1,m+1):
+        for j in range(n+1):
+            if j==0:
+                result[j] = 1
+            elif i>=j:
+                result[j] += result[j-1]
+            else:
+                result[j] = 0
+    return result[-1]
+
 def count_bit_64(number):   # 计算某个自然数中比特位为1的个数是基数还是偶数
     base = 1
     for _ in range(6):
