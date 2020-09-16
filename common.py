@@ -33,6 +33,46 @@ def catalan_number(m,n):
                 result[j] = 0
     return result[-1]
 
+# 判断入栈出栈序列是否合法
+def pushpop(push,out):
+    stack = []
+    push_idx = out_idx = 0
+    while push_idx<len(push) and out_idx<len(out):
+        item = push[push_idx]
+        if item == out[out_idx]:
+            out_idx+=1
+            push_idx+=1
+        elif stack and stack[-1] == out[out_idx]:
+            stack.pop()
+            out_idx+=1
+        else:
+            stack.append(item)
+            push_idx+=1
+
+    while out_idx<len(out):
+        if not stack or stack[-1]!=out[out_idx]:
+            return False
+        out_idx+=1
+        stack.pop()
+    return True
+
+def pushpop(push,out):
+    stack=[]
+    j=0
+    for i in out:
+        if stack and stack[-1]==i:
+            stack.pop()
+            continue
+        while j<len(push):
+            j+=1
+            if push[j-1]==i:
+                break
+            else:
+                stack.append(push[j-1])
+        else:
+            return False
+    return True   # 也可以直接return not stack
+
 def count_bit_64(number):   # 计算某个自然数中比特位为1的个数是基数还是偶数
     base = 1
     for _ in range(6):
