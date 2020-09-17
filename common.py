@@ -17,7 +17,6 @@ def BFS_search():  # 也可以用邻接表实现
     length = len(matrix)
     while True:
         member = queue.popleft()
-        # print(queue)
         if member<=-5:
             break
         elif member<0:
@@ -59,12 +58,10 @@ def BFS_search():
             method+=1
     return method
 
+# matrix[i][j]代表经过一次传球i到j所有可能次数
+# (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
 matrix=np.array([[0,0,1,1,1],[0,0,1,1,1],[0,0,0,1,0],[1,1,1,0,1],[1,1,0,1,0]])
 (matrix@matrix@matrix@matrix@matrix)[0][0]   # 有向图长度为k路径数问题
-'''
-matrix[i][j]代表经过一次传球i到j所有可能次数
-(matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
-'''
 
 def catalan_number(m,n):
     '''
