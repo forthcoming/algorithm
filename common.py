@@ -780,3 +780,48 @@ R=[
     0b000011010,
 ]
 print(division(R))
+
+# 中缀表达式转后缀表达式
+def transform(exp):
+    operators={'#':-1,'(':0,'+':1,'-':1,')':2,'*':2,'/':2,'%':2}
+    precede=lambda a,b:operators[a]>=operators[b]
+    stack=['#']
+    suffix=[]
+    for each in exp:
+        if each not in operators:
+            suffix.append(each)
+        else:
+            if each=='(':
+                stack.append('(')
+            elif each==')':
+                ch=stack.pop()
+                while ch!='(':
+                    suffix.append(ch)
+                    ch=stack.pop()
+            else:
+                while precede(stack[-1],each):
+                    suffix.append(stack.pop())
+                stack.append(each)
+    while stack:
+        suffix.append(stack.pop())
+    return suffix
+
+# 计算后缀表达式
+def evaluation(suffix):
+    stack=[]
+    operators={
+        '+':lambda x,y:x+y,
+        '-':lambda x,y:x-y,
+        '*':lambda x,y:x*y,
+        '/':lambda x,y:x/y,
+        '%':lambda x,y:x%y,
+    }
+    for ch in suffix[:-1]:  # 最后一个是结束符#
+        if ch not in operators:
+            stack.append(float(ch))
+        else:
+            y=stack.pop()
+            x=stack.pop()
+            stack.append(operators[ch](x,y))
+    print(stack.pop())
+    
