@@ -72,7 +72,33 @@ class HuffmanTree:
         else:
             print(root.weight*len(password))
 
-            
+
+# 哈夫曼树应用
+'''
+0~59 E(5%)      [70,80)                         <80
+60~69 D(15%)     /   \                         /   \
+70~79 C(40%)    C  [80,90)                   <70   <90
+80~89 B(30%)        /   \         ==>        / \    /\
+90~100 A(10%)      B  [60,70)              <60  C  B  A
+                       /   \                /\
+                      D   [0,60)           E  D
+                         /   \
+                        E     A
+'''
+def level(score):
+    if score<80:
+        if score<70:
+            if score<60:
+                return 'E'
+            else:
+                return 'D'
+        else:
+            return 'C'
+    elif score<90:
+        return 'B'
+    else:
+        return 'A'
+    
 if __name__=='__main__':
     huffman=HuffmanTree()
     password=huffman.encode()
