@@ -1,8 +1,17 @@
 import random,binascii,hashlib
 
 '''
+欧拉函数:
 比n小但与n互素的正整数个数φ(n)称为n的欧拉函数
 对任一素数p,有φ(n)＝p-1,对于两个不同的素数p和q则φ(pq)=(p-1)(q-1)=φ(p)*φ(q)
+
+模运算：
+(a + b) % p = (a % p + b % p) % p
+(a - b) % p = (a % p - b % p) % p
+(a * b) % p = (a % p * b % p) % p   
+a ^ b % p = ((a % p)^b) % p
+
+模反元素: 
 二个整數a、b,必存在整數x、y使得ax + by = gcd(a,b),可由矩阵推导证明
 对a,b进行辗转相除,可得它们的最大公约数,然后收集辗转相除法中产生的式子,倒回去可以得到ax+by=gcd(a,b)的整数解,可以用来计算模反元素(也叫模逆元)
 如果gcd(a, b) = 1,則稱a和b互素(除了1以外没有其他公因子),a和b是否互素和它们是否素数无关,最小公倍数(a,b)=a*b/gcd(a,b)
@@ -10,12 +19,6 @@ ax+by=1,则a,b互素
 (ax+by)%b=1%b 
 ax%b=1 
 即求出a模b的逆元为x
-
-模运算：
-(a + b) % p = (a % p + b % p) % p
-(a - b) % p = (a % p - b % p) % p
-(a * b) % p = (a % p * b % p) % p   
-a ^ b % p = ((a % p)^b) % p
 
 欧拉定理: 
 如果两个正整数a和n互质,n的欧拉函数φ(n),则a^φ(n) % n = 1, 比如3和7互质,而7的欧拉函数φ(7)等于6,所以3的6次方729减去1,可以被7整除(728/7=104)
@@ -40,7 +43,7 @@ RSA加密解密证明:
 又因为ed = hφ(n)+1,转化为证m = m^(hφ(n)+1)%n
 现在分2种情况证明
 假设m与n互素,根据欧拉定理mφ(n) ≡ 1 (mod n)得到(mφ(n))h × m ≡ m (mod n),原式得到证明
-假设m与n不是互素,m=Dp,其中D与n互素,转化为证m = D^(hφ(n)+1) * p^(hφ(n)+1) %n
+假设m与n不是互素,m=Dp,其中D与n互素,转化为证m = D^(hφ(n)+1) * p^(hφ(n)+1) %n, ToBeDone...
 '''
 
 class Base:
@@ -168,6 +171,8 @@ class RSA(Base):
         # P,Q在初始化后应当被销毁,防止外泄
         P = self.generate_prime()
         Q = self.generate_prime()
+        while P == Q:
+            Q = self.generate_prime()
         phi=(P-1) * (Q-1)
         self.module = P * Q  # 公钥
         self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
