@@ -82,6 +82,20 @@ class Base:
         return res
 
     @staticmethod
+    def power_v1(x,y):  # y可以是任意整数
+        # 分治法降低power时间复杂度到logn,效率 x**y = pow > power_v1
+        result = 1
+        if y<0:
+            x=1/x
+            y=-y
+        while y:
+            if y&1:
+                result *= x
+            x *= x
+            y >>= 1
+        return result
+
+    @staticmethod
     def exgcditer(a, b): # Iterateive Version is faster and uses much less stack space
         x = 0
         y = 1
