@@ -138,15 +138,17 @@ class Base:
         因此对于a和b而言,他们的相对应的p,q分别是y和(x-a/b*y)
         '''
 
-    @staticmethod
-    def exgcdmat(a , b):  # 矩阵版
+   @staticmethod
+    def exgcd_mat(a , b):  # 矩阵版
         import numpy as np
+        _a,_b = a,b
         M=np.eye(2,dtype=np.int64)
         while b:
             M=M@np.array([[a//b,1],[1,0]])  # 注意不能用*
             a,b=b,a%b
-        D=M[0][0]*M[1][1]-M[1][0]*M[0][1]  # 计算行列式
-        return M[1][1]//D,-M[0][1]//D  # 两个整数分别是s = (−1)**(N+1)*m22、t = (−1)**N*m12
+        D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式
+        # 两个整数分别是x = (−1)^(N+1)*M[1][1] ; y = (−1)^N*M[0][1] ; remainder = (−1)^(N+1)* ( M[1][1] *_a − M[0][1] *_b)
+        return M[1][1]//D,-M[0][1]//D,abs(_a*M[1][1]-_b*M[0][1]) 
         '''
         a=q0*b+r1
         b=q1*r1+r2
