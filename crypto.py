@@ -118,7 +118,7 @@ class Base:
     
     @staticmethod
     def exgcd(a,b):
-        def _exgcd( a , b ):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
+        def _exgcd(a, b):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
             if b:
                 d , y , common_factor = _exgcd( b , a % b )
                 d , y = y, d - (a // b) * y
@@ -127,9 +127,7 @@ class Base:
         d,y,common_factor=_exgcd(a,b)
         while d<0:  # 此时求的是最小的模反元素,还需要将它转换成正数
             d+=b
-        while y<0:
-            y+=a
-        return d,y,common_factor
+        return d,common_factor
         '''
         和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得d, y使得a' d+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
         a' d + b' y = gcd(a' , b')
@@ -187,10 +185,10 @@ class RSA(Base):
         phi=(P-1) * (Q-1)
         self.module = P * Q  # 公钥
         self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.d,_,remainder=self.exgcditer(self.e,phi) # 私钥
+        self.d,remainder=self.exgcd(self.e,phi) # 私钥
         while remainder!=1:
             self.e+=2
-            self.d,_,remainder=self.exgcditer(self.e,phi)
+            self.d,remainder=self.exgcd(self.e,phi)
     
     @staticmethod
     def generate_prime():
