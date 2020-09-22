@@ -473,12 +473,11 @@ def power_stack(x,y):
     if y<0:
         x=1/x
         y=-y
-    x_contribute = x
     while y:
         if y&1:
-            result*=x_contribute
-        x_contribute*=x_contribute
-        y>>=1
+            result *= x
+        x *= x
+        y >>= 1
     return result
 
 '''
