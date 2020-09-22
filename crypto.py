@@ -120,24 +120,24 @@ class Base:
     def exgcd(a,b):
         def _exgcd( a , b ):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
             if b:
-                x , y , remainder = _exgcd( b , a % b )
-                x , y = y, x - (a // b) * y
-                return x, y, remainder
+                d , y , common_factor = _exgcd( b , a % b )
+                d , y = y, d - (a // b) * y
+                return d, y, common_factor
             return 1, 0, a
-        x,y,remainder=_exgcd(a,b)
-        while x<0:  # 此时求的是最小的模反元素,还需要将它转换成正数
-            x+=b
+        d,y,common_factor=_exgcd(a,b)
+        while d<0:  # 此时求的是最小的模反元素,还需要将它转换成正数
+            d+=b
         while y<0:
             y+=a
-        return x,y,remainder
+        return d,y,common_factor
         '''
-        和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得x, y使得a' x+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
-        a' x + b' y = gcd(a' , b')
+        和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得d, y使得a' d+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
+        a' d + b' y = gcd(a' , b')
         ===>
-        bx + (a - a/b *b)y = gcd(a' , b') = gcd(a, b)  //注意到这里的/是C语言中的出发
+        bd + (a - a/b *b)y = gcd(a' , b') = gcd(a, b)  //注意到这里的/是C语言中的出发
         ===>
-        ay + b(x- a/b *y) = gcd(a, b)
-        因此对于a和b而言,他们的相对应的p,q分别是y和(x-a/b*y)
+        ay + b(d- a/b *y) = gcd(a, b)
+        因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
         '''
 
     @staticmethod
@@ -159,7 +159,6 @@ class Base:
         while _b:
             M=M@np.array([[common_factor//_b,1],[1,0]])  # 注意不能用*
             common_factor,_b=_b,common_factor%_b
-
         D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式(值是1或者-1,取决于循环的次数)
         d = M[1][1] // D
         while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素
@@ -257,3 +256,4 @@ if __name__ == "__main__":
     message='avatar'
     r,s=dsa.sign(message)
     print(dsa.check(message,r,s))  # True
+    
