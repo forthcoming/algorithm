@@ -452,35 +452,6 @@ def BKDRHash(string,radix=31):
     return hash
 
 '''
-幂运算问题
-如果采用递归slow(x,y)=x*slow(x,y-1)效率会很慢
-分治法降低power时间复杂度到logn,效率 x**y = pow > power > slow
-'''
-def power(x,y):  # y为任意整数
-    if not y:
-        return 1
-    elif y==1:
-        return x
-    elif y==-1:
-        return 1/x
-    elif y&1:
-        return x*power(x,y-1)
-    else:
-        return power(x*x,y>>1)
-
-def power_stack(x,y):
-    result = 1
-    if y<0:
-        x=1/x
-        y=-y
-    while y:
-        if y&1:
-            result *= x
-        x *= x
-        y >>= 1
-    return result
-
-'''
 牛顿/二分法求平方根问题(幂级数展开也能求近似值)
 # Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
 x=1  # x也可以是2
