@@ -118,14 +118,14 @@ class Base:
     
     @staticmethod
     def exgcd(a,b):
-        def _exgcd(a, b):   # 整数a對模数b之模反元素存在的充分必要條件是a和b互質
+        def _exgcd(a, b):
             if b:
                 d , y , common_factor = _exgcd( b , a % b )
                 d , y = y, d - (a // b) * y
                 return d, y, common_factor
             return 1, 0, a
         d,y,common_factor=_exgcd(a,b)
-        while d<0:  # 此时求的是最小的模反元素,还需要将它转换成正数
+        while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
             d+=b
         return d,common_factor
         '''
@@ -159,7 +159,7 @@ class Base:
             common_factor,_b=_b,common_factor%_b
         D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式(值是1或者-1,取决于循环的次数)
         d = M[1][1] // D
-        while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素
+        while d<0: 
             d += b
         return d,common_factor
 
