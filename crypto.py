@@ -77,8 +77,8 @@ class Base:
         while b:
             if b&1:
                 res=res*a%r  # 防止数字过大导致越界
-            b>>=1 # 隐式减去了1
-            a=a*a%r
+            b>>=1    # 隐式减去了1
+            a=a*a%r  # 防止a增大
         return res
 
     @staticmethod
