@@ -98,36 +98,33 @@ class Base:
         return result
 
     @staticmethod
-    def exgcditer(a, b): # Iterateive Version is faster and uses much less stack space
+    def exgcd_iter(a, b): 
         x = 0
         y = 1
         lx = 1
         ly = 0
-        oa = a
-        ob = b
+        _b = b
         while b != 0:
             q = a // b
             a, b = b, a % b
             x, lx = lx - q * x, x
             y, ly = ly - q * y, y
         if lx < 0:
-            lx += ob
-        if ly < 0:
-            ly += oa 
-        return lx, ly, a
+            lx += _b
+        return lx, a
     
     @staticmethod
     def exgcd(a,b):
         def _exgcd(a, b):
             if b:
-                d , y , common_factor = _exgcd( b , a % b )
+                d , y , common_divisor = _exgcd( b , a % b )
                 d , y = y, d - (a // b) * y
-                return d, y, common_factor
+                return d, y, common_divisor
             return 1, 0, a
-        d,y,common_factor=_exgcd(a,b)
+        d,y,common_divisor = _exgcd(a,b)
         while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
             d+=b
-        return d,common_factor
+        return d,common_divisor
         '''
         和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得d, y使得a' d+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
         a' d + b' y = gcd(a' , b')
@@ -139,7 +136,7 @@ class Base:
         '''
 
     @staticmethod
-    def exgcd_mat(a, b):  # 矩阵版(numpy缺点是无法处理大整数)
+    def exgcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
         '''
         a=q0*b+r1
         b=q1*r1+r2
@@ -152,16 +149,16 @@ class Base:
         此处的rn即为最大公约数
         '''
         import numpy as np
-        common_factor,_b = a,b
+        _b = b
         M=np.eye(2,dtype=np.int64)
-        while _b:
-            M=M@np.array([[common_factor//_b,1],[1,0]])  # 注意不能用*
-            common_factor,_b=_b,common_factor%_b
+        while b:
+            M=M@np.array([[a//b,1],[1,0]])  # 注意不能用*
+            a,b=b,a%b
         D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式(值是1或者-1,取决于循环的次数)
         d = M[1][1] // D
         while d<0: 
-            d += b
-        return d,common_factor
+            d += _b
+        return d,a
 
     @staticmethod
     def factorization(n): # 因式分解
@@ -170,7 +167,7 @@ class Base:
             idx=0
             while not n%factor:
                 idx+=1
-                n/= factor
+                n /= factor
             if idx:
                 print(factor,idx)
             factor+=1
@@ -185,10 +182,10 @@ class RSA(Base):
         phi=(P-1) * (Q-1)
         self.module = P * Q  # 公钥
         self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.d,remainder=self.exgcd(self.e,phi) # 私钥
-        while remainder!=1:
+        self.d,common_divisor=self.exgcd(self.e,phi) # 私钥
+        while common_divisor!=1:
             self.e+=2
-            self.d,remainder=self.exgcd(self.e,phi)
+            self.d,common_divisor=self.exgcd(self.e,phi)
     
     @staticmethod
     def generate_prime():
