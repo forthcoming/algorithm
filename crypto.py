@@ -11,15 +11,17 @@ import random,binascii,hashlib
 (a * b) % p = (a % p * b % p) % p   
 a ^ b % p = ((a % p)^b) % p
 
-模反元素: 
+辗转相除法: 
 二个整數a、b,必存在整數x、y使得ax + by = gcd(a,b),可由矩阵推导证明
-对a,b进行辗转相除,可得它们的最大公约数,然后收集辗转相除法中产生的式子,倒回去可以得到ax+by=gcd(a,b)的整数解,可以用来计算模反元素(也叫模逆元)
+对a,b进行辗转相除,可得它们的最大公约数,然后收集辗转相除法中产生的式子,倒回去可以得到ax+by=gcd(a,b)的整数解
+
+模反元素(前提是互素):
+如果正整数a和b互素,那么一定可以找到整数d,使得ad-1被b整除(可用辗转相除法矩阵乘法证),如果d是a的模反元素,则d+kb都是a的模反元素,比如3和11互质,那么3的模反元素就是4
 如果gcd(a, b) = 1,則稱a和b互素(除了1以外没有其他公因子),a和b是否互素和它们是否素数无关,最小公倍数(a,b)=a*b/gcd(a,b)
 ax+by=1,则a,b互素
 (ax+by)%b=1%b 
 ax%b=1 
 即求出a模b的逆元为x
-如果两个正整数a和n互质,那么一定可以找到整数d,使得ad-1被n整除(可用辗转相除法矩阵乘法证),比如3和11互质,那么3的模反元素就是4,显然模反元素不止一个,即如果d是a的模反元素,则d+kn都是a的模反元素
 
 欧拉定理: 
 如果两个正整数a和n互质,n的欧拉函数φ(n),则a^φ(n) % n = 1, 比如3和7互质,而7的欧拉函数φ(7)等于6,所以3的6次方729减去1,可以被7整除(728/7=104)
@@ -138,37 +140,31 @@ class Base:
         因此对于a和b而言,他们的相对应的p,q分别是y和(x-a/b*y)
         '''
 
-   @staticmethod
-    def exgcd_mat(a , b):  # 矩阵版
-        import numpy as np
-        _a,_b = a,b
-        M=np.eye(2,dtype=np.int64)
-        while b:
-            M=M@np.array([[a//b,1],[1,0]])  # 注意不能用*
-            a,b=b,a%b
-        D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式
-        # 两个整数分别是x = (−1)^(N+1)*M[1][1] ; y = (−1)^N*M[0][1] ; remainder = (−1)^(N+1)* ( M[1][1] *_a − M[0][1] *_b)
-        return M[1][1]//D,-M[0][1]//D,abs(_a*M[1][1]-_b*M[0][1]) 
+    @staticmethod
+    def exgcd_mat(a, b):  # 矩阵版(numpy缺点是无法处理大整数)
         '''
         a=q0*b+r1
         b=q1*r1+r2
         r1=q2*r2+r3
         ......
-        rn-1=qn*rn+0
-        a    q0 1   q1 1          qn 1   rn
-          =       *      ...... *      * 
-        b    1  0   1  0          1  0   0
+        rn-1=qn*rn+0  
+        a    q0 1   q1 1          qn 1   rn        rn
+          =       *      ...... *      *     = M * 
+        b    1  0   1  0          1  0   0          0
+        此处的rn即为最大公约数
         '''
+        import numpy as np
+        common_factor,_b = a,b
+        M=np.eye(2,dtype=np.int64)
+        while _b:
+            M=M@np.array([[common_factor//_b,1],[1,0]])  # 注意不能用*
+            common_factor,_b=_b,common_factor%_b
 
-    @staticmethod
-    def gcd(x,y):
-        while y:
-            x,y=y,x%y
-        return x
-    # 递归版  
-    # if y:
-    #     return gcd(y,x%y)
-    # return x
+        D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式(值是1或者-1,取决于循环的次数)
+        d = M[1][1] // D
+        while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素
+            d += b
+        return d,common_factor
 
     @staticmethod
     def factorization(n): # 因式分解
