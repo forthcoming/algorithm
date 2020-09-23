@@ -1,4 +1,5 @@
 import random,binascii,hashlib
+import numpy as np
 
 '''
 欧拉函数:
@@ -96,22 +97,6 @@ class Base:
             x *= x
             y >>= 1
         return result
-
-    @staticmethod
-    def exgcd_iter(a, b): 
-        x = 0
-        y = 1
-        lx = 1
-        ly = 0
-        _b = b
-        while b != 0:
-            q = a // b
-            a, b = b, a % b
-            x, lx = lx - q * x, x
-            y, ly = ly - q * y, y
-        if lx < 0:
-            lx += _b
-        return lx, a
     
     @staticmethod
     def exgcd(a,b):  # 只有当a,b互素时算出的d才有实际意义
@@ -140,6 +125,25 @@ class Base:
         return d,common_divisor
 
     @staticmethod
+    def exgcd_iter(a, b):
+        '''
+        由ad + by = g; bd1 + a%by1 = g可以得到
+        d   0  1    d1   0  1    0  1          0  1    1
+          =       *    =       *       * ... *       *
+        y   1 -k1   y1   1 -k1   1 -k2         1 -dn   0
+        其中kn = a//b, a,b是每次迭代中的a,b,思考为啥最后一项是[1,0]
+        '''
+        _b = b
+        M=np.eye(2,dtype=np.int64)  # 初始化单位矩阵
+        while b:
+            M = M @ np.array([[0,1],[1,-(a//b)]])  # 注意-(a//b)要加括号
+            a, b = b, a % b
+        d = M[0][0]
+        if d < 0:
+            d += _b
+        return d, a
+    
+    @staticmethod
     def exgcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
         '''
         a=q0*b+r1
@@ -152,7 +156,6 @@ class Base:
         b    1  0   1  0          1  0   0          0
         此处的rn即为最大公约数
         '''
-        import numpy as np
         _b = b
         M=np.eye(2,dtype=np.int64)
         while b:
