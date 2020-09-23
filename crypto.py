@@ -127,8 +127,13 @@ class Base:
             if b:
                 d , y , common_divisor = _exgcd( b , a % b )
                 d , y = y, d - (a // b) * y
-                return d, y, common_divisor
-            return 1, 0, a
+            else:
+                '''
+                当b=0时gcd(a,b) = a ; ad + 0y = a
+                所以d=1, y可以是任意数,但一般选0,这样会使所求的模反元素最小, common_divisor=a
+                '''
+                d, y, common_divisor = 1, 0, a
+            return d,y,common_divisor
         d,y,common_divisor = _exgcd(a,b)
         while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
             d+=b
