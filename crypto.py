@@ -115,6 +115,14 @@ class Base:
     
     @staticmethod
     def exgcd(a,b):  # 只有当a,b互素时算出的d才有实际意义
+        '''
+        对于a' = b, b' = a%b = a - a / b * b而言,我们求得d, y使得a' d+b' y=gcd(a', b') 
+        ===>
+        bd + (a - a/b *b)y = gcd(a' , b') = gcd(a, b) , 注意到这里的/是C语言中的除法 
+        ===>
+        ay + b(d- a/b *y) = gcd(a, b)
+        因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
+        '''
         def _exgcd(a, b):
             if b:
                 d , y , common_divisor = _exgcd( b , a % b )
@@ -125,15 +133,6 @@ class Base:
         while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
             d+=b
         return d,common_divisor
-        '''
-        和gcd递归实现相比,发现多了下面的x,y赋值过程,可以这样思考: 对于a' =b , b' =a%b 而言，我们求得d, y使得a' d+b' y=gcd(a', b') 由于b' = a % b = a - a / b * b 那么可以得到
-        a' d + b' y = gcd(a' , b')
-        ===>
-        bd + (a - a/b *b)y = gcd(a' , b') = gcd(a, b)  //注意到这里的/是C语言中的出发
-        ===>
-        ay + b(d- a/b *y) = gcd(a, b)
-        因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
-        '''
 
     @staticmethod
     def exgcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
