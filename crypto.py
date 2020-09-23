@@ -130,7 +130,7 @@ class Base:
             else:
                 '''
                 当b=0时gcd(a,b) = a ; ad + 0y = a
-                所以d=1, y可以是任意数,但一般选0,这样会使所求的模反元素最小, common_divisor=a
+                所以d=1, y可以是任意数,但一般选0,这样会使所求的模反元素d最小, common_divisor=a
                 '''
                 d, y, common_divisor = 1, 0, a
             return d,y,common_divisor
