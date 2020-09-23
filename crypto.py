@@ -114,7 +114,7 @@ class Base:
         return lx, a
     
     @staticmethod
-    def exgcd(a,b):
+    def exgcd(a,b):  # 只有当a,b互素时算出的d才有实际意义
         def _exgcd(a, b):
             if b:
                 d , y , common_divisor = _exgcd( b , a % b )
