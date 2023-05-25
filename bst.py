@@ -240,12 +240,11 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
 
         def _find_path(root):
             path.append(root.data)
-            if root.left or root.right:
-                if root.left:
-                    _find_path(root.left)
-                if root.right:
-                    _find_path(root.right)
-            else:
+            if root.left:
+                _find_path(root.left)
+            if root.right:
+                _find_path(root.right)
+            if root.left is None and root.right is None:
                 print(path)
             path.pop()
 
@@ -274,41 +273,42 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
                 root = root.right
 
     def find_level(self, element):  # 可以求二叉树最大宽度
-        level = -1
-        if self.__root:
-            level = 1
-            queue = deque((self.__root, level))
-            while queue:
-                node = queue.popleft()
-                if isinstance(node, int):
-                    if queue:
-                        level += 1
-                        queue.append(level)
-                    else:
-                        level = -1
-                else:
-                    if node.data == element:
-                        break
-                    if node.left:
-                        queue.append(node.left)
-                    if node.right:
-                        queue.append(node.right)
-        return level
+        # level = 0
+        # if self.__root:
+        #     queue = deque((level+1, self.__root))
+        #     while queue:
+        #         node_or_level = queue.popleft()
+        #         if isinstance(node_or_level, int):
+        #             if queue:
+        #                 level = node_or_level
+        #                 queue.append(node_or_level+1)
+        #             else:
+        #                 level = 0
+        #         else:
+        #             if node_or_level.data == element:
+        #                 break
+        #             if node_or_level.left:
+        #                 queue.append(node_or_level.left)
+        #             if node_or_level.right:
+        #                 queue.append(node_or_level.right)
+        # return level
 
         # 低效版
-        # depth=-1
-        # def _find(root,level):
-        #     nonlocal depth
-        #     if root.data==element:
-        #         depth=level
-        #     else:
-        #         if root.left:
-        #             _find(root.left,level+1)
-        #         if root.right:
-        #             _find(root.right,level+1)
-        # if self.__root:
-        #     _find(self.__root,1)
-        # return depth
+        depth = -1
+
+        def _find(root, level):
+            nonlocal depth
+            if root.data == element:
+                depth = level
+            else:
+                if root.left:
+                    _find(root.left, level + 1)
+                if root.right:
+                    _find(root.right, level + 1)
+
+        if self.__root:
+            _find(self.__root, 1)
+        return depth
 
     def node_num(self, node):  # 各种遍历都可以计算结点个数
         if node:
@@ -325,18 +325,24 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
 
         return _max_depth(self.__root)
 
-        # depth=0
-        # def _max_depth(node,level):
-        #     nonlocal depth
-        #     if level>depth:
-        #         depth=level
-        #     if node.left:
-        #         _max_depth(node.left,level+1)
-        #     if node.right:
-        #         _max_depth(node.right,level+1)
-        # if self.__root:
-        #     _max_depth(self.__root,1)
-        # return depth
+    def find_common_parent(self, one, another):  # one,another不一定存在,如果最低公共父节点不存在,返回None
+        def _find(root, _one, _another):
+            if root:
+                if root.data == _one or root.data == _another:
+                    if (root.data == _one) and self.find(_another):
+                        return root.data
+                    if (root.data == _another) and self.find(_one):
+                        return root.data
+                else:
+                    if (_one < root.data < _another) or (_another < root.data < _one):
+                        if self.find(_one) and self.find(_another):
+                            return root.data
+                    elif (_one < root.data) and (_another < root.data):
+                        return _find(root.left, _one, _another)
+                    else:
+                        return _find(root.right, _one, _another)
+
+        return _find(self.__root, one, another)
 
     def find_common_parent_stack(self, child, sibling):  # 寻找最低公共父节点
         root = self.__root
@@ -375,25 +381,6 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
                 if node.right:
                     queue.append(node.right)
 
-    def find_common_parent(self, one, another):  # one,another不一定存在,如果最低公共父节点不存在,返回None
-        def _find(root, one, another):
-            if root:
-                if root.data == one or root.data == another:
-                    if (root.data == one) and self.find(another):
-                        return root.data
-                    if (root.data == another) and self.find(one):
-                        return root.data
-                else:
-                    if (one < root.data < another) or (another < root.data < one):
-                        if self.find(one) and self.find(another):
-                            return root.data
-                    elif (one < root.data) and (another < root.data):
-                        return _find(root.left, one, another)
-                    else:
-                        return _find(root.right, one, another)
-
-        return _find(self.__root, one, another)
-
 
 if __name__ == '__main__':
     '''
@@ -409,7 +396,7 @@ if __name__ == '__main__':
     tree = BST()
     for num in [49, 38, 65, 76, 13, 27, 52]:  # 时间复杂度介于O(nlogn)和O(n^2),后者出现在序列已经有序的情况下
         tree.add(num)
-    tree.in_order()
+    print(tree.find_common_parent_stack(38, 52))
 
     '''
     a,b,c,d,e,f=6,5,4,3,2,1
