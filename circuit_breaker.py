@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import traceback,time
+import time
 from functools import wraps
 
 
@@ -15,6 +15,7 @@ class FusesPolicyBase:
         """是否到熔断的临界点"""
         raise NotImplementedError("Must implement is_melting_point!")
 
+
 class FusesCountPolicy(FusesPolicyBase):  # 计数法熔断策略
     def __init__(self, threshold):
         super().__init__(threshold)
@@ -26,6 +27,7 @@ class FusesCountPolicy(FusesPolicyBase):  # 计数法熔断策略
 
     def is_open(self, fail_counter, requests):
         return self.is_melting_point(fail_counter, requests)
+
 
 class FusesPercentPolicy(FusesPolicyBase):
     def __init__(self, threshold):
@@ -42,6 +44,7 @@ class FusesPercentPolicy(FusesPolicyBase):
         if requests[-1] == 0 and self.is_melting_point(fail_counter, requests):
             return True
         return False
+
 
 class FusesState:
     def __init__(self, fuses, name):
@@ -61,27 +64,31 @@ class FusesState:
     def error(self):
         raise NotImplementedError("Must implement error!")
 
+
 class FusesClosedState(FusesState):
     """熔断关闭状态"""
+
     def __init__(self, fuses, name='closed'):
         super().__init__(fuses, name)
         self._fuses.reset_fail_counter()
 
     def do_fallback(self):
         if self._fuses.is_open():
-            self._fuses.open()   # 改为熔断打开状态
+            self._fuses.open()  # 改为熔断打开状态
             return True
         return False
 
     def success(self):
-        self._fuses.reset_fail_counter()      # self._fail_counter = 0
+        self._fuses.reset_fail_counter()  # self._fail_counter = 0
         self._fuses.append_success_request()  # FusesPercentPolicy用
 
     def error(self):
-        self._fuses.increase_fail_counter()   # self._fail_counter += 1
+        self._fuses.increase_fail_counter()  # self._fail_counter += 1
+
 
 class FusesOpenState(FusesState):
     """熔断打开状态"""
+
     def __init__(self, fuses, name='open'):
         super().__init__(fuses, name)
         self.last_time = time.time() + self._fuses.timeout
@@ -98,8 +105,10 @@ class FusesOpenState(FusesState):
     def error(self):
         pass
 
+
 class FusesHalfOpenState(FusesState):
     """`熔断半闭合状态`"""
+
     def __init__(self, fuses, name='half_open'):
         super().__init__(fuses, name)
 
@@ -112,11 +121,12 @@ class FusesHalfOpenState(FusesState):
         self._fuses.reset_fail_counter()
         self._fuses.append_success_request()
         if not self._fuses.is_melting_point():
-            self._fuses.close()               # 改为熔断关闭状态
+            self._fuses.close()  # 改为熔断关闭状态
 
     def error(self):
-        self._fuses.increase_fail_counter()   # 这一步好像没用
-        self._fuses.open()                    # 改为熔断打开状态
+        self._fuses.increase_fail_counter()  # 这一步好像没用
+        self._fuses.open()  # 改为熔断打开状态
+
 
 class Fuses:
     def __init__(self, name, threshold, timeout, policy=0, enable_sms=False):
@@ -196,7 +206,9 @@ class Fuses:
     def on_error(self):
         self._cur_state.error()
 
-def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=None, fallback=None, policy=0, enable_sms=True):
+
+def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=None, fallback=None, policy=0,
+                    enable_sms=True):
     '''
     连续失败达到threshold次才会由默认的FusesClosedState态转为FusesOpenState态,前提是熔断函数f可以抛出异常
     FusesOpenState态会维持一段timeout时长,FusesOpenState态下不会再调用熔断函数f,只会调用fall_back
@@ -217,8 +229,9 @@ def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=
         return ret
 
     def circuit_breaker_decorator(f):
-        name = '{}:{}'.format(f.__module__,f.__name__)
+        name = '{}:{}'.format(f.__module__, f.__name__)
         fuse = Fuses(name, threshold, timeout, policy, enable_sms)  # 装饰f时会执行,初始化一次
+
         @wraps(f)
         def _wrapper(*args, **kwargs):  # 装饰类成员函数时第一个参数是self,此后可通过self调用类的其他属性和方法
             if fuse.do_fallback():
@@ -230,15 +243,19 @@ def circuit_breaker(threshold=5, timeout=60, is_member_func=True, default_value=
                 except Exception as e:
                     fuse.on_error()
                     ret = fall_back(*args, **kwargs)  # FusesClosedState态f抛异常时执行
-                    print('{} circuit_breaker error,{}'.format(name,e))
+                    print('{} circuit_breaker error,{}'.format(name, e))
             return ret
+
         return _wrapper
+
     return circuit_breaker_decorator
 
+
 @circuit_breaker(timeout=6)
-def test(idx):
-    print(idx)
-    1/0
+def test(index):
+    print(index)
+    1 / 0
+
 
 if __name__ == '__main__':
     for idx in range(50):
