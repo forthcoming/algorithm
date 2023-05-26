@@ -8,7 +8,7 @@ def full_permutation(arr, left, end):
             else:
                 arr[left], arr[idx] = arr[idx], arr[left]
                 full_permutation(arr, left + 1, end)
-                arr[idx], arr[left] = arr[left], arr[idx]  # 注意此处要还原
+                arr[left], arr[idx] = arr[idx], arr[left]  # 注意此处要还原
     else:
         print(arr)
 
@@ -89,4 +89,3 @@ def permutation(s):  # 去重
                 break
         left[i + 1:] = left[:i:-1]
         print(left)
-
