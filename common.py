@@ -847,3 +847,17 @@ def evaluation(suffix):
             x = stack.pop()
             stack.append(operators[ch](x, y))
     print(stack.pop())
+
+
+def max_product_subarray(arr=(2, 3, -2, 4)):  # 最大乘积子序列
+    if arr is None:
+        return 0
+    res = cur_max = cur_min = arr[0]
+    for element in arr[1:]:
+        cur_max *= element
+        cur_min *= element
+        cur_min = min(cur_max, cur_min, element)
+        cur_max = max(cur_max, cur_min, element)
+        if cur_max > res:
+            res = cur_max
+    return res
