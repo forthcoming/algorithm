@@ -129,28 +129,26 @@ def LCS(x='abcbdab', y='bdcaba'):
     print(dp)
 
 
-def LIS(li=[1, -1, 2, -3, 4, -5, 6, -7]):  # O(n^2),还可以将li排序得到新的数组与原数组构成LCS问题
-    if not li:
-        return -1
-    maximum = 1
-    length = len(li)
+# 最长递增子序列
+def longest_incr_seq(arr=[1, -1, 2, -3, 4, -5, 6, -7]):  # O(n^2),还可以将li排序得到新的数组与原数组构成LCS问题
+    if not arr:
+        return 0
+    length = len(arr)
     dp = [1] * length
     path = [-1] * length
     for idx in range(1, length):
         for _idx in range(idx):
-            if li[idx] >= li[_idx] and dp[idx] < dp[_idx] + 1:
+            if arr[idx] >= arr[_idx] and dp[idx] < dp[_idx] + 1:
                 dp[idx] = dp[_idx] + 1
                 path[idx] = _idx
-        if maximum < dp[idx]:
-            maximum = dp[idx]
 
     for idx in range(length):
-        result = [li[idx]]
+        result = [arr[idx]]
         while path[idx] != -1:
             idx = path[idx]
-            result.append(li[idx])
+            result.append(arr[idx])
         print(result[::-1])
-    return maximum
+    print(dp)
 
 
 '''
@@ -201,3 +199,6 @@ def josephus(n, k):
     for idx in range(2, n + 1):
         dp = (dp + k) % idx  # 还能优化
     return dp
+
+
+longest_incr_seq()
