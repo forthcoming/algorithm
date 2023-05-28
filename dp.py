@@ -44,6 +44,19 @@ def coin_combination(n):
     print(dp[n])
 
 
+# 给定币值n,找出由coins=[1,3,5]硬币的最小组合数
+def coin_number(n):
+    coins = [1, 2, 5]
+    dp = [0] * (n + 1)
+    for sub_amount in range(1, n + 1):
+        _ = float("inf")
+        for coin in coins:
+            if sub_amount >= coin:
+                _ = min(_, dp[sub_amount - coin])
+        dp[sub_amount] = _+1
+    print(dp)
+
+
 '''
 跳台阶问题
 一个台阶总共有n级,如果一次可以跳1级,也可以跳2级,求总共有多少跳法
@@ -58,15 +71,6 @@ f(3)=4
 ......
 f(n)=f(n-1)+f(n-2)+f(n-3) n > 3
 '''
-
-
-# 给定币值n,找出由coins=[1,3,5]硬币的最小组合数
-def coin_number(n):
-    coins = [1, 3, 5]
-    dp = [0, 1, 2, 1, 2, 1]
-    for idx in range(6, n + 1):
-        dp.append(min(dp[idx - 1], dp[idx - 2], dp[idx - 5]) + 1)
-    print(dp[-1])
 
 
 def LCS(x='abcbdab', y='bdcaba'):  # O(m*n)
@@ -140,7 +144,7 @@ def longest_incr_seq(arr=[1, -1, 2, -3, 4, -5, 6, -7]):  # O(n^2),还可以将ar
         for _idx in range(idx):
             if arr[idx] >= arr[_idx] and dp[idx] < dp[_idx] + 1:
                 dp[idx] = dp[_idx] + 1
-                path[idx] = _idx   # 经典,记录每一个dp[i]前面的第一个元素下标
+                path[idx] = _idx  # 经典,记录每一个dp[i]前面的第一个元素下标
 
     for idx in range(length):
         result = [arr[idx]]
@@ -201,4 +205,4 @@ def josephus(n, k):
     return dp
 
 
-longest_incr_seq()
+coin_number(7)
