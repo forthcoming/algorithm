@@ -130,17 +130,17 @@ def LCS(x='abcbdab', y='bdcaba'):
 
 
 # 最长递增子序列
-def longest_incr_seq(arr=[1, -1, 2, -3, 4, -5, 6, -7]):  # O(n^2),还可以将li排序得到新的数组与原数组构成LCS问题
+def longest_incr_seq(arr=[1, -1, 2, -3, 4, -5, 6, -7]):  # O(n^2),还可以将arr排序得到新的数组与原数组构成LCS问题
     if not arr:
         return 0
     length = len(arr)
-    dp = [1] * length
+    dp = [1] * length  # dp[i]意思是数组0到i之中最长递增子序列
     path = [-1] * length
     for idx in range(1, length):
         for _idx in range(idx):
             if arr[idx] >= arr[_idx] and dp[idx] < dp[_idx] + 1:
                 dp[idx] = dp[_idx] + 1
-                path[idx] = _idx
+                path[idx] = _idx   # 经典,记录每一个dp[i]前面的第一个元素下标
 
     for idx in range(length):
         result = [arr[idx]]
