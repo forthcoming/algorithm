@@ -42,6 +42,35 @@ class Heap:
     def traverse(self):
         print(self.__heap[:self.length])
 
+    def __shift_up(self, ends):
+        root = self.__heap[ends]
+        senior = self.parent(ends)
+        while senior != -1 and self.key(self.__heap[senior], root):
+            self.__heap[ends] = self.__heap[senior]
+            ends = senior
+            senior = self.parent(ends)
+        self.__heap[ends] = root
+
+    def __shift_down(self, starts, ends):  # 为了排序而多加了一个ends参数
+        root = self.__heap[starts]
+        left = self.left_child(starts)
+        while left != -1 and left <= ends:
+            if left < ends and self.key(self.__heap[left], self.__heap[left + 1]):
+                left += 1
+            if self.key(root, self.__heap[left]):
+                self.__heap[starts] = self.__heap[left]
+                starts = left
+                left = self.left_child(starts)
+            else:
+                break
+        self.__heap[starts] = root
+
+    def build_heap(self):  # 建堆的时间复杂度是O(n),重要!
+        # for ends in range(0, self.length):  # 自上而下构建堆
+        #     self.__shift_up(ends)
+        for starts in range((self.length >> 1) - 1, -1, -1):  # 自下而上构建堆,只需要从非叶子节点开始构建
+            self.__shift_down(starts, self.length - 1)
+
     def pop(self, pos=0):  # pop,push原则是不能使__heap元素移位,时间复杂度是O(logn)
         assert self.length and 0 <= pos < self.length
         self.length -= 1
@@ -61,35 +90,6 @@ class Heap:
         except IndexError:
             self.__heap.append(value)
         self.__shift_up(self.length - 1)
-
-    def __shift_down(self, starts, ends):  # 为了排序而多加了一个ends参数
-        root = self.__heap[starts]
-        left = self.left_child(starts)
-        while left != -1 and left <= ends:
-            if left < ends and self.key(self.__heap[left], self.__heap[left + 1]):
-                left += 1
-            if self.key(root, self.__heap[left]):
-                self.__heap[starts] = self.__heap[left]
-                starts = left
-                left = self.left_child(starts)
-            else:
-                break
-        self.__heap[starts] = root
-
-    def __shift_up(self, ends):
-        root = self.__heap[ends]
-        senior = self.parent(ends)
-        while senior != -1 and self.key(self.__heap[senior], root):
-            self.__heap[ends] = self.__heap[senior]
-            ends = senior
-            senior = self.parent(ends)
-        self.__heap[ends] = root
-
-    def build_heap(self):  # 建堆的时间复杂度是O(n),重要!
-        # for ends in range(0, self.length):  # 自上而下构建堆
-        #     self.__shift_up(ends)
-        for starts in range((self.length >> 1) - 1, -1, -1):  # 自下而上构建堆,只需要从非叶子节点开始构建
-            self.__shift_down(starts, self.length - 1)
 
     def sort(self):  # 堆排序不稳定
         self.build_heap()
