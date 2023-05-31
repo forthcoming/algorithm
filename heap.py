@@ -17,20 +17,19 @@ class Heap:
         self.build_heap()  # 构建过程时间复杂度是O(n)
 
     def is_leaf(self, pos):
-        # return (self.length >> 1) - 1 < pos < self.length
-        return (pos << 1) + 1 >= self.length  # 叶子结点无左孩子
+        return (self.length >> 1) - 1 < pos < self.length  # 叶子结点无左孩子
 
     def left_child(self, pos):  # 不存在则返回-1
-        pos = (pos << 1) + 1
-        if 0 < pos < self.length:
-            return pos
+        l_child_pos = (pos << 1) + 1
+        if 0 < l_child_pos < self.length:
+            return l_child_pos
         else:
             return -1
 
     def right_child(self, pos):
-        pos = (pos << 1) + 2
-        if 0 < pos < self.length:
-            return pos
+        r_child_pos = (pos << 1) + 2
+        if 0 < r_child_pos < self.length:
+            return r_child_pos
         else:
             return -1
 
