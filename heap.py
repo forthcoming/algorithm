@@ -2,13 +2,6 @@
 import math
 
 
-def count_left_child(size):  # 计算根节点的左孩子个数
-    height = int(math.log2(size + 1))
-    X = size + 1 - 2 ** height
-    X = min(X, 2 ** (height - 1))
-    return X + 2 ** (height - 1) - 1
-
-
 class Heap:
     def __init__(self, arr, key=lambda x, y: x > y):  # 默认构建小顶堆
         self.__heap = list(arr)
@@ -97,13 +90,20 @@ class Heap:
             self.__heap[0], self.__heap[ends] = self.__heap[ends], self.__heap[0]
             self.__shift_down(0, ends - 1)
 
+    @staticmethod
+    def count_left_child(size):  # 计算根节点的左孩子个数
+        height = int(math.log2(size + 1))
+        X = size + 1 - 2 ** height
+        X = min(X, 2 ** (height - 1))
+        return X + 2 ** (height - 1) - 1
+
     def create_complete_search_tree(self):  # 跟堆相关的一道题目(不属于堆结构)
         self.sort()
         tree = [None] * self.length
 
         def __solve(root, start, size):
             if size:
-                l_children = count_left_child(size)
+                l_children = Heap.count_left_child(size)
                 tree[root] = self.__heap[start + l_children]
                 left = (root << 1) + 1
                 right = left + 1
