@@ -36,14 +36,14 @@ class Heap:
     def traverse(self):
         print(self.__heap[:self.length])
 
-    def __shift_up(self, ends):
-        root = self.__heap[ends]
-        senior = self.parent(ends)
+    def __shift_up(self, end):
+        root = self.__heap[end]
+        senior = self.parent(end)
         while senior != -1 and self.key(self.__heap[senior], root):
-            self.__heap[ends] = self.__heap[senior]
-            ends = senior
-            senior = self.parent(ends)
-        self.__heap[ends] = root
+            self.__heap[end] = self.__heap[senior]
+            end = senior
+            senior = self.parent(end)
+        self.__heap[end] = root
 
     def __shift_down(self, start):
         end = self.length - 1
@@ -76,10 +76,18 @@ class Heap:
         self.__heap[start] = root
 
     def build_heap(self):  # 建堆的时间复杂度是O(n),重要!
-        # for ends in range(0, self.length):  # 自上而下构建堆
-        #     self.__shift_up(ends)
-        for starts in range((self.length >> 1) - 1, -1, -1):  # 自下而上构建堆,只需要从非叶子节点开始构建
-            self.__shift_down(starts)
+        # for end in range(0, self.length):  # 自上而下构建堆
+        #     self.__shift_up(end)
+        for start in range((self.length >> 1) - 1, -1, -1):  # 自下而上构建堆,只需要从非叶子节点开始构建
+            self.__shift_down(start)
+
+    def push(self, value):  # 时间复杂度是O(logn)
+        self.length += 1
+        try:
+            self.__heap[self.length - 1] = value
+        except IndexError:
+            self.__heap.append(value)
+        self.__shift_up(self.length - 1)
 
     def pop(self, pos=0):  # pop,push原则是不能使__heap元素移位,时间复杂度是O(logn)
         assert 0 <= pos < self.length
@@ -93,19 +101,11 @@ class Heap:
             self.__shift_up(pos)
         return value
 
-    def push(self, value):  # 时间复杂度是O(logn)
-        self.length += 1
-        try:
-            self.__heap[self.length - 1] = value
-        except IndexError:
-            self.__heap.append(value)
-        self.__shift_up(self.length - 1)
-
     def sort(self):  # 堆排序不稳定
         self.build_heap()
-        for ends in range(self.length - 1, 0, -1):
-            self.__heap[0], self.__heap[ends] = self.__heap[ends], self.__heap[0]
-            self.__shift_down_sort(0, ends - 1)
+        for end in range(self.length - 1, 0, -1):
+            self.__heap[0], self.__heap[end] = self.__heap[end], self.__heap[0]
+            self.__shift_down_sort(0, end - 1)
 
     @staticmethod
     def count_left_child(size):  # 计算根节点的左孩子个数
