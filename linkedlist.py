@@ -16,33 +16,32 @@ class LinkedList:
     def __len__(self):
         return self.__length
 
-    def unshift(self, node):
-        node.right = self.__head.right
-        self.__head.right = node
-        self.__length += 1
+    def traverse(self):
+        cur = self.__head.right
+        while cur:
+            print(cur, end="\t")
+            cur = cur.right
+        print()
 
-    def reverse(self):
-        L = None
+    def reverse(self):  # 反转链表
+        head = None
         cur = self.__head.right
         while cur:
             tmp = cur
             cur = cur.right  # 注意他跟上一句的顺序
-            tmp.right = L
-            L = tmp
-        self.__head.right = L
+            tmp.right = head
+            head = tmp
+        self.__head.right = head
 
     def recur_reverse(self):
-        def _reverse(head):
-            L = None
-            if head:
-                if head.right:
-                    last = head.right
-                    L = _reverse(last)
-                    last.right = head
-                    head.right = None
-                else:
-                    L = head
-            return L
+        def _reverse(root):
+            if root and root.right:
+                rev_linked_list = _reverse(root.right)
+                root.right.right = root
+                root.right = None  # 不要忘记
+                return rev_linked_list
+            else:
+                return root
 
         self.__head.right = _reverse(self.__head.right)
 
@@ -57,24 +56,15 @@ class LinkedList:
         else:
             return False
 
-    def insert(self, node, num):
-        if 1 <= num <= self.__length:
-            num -= 1
-            cur = self.__head.right
-            while num:
-                cur = cur.right
-                num -= 1
-            node.right = cur.right
-            cur.right = node
-            self.__length += 1
-            return True
-
-    def traverse(self):
-        cur = self.__head.right
-        while cur:
-            print(cur)
+    def insert(self, node, pos=1):
+        assert 0 <= pos <= self.__length
+        cur = self.__head
+        while pos:
             cur = cur.right
-        print()
+            pos -= 1
+        node.right = cur.right
+        cur.right = node
+        self.__length += 1
 
     def reverse_k(self, count):  # 分组反转链表
         start = self.__head
@@ -115,14 +105,14 @@ class LinkedList:
                 node = node.right
                 self.__length += 1
 
-    def randinit(self, ranges=99, num=10):
+    def rand_init(self, ranges=99, num=10):
         from random import randrange
         from functools import reduce
-        def concat(node1, node2):
+        def _concat(node1, node2):
             node2.right = node1
             return node2
 
-        self.__head.right = reduce(concat, [Node(randrange(0, ranges)) for i in range(num)])
+        self.__head.right = reduce(_concat, [Node(randrange(0, ranges)) for _ in range(num)])
         self.__length += num
 
     @staticmethod
@@ -166,7 +156,7 @@ class LinkedList:
         starts.right = L if L else mid
 
     @staticmethod
-    def mergeSort(starts, ends=None):
+    def merge_sort(starts, ends=None):
         if starts.right != ends:  # 至少包含了两个节点
             pre = Node(None, starts)
             mid = cur = starts
@@ -231,6 +221,6 @@ if __name__ == '__main__':
     Lc.traverse()
 
     Ld = LinkedList()
-    Ld.randinit(9, 11)
+    Ld.rand_init(9, 11)
     Ld.quick_sort(Ld._LinkedList__head.right)
     Ld.traverse()
