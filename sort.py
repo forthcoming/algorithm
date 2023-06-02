@@ -1,3 +1,6 @@
+import random
+
+
 # 选择排序(非稳定排序)
 def select_sort(arr):
     length = len(arr)
@@ -47,12 +50,50 @@ def insert_sort(arr):
             i -= 1
         arr[i] = tmp
 
-    # for i in range(1, len(arr)):  # 效率较低
-    #     for j in range(i, 0, -1):
-    #         if arr[j] < arr[j - 1]:
-    #             arr[j], arr[j - 1] = arr[j - 1], arr[j]
-    #         else:
-    #             break
+
+# 位排序(仅适用于不重复的自然数)
+def bit_sort(arr):
+    import math
+    bitmap = 0
+    for each in arr:
+        bitmap |= 1 << each
+
+    while bitmap:  # 适用于数的范围较零散
+        t = math.log2(bitmap & -bitmap)  # x&-x返回最低位1
+        print(int(t), end=' ')
+        bitmap &= bitmap - 1  # x&=x-1清除最低位1
+
+    # index = -1  # 适用于数的范围较稠密
+    # while bitmap:
+    #     index += 1
+    #     if bitmap & 1:
+    #         print(index, end=' ')
+    #     bitmap >>= 1
+
+
+# 希尔排序
+def shell_sort(arr):
+    length = len(arr)
+    step = length >> 1
+    # while step:
+    #     for i in range(step):  # 遍历每个分组
+    #         for j in range(i + step, length, step):
+    #             tmp = arr[j]
+    #             while j >= step and tmp < arr[j - step]:
+    #                 arr[j] = arr[j - step]
+    #                 j -= step
+    #             arr[j] = tmp
+    #     step >>= 1
+
+    while step:  # 效率与上面一样,只不过从不同的方向思考问题
+        for i in range(step, length):  # 遍历每一个数组元素,然后再跟其对应的分组元素做比较
+            index = i - step
+            tmp = arr[i]
+            while index >= 0 and arr[index] > tmp:
+                arr[index + step] = arr[index]
+                index -= step
+            arr[index + step] = tmp
+        step >>= 1
 
 
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
@@ -168,64 +209,77 @@ def quick_sort(arr, left, right):  # 包含left,right边界
     #     quick_sort(arr, start, right)
 
 
-# 希尔排序
-def shell_sort(arr):
-    length = len(arr)
-    step = length >> 1
-    # while step:
-    #     for i in range(step):  # 遍历每个分组
-    #         for j in range(i + step, length, step):
-    #             tmp = arr[j]
-    #             while j >= step and tmp < arr[j - step]:
-    #                 arr[j] = arr[j - step]
-    #                 j -= step
-    #             arr[j] = tmp
-    #     step >>= 1
+class MergeSort:
+    # 归并排序(稳定排序,时间复杂度永远是nlogn,跟数组的数据无关)
+    def __init__(self, li):
+        self.li = li  # 待排序数组
+        self.inversion_number = 0  # 逆序数,针对recursive_sort方法有效
 
-    while step:  # 效率与上面一样,只不过从不同的方向思考问题
-        for i in range(step, length):  # 遍历每一个数组元素,然后再跟其对应的分组元素做比较
-            index = i - step
-            tmp = arr[i]
-            while index >= 0 and arr[index] > tmp:
-                arr[index + step] = arr[index]
-                index -= step
-            arr[index + step] = tmp
-        step >>= 1
+    def merge(self, left, mid, right):  # 包含[left,mid],[mid+1,right]边界
+        result = []
+        p1 = left
+        p2 = mid + 1
+        while p1 <= mid and p2 <= right:
+            if self.li[p1] < self.li[p2]:
+                result.append(self.li[p1])
+                p1 += 1
+            else:
+                result.append(self.li[p2])
+                p2 += 1
+                self.inversion_number += mid - p1 + 1  # 逆序数统计不管两数相等的情况
+        if p1 <= mid:
+            p2 = right - mid + p1
+            self.li[p2:right + 1] = self.li[p1:mid + 1]
+        self.li[left:p2] = result
 
+    def recursive_sort(self, left, right):  # 递归版归并排序,包含left,right边界
+        if left < right:
+            mid = (left + right) >> 1
+            self.recursive_sort(left, mid)
+            self.recursive_sort(mid + 1, right)
+            self.merge(left, mid, right)
 
-# 位排序(仅适用于不重复的自然数)
-def bit_sort(arr):
-    import math
-    bitmap = 0
-    for each in arr:
-        bitmap |= 1 << each
+    def reverse(self, left, right):  # [::-1] or list.reverse
+        while left < right:
+            self.li[left], self.li[right] = self.li[right], self.li[left]
+            left += 1
+            right -= 1
 
-    while bitmap:  # 适用于数的范围较零散
-        t = math.log2(bitmap & -bitmap)  # x&-x返回最低位1
-        print(int(t), end=' ')
-        bitmap &= bitmap - 1  # x&=x-1清除最低位1
+    def inplace_merge(self, left, mid, right):  # 包含[left,mid],[mid+1,right]边界,效率低于merge
+        mid += 1
+        while left < mid <= right:
+            p = mid
+            while left < mid and self.li[left] <= self.li[mid]:
+                left += 1
+            while mid <= right and self.li[mid] <= self.li[left]:
+                mid += 1
+            self.reverse(left, p - 1)
+            self.reverse(p, mid - 1)
+            self.reverse(left, mid - 1)
+            left += mid - p
 
-    # index = -1  # 适用于数的范围较稠密
-    # while bitmap:
-    #     index += 1
-    #     if bitmap & 1:
-    #         print(index, end=' ')
-    #     bitmap >>= 1
-
-
-# 地精排序
-def gnome_sort(arr):
-    length = len(arr)
-    i = 1
-    while i != length:
-        if i and arr[i] < arr[i - 1]:
-            arr[i], arr[i - 1] = arr[i - 1], arr[i]
-            i -= 1
-        else:
-            i += 1
+    def iter_sort(self):  # 迭代版归并排序
+        length = len(self.li)
+        init_mid = 0
+        while init_mid < length - 1:
+            step = (init_mid + 1) << 1
+            for mid in range(init_mid, length, step):
+                left = mid - (step >> 1) + 1
+                right = mid + (step >> 1)  # right=left+step-1
+                if right >= length:
+                    right = length - 1
+                self.inplace_merge(left, mid, right)
+            init_mid = (init_mid << 1) + 1
 
 
 if __name__ == "__main__":
     array = [3, 1, 2, 5, 4, 7, 0, 9, 8]
-    insert_sort(array)
+    shell_sort(array)
     print(array)
+
+    array = list(range(10))
+    random.shuffle(array)
+    print(array)  # [0, 8, 4, 5, 7, 6, 3, 2, 1, 9]
+    res = MergeSort(array)
+    res.recursive_sort(0, len(array) - 1)
+    print(array, res.inversion_number)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 23
