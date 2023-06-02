@@ -1,3 +1,60 @@
+# 选择排序(非稳定排序)
+def select_sort(arr):
+    length = len(arr)
+    for i in range(length - 1):
+        min_index = i
+        for j in range(i + 1, length):
+            if arr[min_index] > arr[j]:
+                min_index = j
+        arr[min_index], arr[i] = arr[i], arr[min_index]
+
+    # left = 0
+    # right = len(arr) - 1
+    # while left < right:
+    #     small = big = left
+    #     for i in range(left + 1, right+1):
+    #         if arr[i] > arr[big]:
+    #             big = i
+    #         elif arr[i] < arr[small]:
+    #             small = i
+    #     arr[left], arr[small] = arr[small], arr[left]
+    #     if big == left:  # 注意判断
+    #         big = small
+    #     arr[right], arr[big] = arr[big], arr[right]
+    #     left += 1
+    #     right -= 1
+
+
+# 冒泡排序
+def bubble_sort(arr):  # 针对此类[random.randrange(0,1000,3) for i in range(2000)]+list(range(3000))大数基本靠右的效率更高
+    last_change = len(arr) - 1
+    flag = True
+    while flag:
+        flag = False
+        for i in range(last_change):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                last_change = i
+                flag = True
+
+
+# 插入排序
+def insert_sort(arr):
+    for i in range(1, len(arr)):
+        tmp = arr[i]
+        while i and tmp < arr[i - 1]:
+            arr[i] = arr[i - 1]  # 避免相邻两项两两交换
+            i -= 1
+        arr[i] = tmp
+
+    # for i in range(1, len(arr)):  # 效率较低
+    #     for j in range(i, 0, -1):
+    #         if arr[j] < arr[j - 1]:
+    #             arr[j], arr[j - 1] = arr[j - 1], arr[j]
+    #         else:
+    #             break
+
+
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
 def radix_sort(arr, radix=10):
     num = 1 << radix
@@ -156,28 +213,6 @@ def bit_sort(arr):
     #     bitmap >>= 1
 
 
-# 冒泡排序
-def bubble_sort(arr):  # 针对此类[random.randrange(0,1000,3) for i in range(2000)]+list(range(3000))大数基本靠右的效率更高
-    last_change = len(arr) - 1
-    flag = -1
-    while flag != last_change:
-        flag = last_change
-        for i in range(last_change):
-            if arr[i] > arr[i + 1]:
-                arr[i], arr[i + 1] = arr[i + 1], arr[i]
-                last_change = i
-
-    # length = len(arr)
-    # flag = True
-    # for i in range(1, length):  # 控制次数
-    #     for j in range(length - i):
-    #         if arr[j] > arr[j + 1]:
-    #             arr[j], arr[j + 1] = arr[j + 1], arr[j]
-    #             flag = False
-    #     if flag:
-    #         break
-
-
 # 地精排序
 def gnome_sort(arr):
     length = len(arr)
@@ -190,46 +225,7 @@ def gnome_sort(arr):
             i += 1
 
 
-# 插入排序
-def insert_sort(arr):
-    length = len(arr)
-    for i in range(1, length):
-        tmp = arr[i]
-        while i and tmp < arr[i - 1]:
-            arr[i] = arr[i - 1]  # 避免相邻两项两两交换
-            i -= 1
-        arr[i] = tmp
-
-    # for i in range(1, length):  # 效率较低
-    #     for j in range(i, 0, -1):
-    #         if arr[j] < arr[j - 1]:
-    #             arr[j], arr[j - 1] = arr[j - 1], arr[j]
-    #         else:
-    #             break
-
-
-# 选择排序(非稳定排序)
-def select_sort(arr):
-    length = len(arr)
-    for i in range(1, length):
-        index = i - 1
-        for j in range(i, length):
-            if arr[index] > arr[j]:
-                index = j
-        arr[index], arr[i - 1] = arr[i - 1], arr[index]
-
-    # left = 0
-    # right = len(arr) - 1
-    # while left < right:
-    #     big = small = left
-    #     for i in range(left + 1, right + 1):
-    #         if arr[i] > arr[big]:
-    #             big = i
-    #         elif arr[i] < arr[small]:
-    #             small = i
-    #     arr[left], arr[small] = arr[small], arr[left]
-    #     if big == left:  # 注意判断
-    #         big = small
-    #     arr[right], arr[big] = arr[big], arr[right]
-    #     left += 1
-    #     right -= 1
+if __name__ == "__main__":
+    array = [3, 1, 2, 5, 4, 7, 0, 9, 8]
+    insert_sort(array)
+    print(array)
