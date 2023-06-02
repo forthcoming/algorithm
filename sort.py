@@ -146,7 +146,7 @@ def msd_radix_sort(arr, left, right, n=5, radix=10):
 # 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
 def bucket_sort(arr, radix=10):
     lower = (1 << radix) - 1
-    bucket = [[] for i in range(lower + 1)]  # 不能用 [[]]*(lower+1)
+    bucket = [[] for _ in range(lower + 1)]  # 不能用 [[]]*(lower+1)
     bit = 0
     while True:
         for val in arr:
@@ -161,8 +161,8 @@ def bucket_sort(arr, radix=10):
         bit += 1
         '''
         下面2种li赋值方法效率很低
-        li[:]=reduce(lambda x,y:x+y,bucket)
-        li[:]=sum(bucket,[])
+        arr[:]=reduce(lambda x,y:x+y,bucket)
+        arr[:]=sum(bucket,[])
         '''
 
 
