@@ -140,17 +140,20 @@ def quick_sort_stack(arr):
             args.append((left, mid - 1))
 
 
+def get_pos(natural_number, pos, radix):
+    return (natural_number >> (pos * radix)) & ((1 << radix) - 1)
+
+
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
 def radix_sort(arr, radix=10):
     num = 1 << radix
     length = len(arr)
     bucket = [None] * length
     count = [0] * num
-    get_bit = lambda x, y: (x >> (y * radix)) & ((1 << radix) - 1)
     bit = 0
     while True:
         for element in arr:
-            count[get_bit(element, bit)] += 1  # 有点计数排序的思想
+            count[get_pos(element, bit, radix)] += 1  # 有点计数排序的思想
         if count[0] == length:  # 说明已经遍历完所有位
             break
         # for j in range(num - 2, -1, -1):  # 逆序
@@ -158,7 +161,7 @@ def radix_sort(arr, radix=10):
         for j in range(1, num):
             count[j] += count[j - 1]
         for element in arr[::-1]:  # 注意这里要逆序遍历
-            index = get_bit(element, bit)
+            index = get_pos(element, bit, radix)
             bucket[count[index] - 1] = element
             count[index] -= 1
         arr[:] = bucket  # arr=bucket并不会改变外面的arr对象
@@ -168,12 +171,12 @@ def radix_sort(arr, radix=10):
 
 # 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
 def bucket_sort(arr, radix=10):
-    lower = (1 << radix) - 1
-    bucket = [[] for _ in range(lower + 1)]  # 不能用 [[]]*(lower+1)
+    bucket = [[] for _ in range(1 << radix)]  # 不能用 [[]]*(1 << radix)
     bit = 0
     while True:
-        for val in arr:
-            bucket[val >> (bit * radix) & lower].append(val)  # 很关键,原理是将自然数看成二进制数,然后再按lower个位数划分
+        for element in arr:
+            index = get_pos(element, bit, radix)
+            bucket[index].append(element)  # 很关键,原理是将自然数看成二进制数,然后再按2**radix个位数划分
         if len(bucket[0]) == len(arr):
             break
         del arr[:]
@@ -276,7 +279,7 @@ class MergeSort:
 if __name__ == "__main__":
     array = list(range(12))
     random.shuffle(array)
-    radix_sort(array, 2)
+    bucket_sort(array, 3)
     print(array)
 
     # array = list(range(10))
