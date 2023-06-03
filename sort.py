@@ -144,6 +144,29 @@ def get_pos(natural_number, pos, radix):
     return (natural_number >> (pos * radix)) & ((1 << radix) - 1)
 
 
+# 桶排序(跟基数排序类似,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
+def bucket_sort(arr, radix=10):
+    bucket = [[] for _ in range(1 << radix)]  # 不能用 [[]]*(1 << radix)
+    bit = 0
+    while True:
+        for element in arr:
+            index = get_pos(element, bit, radix)
+            bucket[index].append(element)  # 很关键,原理是将自然数看成二进制数,然后再按2**radix个位数划分
+        if len(bucket[0]) == len(arr):
+            break
+        del arr[:]
+        # for each in bucket[::-1]:   # 逆序
+        for each in bucket:
+            arr += each  # 部分each为[]
+            each[:] = []  # 清空桶数据
+        bit += 1
+        '''
+        下面2种arr赋值方法效率很低
+        arr[:]=reduce(lambda x,y:x+y,bucket)
+        arr[:]=sum(bucket,[])
+        '''
+
+
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
 def radix_sort(arr, radix=10):
     num = 1 << radix
@@ -169,30 +192,7 @@ def radix_sort(arr, radix=10):
         bit += 1
 
 
-# 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
-def bucket_sort(arr, radix=10):
-    bucket = [[] for _ in range(1 << radix)]  # 不能用 [[]]*(1 << radix)
-    bit = 0
-    while True:
-        for element in arr:
-            index = get_pos(element, bit, radix)
-            bucket[index].append(element)  # 很关键,原理是将自然数看成二进制数,然后再按2**radix个位数划分
-        if len(bucket[0]) == len(arr):
-            break
-        del arr[:]
-        for each in bucket:
-            # for each in bucket[::-1]:   # 逆序
-            arr += each  # 部分each为[]
-            each[:] = []  # 清空桶数据
-        bit += 1
-        '''
-        下面2种arr赋值方法效率很低
-        arr[:]=reduce(lambda x,y:x+y,bucket)
-        arr[:]=sum(bucket,[])
-        '''
-
-
-# MSD-10进制递归版基数排序
+# MSD递归版基数排序
 def msd_radix_sort(arr, left, right, n=5, radix=10):
     if n and left < right:
         bucket = [None] * (right - left + 1)
@@ -215,8 +215,8 @@ def msd_radix_sort(arr, left, right, n=5, radix=10):
 
 class MergeSort:
     # 归并排序(稳定排序,时间复杂度永远是nlogn,跟数组的数据无关)
-    def __init__(self, li):
-        self.li = li  # 待排序数组
+    def __init__(self, arr):
+        self.arr = arr  # 待排序数组
         self.inversion_number = 0  # 逆序数,针对recursive_sort方法有效
 
     def merge(self, left, mid, right):  # 包含[left,mid],[mid+1,right]边界
@@ -224,67 +224,75 @@ class MergeSort:
         p1 = left
         p2 = mid + 1
         while p1 <= mid and p2 <= right:
-            if self.li[p1] < self.li[p2]:
-                result.append(self.li[p1])
-                p1 += 1
-            else:
-                result.append(self.li[p2])
+            if self.arr[p1] > self.arr[p2]:
+                result.append(self.arr[p2])
                 p2 += 1
                 self.inversion_number += mid - p1 + 1  # 逆序数统计不管两数相等的情况
+            else:
+                result.append(self.arr[p1])
+                p1 += 1
         if p1 <= mid:
             p2 = right - mid + p1
-            self.li[p2:right + 1] = self.li[p1:mid + 1]
-        self.li[left:p2] = result
+            self.arr[p2:right + 1] = self.arr[p1:mid + 1]
+        self.arr[left:p2] = result
 
-    def recursive_sort(self, left, right):  # 递归版归并排序,包含left,right边界
+    def sort(self, left, right):  # 递归版归并排序,包含left,right边界
         if left < right:
             mid = (left + right) >> 1
-            self.recursive_sort(left, mid)
-            self.recursive_sort(mid + 1, right)
+            self.sort(left, mid)
+            self.sort(mid + 1, right)
             self.merge(left, mid, right)
+
+    def iter_sort(self):  # 迭代版归并排序
+        length = len(self.arr)
+        step = 1
+        while step < length:
+            step <<= 1
+            for left in range(0, length, step):  # 以左边界遍历
+                right = left + step - 1
+                mid = (left + right) >> 1
+                if mid >= length:  # 注意
+                    mid = length - 1
+                if right >= length:  # 注意
+                    right = length - 1
+                self.merge(left, mid, right)
+
+        # length = len(self.arr)
+        # init_mid = 0
+        # while init_mid < length - 1:
+        #     step = (init_mid + 1) << 1
+        #     for mid in range(init_mid, length, step):   # 以中间位置遍历
+        #         left = mid - (step >> 1) + 1
+        #         right = mid + (step >> 1)  # right=left+step-1
+        #         if right >= length:
+        #             right = length - 1
+        #         self.merge(left, mid, right)
+        #     init_mid = (init_mid << 1) + 1
 
     def reverse(self, left, right):  # [::-1] or list.reverse
         while left < right:
-            self.li[left], self.li[right] = self.li[right], self.li[left]
+            self.arr[left], self.arr[right] = self.arr[right], self.arr[left]
             left += 1
             right -= 1
 
-    def inplace_merge(self, left, mid, right):  # 包含[left,mid],[mid+1,right]边界,效率低于merge
+    def inplace_merge(self, left, mid, right):  # 包含[left,mid],[mid+1,right]边界,效率低于merge,没更新inversion_number
         mid += 1
         while left < mid <= right:
             p = mid
-            while left < mid and self.li[left] <= self.li[mid]:
+            while left < mid and self.arr[left] <= self.arr[mid]:
                 left += 1
-            while mid <= right and self.li[mid] <= self.li[left]:
+            while mid <= right and self.arr[mid] <= self.arr[left]:
                 mid += 1
             self.reverse(left, p - 1)
             self.reverse(p, mid - 1)
             self.reverse(left, mid - 1)
             left += mid - p
 
-    def iter_sort(self):  # 迭代版归并排序
-        length = len(self.li)
-        init_mid = 0
-        while init_mid < length - 1:
-            step = (init_mid + 1) << 1
-            for mid in range(init_mid, length, step):
-                left = mid - (step >> 1) + 1
-                right = mid + (step >> 1)  # right=left+step-1
-                if right >= length:
-                    right = length - 1
-                self.inplace_merge(left, mid, right)
-            init_mid = (init_mid << 1) + 1
-
 
 if __name__ == "__main__":
-    array = list(range(12))
+    array = list(range(11))
     random.shuffle(array)
-    bucket_sort(array, 3)
-    print(array)
-
-    # array = list(range(10))
-    # random.shuffle(array)
-    # print(array)  # [0, 8, 4, 5, 7, 6, 3, 2, 1, 9]
-    # res = MergeSort(array)
-    # res.recursive_sort(0, len(array) - 1)
-    # print(array, res.inversion_number)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 23
+    print(array)  # [0, 8, 4, 5, 7, 6, 3, 2, 1, 9]
+    res = MergeSort(array)
+    res.iter_sort()
+    print(array, res.inversion_number)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 23
