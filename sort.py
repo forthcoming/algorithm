@@ -96,6 +96,55 @@ def shell_sort(arr):
         step >>= 1
 
 
+# 快速排序(非稳定排序)
+def quick_sort(arr, left, right):  # 包含left,right边界
+    if left < right:
+        _ = random.randrange(left, right + 1)  # 防止数组本身基本有序带来的效率损失
+        arr[left], arr[_] = arr[_], arr[left]
+        mid_value = arr[left]
+        _left = left
+        _right = right
+        while _left < _right:  # 不能有等号
+            while _left < _right:  # 不能有等号
+                if arr[_right] >= mid_value:  # 应为一开始保存了arr[left],所以只能先从右至左遍历
+                    _right -= 1
+                else:
+                    arr[_left] = arr[_right]
+                    break
+            while _left < _right:  # 不能有等号
+                if arr[_left] <= mid_value:
+                    _left += 1
+                else:
+                    arr[_right] = arr[_left]
+                    break
+        arr[_left] = mid_value  # 此时_left = _right
+        quick_sort(arr, left, _left - 1)
+        quick_sort(arr, _left + 1, right)
+
+    # if left < right:  # 效率一般
+    #     mid = left
+    #     for i in range(left + 1, right + 1):
+    #         if arr[i] < arr[left]:
+    #             mid += 1
+    #             arr[i], arr[mid] = arr[mid], arr[i]
+    #     arr[left], arr[mid] = arr[mid], arr[left]
+    #     quick_sort(arr, left, mid - 1)
+    #     quick_sort(arr, mid + 1, right)
+
+    # if left < right:  # 效率一般
+    #     _left, _right = left + 1, right
+    #     while _left <= _right:
+    #         if arr[_left] > arr[left]:
+    #             arr[_left], arr[_right] = arr[_right], arr[_left]
+    #             _right -= 1
+    #         else:
+    #             _left += 1
+    #     # 此时 _left = _right + 1
+    #     arr[_right], arr[left] = arr[left], arr[_right]
+    #     quick_sort(arr, left, _right - 1)
+    #     quick_sort(arr, _right + 1, right)
+
+
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
 def radix_sort(arr, radix=10):
     num = 1 << radix
@@ -160,53 +209,10 @@ def bucket_sort(arr, radix=10):
             each[:] = []  # 清空桶数据
         bit += 1
         '''
-        下面2种li赋值方法效率很低
+        下面2种arr赋值方法效率很低
         arr[:]=reduce(lambda x,y:x+y,bucket)
         arr[:]=sum(bucket,[])
         '''
-
-
-# 快速排序(非稳定排序)
-def quick_sort(arr, left, right):  # 包含left,right边界
-    if left < right:  # 效率最高
-        flag = arr[left]
-        start = left
-        end = right
-        while start < end:  # 不能有等号
-            while start < end and arr[end] >= flag:  # 不能有等号
-                end -= 1
-            arr[start] = arr[end]
-            while start < end and arr[start] <= flag:  # 不能有等号
-                start += 1
-            arr[end] = arr[start]
-        arr[start] = flag  # 此时start等与end
-        quick_sort(arr, left, start - 1)
-        quick_sort(arr, start + 1, right)
-
-    # if left < right:  # 效率一般
-    #     index = randrange(left, right + 1)  # 防止数组本身基本有序带来的效率损失
-    #     arr[left], arr[index] = arr[index], arr[left]
-    #     mid = left
-    #     for i in range(left + 1, right + 1):
-    #         if arr[i] < arr[left]:
-    #             mid += 1
-    #             arr[i], arr[mid] = arr[mid], arr[i]
-    #     arr[left], arr[mid] = arr[mid], arr[left]
-    #     quick_sort(arr, left, mid - 1)
-    #     quick_sort(arr, mid + 1, right)
-    #
-    # if left < right:  # 效率较低
-    #     key = arr[left]
-    #     start, end = left + 1, right
-    #     while start <= end:
-    #         if arr[start] > key:
-    #             arr[start], arr[end] = arr[end], arr[start]
-    #             end -= 1
-    #         else:
-    #             start += 1
-    #     arr[start - 1], arr[left] = arr[left], arr[start - 1]
-    #     quick_sort(arr, left, start - 2)
-    #     quick_sort(arr, start, right)
 
 
 class MergeSort:
@@ -273,8 +279,9 @@ class MergeSort:
 
 
 if __name__ == "__main__":
-    array = [3, 1, 2, 5, 4, 7, 0, 9, 8]
-    shell_sort(array)
+    array = list(range(10))
+    random.shuffle(array)
+    quick_sort(array, 0, 9)
     print(array)
 
     array = list(range(10))
