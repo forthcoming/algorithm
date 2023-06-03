@@ -51,26 +51,6 @@ def insert_sort(arr):
         arr[i] = tmp
 
 
-# 位排序(仅适用于不重复的自然数)
-def bit_sort(arr):
-    import math
-    bitmap = 0
-    for each in arr:
-        bitmap |= 1 << each
-
-    while bitmap:  # 适用于数的范围较零散
-        t = math.log2(bitmap & -bitmap)  # x&-x返回最低位1
-        print(int(t), end=' ')
-        bitmap &= bitmap - 1  # x&=x-1清除最低位1
-
-    # index = -1  # 适用于数的范围较稠密
-    # while bitmap:
-    #     index += 1
-    #     if bitmap & 1:
-    #         print(index, end=' ')
-    #     bitmap >>= 1
-
-
 # 希尔排序
 def shell_sort(arr):
     length = len(arr)
@@ -151,7 +131,7 @@ def quick_sort_stack(arr):
         left, right = args.pop()
         if left < right:
             mid = left
-            for index in range(left+1, right + 1):
+            for index in range(left + 1, right + 1):
                 if arr[index] < arr[left]:
                     mid += 1
                     arr[index], arr[mid] = arr[mid], arr[index]
@@ -166,45 +146,24 @@ def radix_sort(arr, radix=10):
     length = len(arr)
     bucket = [None] * length
     count = [0] * num
-    get_bit = lambda x, y: x >> (y * radix) & (num - 1)
+    get_bit = lambda x, y: (x >> (y * radix)) & ((1 << radix) - 1)
     bit = 0
     while True:
-        for i in arr:
-            count[get_bit(i, bit)] += 1  # 有点计数排序的思想
+        for element in arr:
+            count[get_bit(element, bit)] += 1  # 有点计数排序的思想
         if count[0] == length:  # 说明已经遍历完所有位
             break
-        # for j in range(len(count) - 2, -1, -1):  # 逆序
+        # for j in range(num - 2, -1, -1):  # 逆序
         #     count[j] += count[j + 1]
-        for j in range(1, len(count)):
+        for j in range(1, num):
             count[j] += count[j - 1]
-        for k in arr[::-1]:  # 注意这里要逆序遍历
-            index = get_bit(k, bit)
-            bucket[count[index] - 1] = k
+        for element in arr[::-1]:  # 注意这里要逆序遍历
+            index = get_bit(element, bit)
+            bucket[count[index] - 1] = element
             count[index] -= 1
-        arr[:] = bucket  # li=bucket并不会改变外面的li对象
+        arr[:] = bucket  # arr=bucket并不会改变外面的arr对象
         count = [0] * num
         bit += 1
-
-
-# MSD-10进制递归版基数排序
-def msd_radix_sort(arr, left, right, n=5, radix=10):
-    if n and left < right:
-        bucket = [None] * (right - left + 1)
-        count = [0] * radix
-        get_bit = lambda x, y: x // radix ** (y - 1) % radix
-        for i in arr[left:right + 1]:
-            count[get_bit(i, n)] += 1
-        for j in range(1, radix):
-            count[j] += count[j - 1]
-        for k in arr[left:right + 1]:  # 正序逆序都可以
-            index = get_bit(k, n)
-            bucket[count[index] - 1] = k
-            count[index] -= 1
-        arr[left:right + 1] = bucket  # 注意这里要加1
-        n -= 1
-        for x in range(0, radix - 1):  # 遍历count每一个元素
-            msd_radix_sort(arr, left + count[x], left + count[x + 1] - 1, n, radix)  # attention
-        msd_radix_sort(arr, left + count[-1], right, n, radix)  # attention
 
 
 # 桶排序(效率跟基数排序类似,实质是哈希,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
@@ -228,6 +187,27 @@ def bucket_sort(arr, radix=10):
         arr[:]=reduce(lambda x,y:x+y,bucket)
         arr[:]=sum(bucket,[])
         '''
+
+
+# MSD-10进制递归版基数排序
+def msd_radix_sort(arr, left, right, n=5, radix=10):
+    if n and left < right:
+        bucket = [None] * (right - left + 1)
+        count = [0] * radix
+        get_bit = lambda x, y: x // radix ** (y - 1) % radix
+        for i in arr[left:right + 1]:
+            count[get_bit(i, n)] += 1
+        for j in range(1, radix):
+            count[j] += count[j - 1]
+        for k in arr[left:right + 1]:  # 正序逆序都可以
+            index = get_bit(k, n)
+            bucket[count[index] - 1] = k
+            count[index] -= 1
+        arr[left:right + 1] = bucket  # 注意这里要加1
+        n -= 1
+        for x in range(0, radix - 1):  # 遍历count每一个元素
+            msd_radix_sort(arr, left + count[x], left + count[x + 1] - 1, n, radix)  # attention
+        msd_radix_sort(arr, left + count[-1], right, n, radix)  # attention
 
 
 class MergeSort:
@@ -294,14 +274,14 @@ class MergeSort:
 
 
 if __name__ == "__main__":
-    array = list(range(10))
+    array = list(range(12))
     random.shuffle(array)
-    quick_sort_stack(array)
+    radix_sort(array, 2)
     print(array)
 
-    array = list(range(10))
-    random.shuffle(array)
-    print(array)  # [0, 8, 4, 5, 7, 6, 3, 2, 1, 9]
-    res = MergeSort(array)
-    res.recursive_sort(0, len(array) - 1)
-    print(array, res.inversion_number)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 23
+    # array = list(range(10))
+    # random.shuffle(array)
+    # print(array)  # [0, 8, 4, 5, 7, 6, 3, 2, 1, 9]
+    # res = MergeSort(array)
+    # res.recursive_sort(0, len(array) - 1)
+    # print(array, res.inversion_number)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 23
