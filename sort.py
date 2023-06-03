@@ -96,7 +96,7 @@ def shell_sort(arr):
         step >>= 1
 
 
-# 快速排序(非稳定排序)
+# 快速排序(非稳定排序,时间复杂度nlogn,注意如何计算)
 def quick_sort(arr, left, right):  # 包含left,right边界
     if left < right:
         _ = random.randrange(left, right + 1)  # 防止数组本身基本有序带来的效率损失
@@ -143,6 +143,21 @@ def quick_sort(arr, left, right):  # 包含left,right边界
     #     arr[_right], arr[left] = arr[left], arr[_right]
     #     quick_sort(arr, left, _right - 1)
     #     quick_sort(arr, _right + 1, right)
+
+
+def quick_sort_stack(arr):
+    args = [(0, len(arr) - 1)]
+    while args:
+        left, right = args.pop()
+        if left < right:
+            mid = left
+            for index in range(left+1, right + 1):
+                if arr[index] < arr[left]:
+                    mid += 1
+                    arr[index], arr[mid] = arr[mid], arr[index]
+            arr[left], arr[mid] = arr[mid], arr[left]
+            args.append((mid + 1, right))
+            args.append((left, mid - 1))
 
 
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
@@ -281,7 +296,7 @@ class MergeSort:
 if __name__ == "__main__":
     array = list(range(10))
     random.shuffle(array)
-    quick_sort(array, 0, 9)
+    quick_sort_stack(array)
     print(array)
 
     array = list(range(10))
