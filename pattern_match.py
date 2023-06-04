@@ -31,34 +31,34 @@ def rolling_hash(source, pattern, radix=31):
     return -1
 
 
-def kmp(source, pattern, pos=0):
+def kmp(source, pattern, s_pos=0):
     source_length = len(source)
     pattern_length = len(pattern)
     # 求串T的next数组
     _next = [-1] * pattern_length
     k = -1
-    index = 1
-    # 构建next数组
-    while index < pattern_length:
-        if k == -1 or pattern[index - 1] == pattern[k]:
+    p_pos = 1
+    # 构建next数组,不涉及source串,如果next长度不小于2,则next[0] = -1, next[1] = 0
+    while p_pos < pattern_length:
+        if k == -1 or pattern[p_pos - 1] == pattern[k]:
             k += 1
-            # 优化_next数组,直接_next[index]=k也行,数组_next中的数字越小则认为越优化
-            if pattern[index] == pattern[k]:
-                _next[index] = _next[k]
+            # 优化_next数组,直接_next[p_pos]=k也行,数组_next中的数字越小则认为越优化
+            if pattern[p_pos] == pattern[k]:
+                _next[p_pos] = _next[k]
             else:
-                _next[index] = k
-            index += 1
+                _next[p_pos] = k
+            p_pos += 1
         else:
             k = _next[k]
 
-    index = 0
-    while index < pattern_length and pos < source_length:
-        if index == -1 or source[pos] == pattern[index]:
-            pos += 1
-            index += 1
+    p_pos = 0
+    while p_pos < pattern_length and s_pos < source_length:
+        if p_pos == -1 or source[s_pos] == pattern[p_pos]:
+            s_pos += 1
+            p_pos += 1
         else:
-            index = _next[index]
-    return pos - index if index == pattern_length else -1
+            p_pos = _next[p_pos]
+    return s_pos - p_pos if p_pos == pattern_length else -1
 
 
 def sunday(source, pattern, pos=0):
@@ -81,4 +81,4 @@ def sunday(source, pattern, pos=0):
 
 
 if __name__ == "__main__":
-    print(kmp("abcde", "ef"))
+    print(kmp("abcde", "bcf"))
