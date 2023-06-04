@@ -38,16 +38,19 @@ def kmp(source, pattern, pos=0):
     _next = [-1] * pattern_length
     k = -1
     index = 1
+    # 构建next数组
     while index < pattern_length:
         if k == -1 or pattern[index - 1] == pattern[k]:
             k += 1
             # 优化_next数组,直接_next[index]=k也行,数组_next中的数字越小则认为越优化
-            _next[index] = _next[k] if pattern[index] == pattern[k] else k
+            if pattern[index] == pattern[k]:
+                _next[index] = _next[k]
+            else:
+                _next[index] = k
             index += 1
         else:
             k = _next[k]
 
-    print(_next)
     index = 0
     while index < pattern_length and pos < source_length:
         if index == -1 or source[pos] == pattern[index]:
@@ -78,4 +81,4 @@ def sunday(source, pattern, pos=0):
 
 
 if __name__ == "__main__":
-    print(rolling_hash("abcd", "abcde"))
+    print(kmp("abcde", "ef"))
