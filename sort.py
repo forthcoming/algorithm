@@ -209,8 +209,8 @@ def msd_radix_sort(arr, left, right, n=5, radix=10):
         arr[left:right + 1] = bucket  # 注意这里要加1
         n -= 1
         for x in range(0, radix - 1):  # 遍历count每一个元素
-            msd_radix_sort(arr, left + count[x], left + count[x + 1] - 1, n, radix)  # attention
-        msd_radix_sort(arr, left + count[-1], right, n, radix)  # attention
+            msd_radix_sort(arr, left + count[x], left + count[x + 1] - 1, n, radix)  # attention,前提是最高位已经在正确位置
+        msd_radix_sort(arr, left + count[-1], right, n, radix)  # attention,前提是最高位已经在正确位置
 
 
 class MergeSort:
