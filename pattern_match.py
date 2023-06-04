@@ -31,14 +31,13 @@ def rolling_hash(source, pattern, radix=31):
     return -1
 
 
-def kmp(source, pattern, s_pos=0):
-    source_length = len(source)
+def build_next(pattern):
+    # 不涉及source串,如果next长度不小于2,则next[0] = -1, next[1] = 0
+    # 代表当前字符之前的字符串中最大长度的相同前缀后缀,意味着当前字符s[j]匹配失配时下一步匹配中模式串应该跳到next[j]位置
     pattern_length = len(pattern)
-    # 求串T的next数组
     _next = [-1] * pattern_length
     k = -1
     p_pos = 1
-    # 构建next数组,不涉及source串,如果next长度不小于2,则next[0] = -1, next[1] = 0
     while p_pos < pattern_length:
         if k == -1 or pattern[p_pos - 1] == pattern[k]:
             k += 1
@@ -50,7 +49,13 @@ def kmp(source, pattern, s_pos=0):
             p_pos += 1
         else:
             k = _next[k]
+    return _next
 
+
+def kmp(source, pattern, s_pos=0):
+    source_length = len(source)
+    pattern_length = len(pattern)
+    _next = build_next(pattern)
     p_pos = 0
     while p_pos < pattern_length and s_pos < source_length:
         if p_pos == -1 or source[s_pos] == pattern[p_pos]:
@@ -81,4 +86,4 @@ def sunday(source, pattern, pos=0):
 
 
 if __name__ == "__main__":
-    print(kmp("abcde", "bcf"))
+    print(kmp("abcde", "bce"))
