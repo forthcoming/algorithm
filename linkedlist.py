@@ -129,7 +129,7 @@ class LinkedList:
                 la = la.right
             elif lb.data < lc.data:
                 lb = lb.right
-            elif la.data == lb.data == lc.data:
+            elif la.data == lb.data == lc.data: # 此时la.data,lb.data一定大于等于lc.data
                 pre.right = lc.right
                 lc = lc.right
                 root.__length -= 1
