@@ -197,19 +197,19 @@ def msd_radix_sort(arr, left, right, n=5, radix=10):
     if n and left < right:
         bucket = [None] * (right - left + 1)
         count = [0] * radix
-        get_bit = lambda x, y: x // radix ** (y - 1) % radix
+        get_pos = lambda x, y: x // radix ** (y - 1) % radix
         for i in arr[left:right + 1]:
-            count[get_bit(i, n)] += 1
+            count[get_pos(i, n)] += 1
         for j in range(1, radix):
             count[j] += count[j - 1]
         for k in arr[left:right + 1]:  # 正序逆序都可以
-            index = get_bit(k, n)
+            index = get_pos(k, n)
             bucket[count[index] - 1] = k
             count[index] -= 1
         arr[left:right + 1] = bucket  # 注意这里要加1
         n -= 1
-        for x in range(0, radix - 1):  # 遍历count每一个元素
-            msd_radix_sort(arr, left + count[x], left + count[x + 1] - 1, n, radix)  # attention,前提是最高位已经在正确位置
+        for idx in range(0, radix - 1):  # 遍历count每一个元素
+            msd_radix_sort(arr, left + count[idx], left + count[idx + 1] - 1, n, radix)  # attention,前提是最高位已经在正确位置
         msd_radix_sort(arr, left + count[-1], right, n, radix)  # attention,前提是最高位已经在正确位置
 
 
