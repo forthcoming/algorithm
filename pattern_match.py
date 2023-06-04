@@ -11,6 +11,26 @@ def bf(source, pattern, pos=0):
     return pos if j == pattern_length else -1
 
 
+def rolling_hash(source, pattern, radix=31):
+    source_length = len(source)
+    pattern_length = len(pattern)
+    if source_length < pattern_length:
+        return -1
+    source_hash = 0
+    pattern_hash = 0
+    offset = radix ** pattern_length
+    for i in range(pattern_length):
+        source_hash = source_hash * radix + ord(source[i])
+        pattern_hash = pattern_hash * radix + ord(pattern[i])
+    if source_hash == pattern_hash:  # 此处可以做进一步检查,字符串是否相等
+        return 0
+    for j in range(pattern_length, source_length):
+        source_hash = source_hash * radix - ord(source[j - pattern_length]) * offset + ord(source[j])
+        if source_hash == pattern_hash:  # 此处可以做进一步检查,字符串是否相等
+            return j - pattern_length + 1
+    return -1
+
+
 def kmp(source, pattern, pos=0):
     source_length = len(source)
     pattern_length = len(pattern)
@@ -57,21 +77,5 @@ def sunday(source, pattern, pos=0):
     return pos - index if index == pattern_length else -1
 
 
-def rolling_hash(source, pattern, radix=31):
-    source_length = len(source)
-    pattern_length = len(pattern)
-    if source_length < pattern_length:
-        return -1
-    source_hash = 0
-    pattern_hash = 0
-    offset = radix ** pattern_length
-    for i in range(pattern_length):
-        source_hash = source_hash * radix + ord(source[i])
-        pattern_hash = pattern_hash * radix + ord(pattern[i])
-    if source_hash == pattern_hash:
-        return 0
-    for j in range(pattern_length, source_length):
-        source_hash = source_hash * radix + ord(source[j]) - ord(source[j - pattern_length]) * offset
-        if source_hash == pattern_hash:  # 此处可以做进一步检查,字符串是否相等
-            return j - pattern_length + 1
-    return -1
+if __name__ == "__main__":
+    print(rolling_hash("abcd", "abcde"))
