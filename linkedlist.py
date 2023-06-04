@@ -1,3 +1,7 @@
+from random import randrange
+from functools import reduce
+
+
 # 带头节点的单链表
 class Node:
     def __init__(self, data, right=None):
@@ -67,36 +71,36 @@ class LinkedList:
         self.__length += 1
 
     def reverse_k(self, count):  # 分组反转链表
+        # def _reverse_k(root):
+        #     tail = root
+        #     head = None
+        #     _count = count
+        #     while root and _count:
+        #         _ = root
+        #         root = root.right
+        #         _.right = head
+        #         head = _
+        #         _count -= 1
+        #     if root:
+        #         tail.right = _reverse_k(root)
+        #     return head
+        #
+        # self.__head.right = _reverse_k(self.__head.right)
+
         start = self.__head
         cur = end = start.right
         while cur:
             times = count
-            L = None
+            head = None
             while cur and times:
                 tmp = cur.right
-                cur.right = L
-                L = cur
+                cur.right = head
+                head = cur
                 cur = tmp
                 times -= 1
-            start.right = L
+            start.right = head
             start = end
             end = cur
-
-    #         head=self.__head
-    #         while head.right:
-    #             tail=starts=head.right
-    #             if starts:
-    #                 ends=starts.right
-    #                 flag=count-1
-    #                 while ends and flag:
-    #                     cur=ends
-    #                     ends=ends.right
-    #                     cur.right=starts
-    #                     starts=cur
-    #                     flag-=1
-    #                 tail.right=ends
-    #                 head.right=starts
-    #             head=tail
 
     def init(self, node):  # 当且仅当链表为空时才有效
         if not self.__length:
@@ -106,8 +110,6 @@ class LinkedList:
                 self.__length += 1
 
     def rand_init(self, ranges=99, num=10):
-        from random import randrange
-        from functools import reduce
         def _concat(node1, node2):
             node2.right = node1
             return node2
@@ -116,19 +118,41 @@ class LinkedList:
         self.__length += num
 
     @staticmethod
-    def quick_sort(starts, ends=None):
-        if starts != ends:  # 这里要特别注意,starts可能为空
-            pre = starts
-            cur = starts.right
-            while cur != ends:
-                if cur.data < starts.data:
-                    pre = pre.right
-                    if pre != cur:
-                        pre.data, cur.data = cur.data, pre.data
-                cur = cur.right
-            pre.data, starts.data = starts.data, pre.data
-            __class__.quick_sort(starts, pre)  # 不包含pre
-            __class__.quick_sort(pre.right, ends)
+    def filter(la, lb, lc):  # 有序链表la,lb,lc,删除lc中同时出现在三者之间的节点
+        root = lc
+        pre = lc.__head
+        la = la.__head.right
+        lb = lb.__head.right
+        lc = lc.__head.right
+        while la and lb and lc:
+            if la.data < lc.data:
+                la = la.right
+            elif lb.data < lc.data:
+                lb = lb.right
+            elif la.data == lb.data == lc.data:
+                pre.right = lc.right
+                lc = lc.right
+                root.__length -= 1
+            else:
+                lc = lc.right
+                pre = pre.right
+
+        # while la and lb and lc:
+        #     if la.data > lb.data:
+        #         lb = lb.right
+        #     elif la.data < lb.data:
+        #         la = la.right
+        #     else:
+        #         if lc.data < la.data:
+        #             lc = lc.right
+        #             pre = pre.right
+        #         elif lc.data == la.data:
+        #             pre.right = lc.right
+        #             lc = lc.right
+        #             root.__length -= 1
+        #         else:
+        #             la = la.right
+        #             lb = lb.right
 
     @staticmethod
     def merge(starts, mid, ends):  # 合并2个以starts,mid开头ends(None)结尾的有序单链表
@@ -166,46 +190,9 @@ class LinkedList:
                 pre = pre.right
                 cur = cur.right.right
             pre.right = ends  # 这里是重点!
-            __class__.mergeSort(starts, ends)  # 不包含ends
-            __class__.mergeSort(mid, ends)
+            __class__.merge_sort(starts, ends)  # 不包含ends
+            __class__.merge_sort(mid, ends)
             __class__.merge(starts, mid, ends)
-
-    @staticmethod
-    def filter(La, Lb, Lc):  # 有序链表La,Lb,Lc,删除Lc中同时出现在三者之间的节点
-        root = Lc
-        pre = Lc.__head
-        La = La.__head.right
-        Lb = Lb.__head.right
-        Lc = Lc.__head.right
-        while La and Lb and Lc:
-            if La.data < Lc.data:
-                La = La.right
-            elif Lb.data < Lc.data:
-                Lb = Lb.right
-            elif La.data == Lb.data == Lc.data:
-                pre.right = Lc.right
-                Lc = Lc.right
-                root.__length -= 1
-            else:
-                Lc = Lc.right
-                pre = pre.right
-
-        # while La and Lb and Lc:
-        #     if La.data>Lb.data:
-        #         Lb=Lb.right
-        #     elif La.data<Lb.data:
-        #         La=La.right
-        #     else:
-        #         if Lc.data<La.data:
-        #             Lc=Lc.right
-        #             pre=pre.right
-        #         elif Lc.data==La.data:
-        #             pre.right=Lc.right
-        #             Lc=Lc.right
-        #             root.__length-=1
-        #         else:
-        #             La=La.right
-        #             Lb=Lb.right
 
 
 if __name__ == '__main__':
@@ -221,6 +208,6 @@ if __name__ == '__main__':
     Lc.traverse()
 
     Ld = LinkedList()
-    Ld.rand_init(9, 11)
-    Ld.quick_sort(Ld._LinkedList__head.right)
+    Ld.init(Node(0, Node(11, Node(3, Node(5, Node(17, Node(9)))))))
+    Ld.merge_sort(Ld._LinkedList__head.right)
     Ld.traverse()
