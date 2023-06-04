@@ -32,8 +32,12 @@ def rolling_hash(source, pattern, radix=31):
 
 
 def build_next(pattern):
-    # 不涉及source串,如果next长度不小于2,则next[0] = -1, next[1] = 0
-    # 代表当前字符之前的字符串中最大长度的相同前缀后缀,意味着当前字符s[j]匹配失配时下一步匹配中模式串应该跳到next[j]位置
+    """
+    next[j]代表p[0,j-1]子串最大长度的相同前缀后缀(不含子串本身,应为子串至少要移动一步),s[j]匹配失败时下一步匹配中模式串应该跳到next[j]位置
+    计算步骤:
+    1. 计算p[0,0], p[0,1]... p[0,n]子串的最大长度的相同前缀后缀0, max(1), max(2)... max(n)
+    2. next[0]=-1, next[1]=0, next[2]=max(1)...next[n]=max(n-1)
+    """
     pattern_length = len(pattern)
     _next = [-1] * pattern_length
     k = -1
@@ -44,6 +48,7 @@ def build_next(pattern):
             # 优化_next数组,直接_next[p_pos]=k也行,数组_next中的数字越小则认为越优化
             if pattern[p_pos] == pattern[k]:
                 _next[p_pos] = _next[k]
+                # _next[p_pos] = k
             else:
                 _next[p_pos] = k
             p_pos += 1
@@ -86,4 +91,4 @@ def sunday(source, pattern, pos=0):
 
 
 if __name__ == "__main__":
-    print(kmp("abcde", "bce"))
+    print(kmp("bbc abcdab abcdabcdabde", "abcdabd"))
