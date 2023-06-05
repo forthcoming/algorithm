@@ -55,7 +55,6 @@ class TrieTree:  # 孩子-兄弟链表存储
         return False
 
     def show(self):
-        root = self.__root.left
         stack = []
 
         def _traverse(root):
@@ -68,7 +67,7 @@ class TrieTree:  # 孩子-兄弟链表存储
                 stack.pop()
                 root = root.sibling
 
-        _traverse(root)
+        _traverse(self.__root.left)
 
 
 if __name__ == '__main__':
