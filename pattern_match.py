@@ -16,17 +16,17 @@ def rabin_karp(source, pattern, radix=31):
     length_p = len(pattern)
     if length_s < length_p:
         return -1
-    source_hash = 0
-    pattern_hash = 0
+    hash_s = 0
+    hash_p = 0
     offset = radix ** length_p
     for i in range(length_p):
-        source_hash = source_hash * radix + ord(source[i])  # rolling hash
-        pattern_hash = pattern_hash * radix + ord(pattern[i])
-    if source_hash == pattern_hash:  # 此处可以做进一步检查,字符串是否相等
+        hash_s = hash_s * radix + ord(source[i])  # rolling hash
+        hash_p = hash_p * radix + ord(pattern[i])
+    if hash_s == hash_p:  # 此处可以做进一步检查,字符串是否相等
         return 0
     for j in range(length_p, length_s):
-        source_hash = source_hash * radix - ord(source[j - length_p]) * offset + ord(source[j])
-        if source_hash == pattern_hash:  # 此处可以做进一步检查,字符串是否相等
+        hash_s = hash_s * radix - ord(source[j - length_p]) * offset + ord(source[j])
+        if hash_s == hash_p:  # 此处可以做进一步检查,字符串是否相等
             return j - length_p + 1
     return -1
 
