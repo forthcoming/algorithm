@@ -34,13 +34,19 @@ def rolling_hash(source, pattern, radix=31):
 def build_next(pattern):
     """
     next[j]代表p[0,j-1]子串最大长度的相同前缀后缀(不含子串本身,应为子串至少要移动一步),s[j]匹配失败时下一步匹配中模式串应该跳到next[j]位置
-    计算步骤:
+    人工计算步骤:
     1. 计算p[0,0], p[0,1]... p[0,n]子串的最大长度的相同前缀后缀0, max(1), max(2)... max(n)
     2. next[0]=-1, next[1]=0, next[2]=max(1)...next[n]=max(n-1)
+
+    程序计算步骤:
+    1. 当pattern长度大于等于2时,next[0]=-1, next[1]=0,由next[j]推导next[j+1]
+    2.
+      1. 如果p[next[j]]==p[j],next[j+1]=next[j]+1,如果next[j+1]再大点next[j]一定会变大,所以next[j+1]只能等于next[j]+1
+      2. 如果p[next[j]]!=p[j],需要在p[0,next[j]-1]子串寻找,即判断p[next[next[j]]]是否等于p[j]
     """
     pattern_length = len(pattern)
     _next = [-1] * pattern_length
-    k = -1
+    k = -1  # 代表next[p_pos-1]
     p_pos = 1
     while p_pos < pattern_length:
         if k == -1 or pattern[p_pos - 1] == pattern[k]:
@@ -57,7 +63,7 @@ def build_next(pattern):
     return _next
 
 
-def kmp(source, pattern, s_pos=0):
+def kmp(source, pattern, s_pos=0):  # 时间复杂度O(s+p)
     source_length = len(source)
     pattern_length = len(pattern)
     _next = build_next(pattern)
