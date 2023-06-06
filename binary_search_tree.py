@@ -251,7 +251,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
         if self.__root:
             _find_path(self.__root)
 
-    def find_path_stack(self):  # all path from root to leaf
+    def find_path_stack(self):  # root => leaf路径问题, 此处是先序遍历
         root = self.__root
         stack = []
         path = []
