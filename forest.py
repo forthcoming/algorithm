@@ -34,7 +34,7 @@ class Forest:
         index = 1
         length = len(nodes)
         root = queue[0]
-        while index < length and nodes[index][0] == '#':
+        while index < length and nodes[index][0] == '#':  # 将其兄弟连接起来,且队列只保存最左边的孩子节点
             root.sibling = Node(nodes[index][1])
             root = root.sibling
             index += 1
@@ -50,7 +50,7 @@ class Forest:
                     else:
                         node.left = Node(nodes[index][1])
                         r = node.left
-                        queue.append(r)  # 如果要迭代调用其sibling,则队列里面只能存他的一个左孩子
+                        queue.append(r)  # 队列只保存最左边的孩子节点,应为兄弟节点可以通过其遍历出来
                     index += 1
 
     def level_traverse(self):
