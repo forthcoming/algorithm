@@ -148,8 +148,9 @@ class Forest:
         def _find_path(root):
             while root:
                 path.append(root.data)
-                _find_path(root.left)
-                if root.left is None:
+                if root.left:
+                    _find_path(root.left)
+                else:  # root是树叶子结点
                     print(path)
                 path.pop()
                 root = root.sibling
