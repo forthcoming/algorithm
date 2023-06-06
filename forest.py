@@ -7,6 +7,7 @@ from collections import deque
 2. 孩子链表---图的一种存储方式（树也是一种特殊的图结构）
 3. 二叉链表---按照二叉树的结构存储（推荐,可以利用二叉树的研究方法研究）
 树/森林先序遍历对应二叉树先序遍历; 树/森林后序遍历对应二叉树中序遍历
+树/森林的叶子结点特征是左子树为空
 二叉树最大子结构是根节点下的左右子树
 森林最大子结构是每棵树根节点下的最左孩子(从左到右第一个孩子),最大子结构也可以是第一棵树根节点下的最左孩子和第一棵树后面的子树集合root.sibling
 '''
@@ -119,7 +120,7 @@ class Forest:
         else:
             return 0
 
-    def show_route(self, root, queue=deque()):  # 当然如果用[]来当做栈使用也是可以的,树的叶子结点特征是左子树为空
+    def show_route(self, root, queue=deque()):  # 如果用[]来当做栈使用也可以
         while root:
             queue.append(root)
             if root.left:
@@ -155,5 +156,5 @@ if __name__ == '__main__':
     print(forest.max_depth(forest.root))
     forest.root_last_traverse()
     print(forest.find_parent(4))
-    # forest.show_route(forest.root)
+    forest.show_route(forest.root)
 
