@@ -7,6 +7,8 @@ from collections import deque
 2. 孩子链表---图的一种存储方式（树也是一种特殊的图结构）
 3. 二叉链表---按照二叉树的结构存储（推荐,可以利用二叉树的研究方法研究）
 树/森林先序遍历对应二叉树先序遍历; 树/森林后序遍历对应二叉树中序遍历
+二叉树最大子结构是根节点下的左右子树
+森林最大子结构是每棵树根节点下的最左孩子(从左到右第一个孩子),最大子结构也可以是第一棵树根节点下的最左孩子和第一棵树后面的子树集合root.sibling
 '''
 
 
@@ -38,7 +40,7 @@ class Forest:
             root.sibling = Node(nodes[index][1])
             root = root.sibling
             index += 1
-        while queue and index < length:
+        while queue:
             node = queue.popleft()
             while node and index < length:
                 if node.data != nodes[index][0]:
@@ -58,10 +60,24 @@ class Forest:
         while queue:
             node = queue.popleft()
             while node:
-                print(node, end='\t')
+                print(node, end="\t")
                 if node.left:
                     queue.append(node.left)
                 node = node.sibling
+
+    def root_last_traverse(self):
+        def _root_last_traverse(root):
+            while root:
+                _root_last_traverse(root.left)
+                print(root, end="\t")
+                root = root.sibling
+
+            # if root:  # 二叉树中序遍历
+            #     _root_last_traverse(root.left)
+            #     print(root, end='\t')
+            #     _root_last_traverse(root.sibling)
+
+        _root_last_traverse(self.__root)
 
     def root_first_traverse(self, root):  # 对应二叉树的前序遍历,以广义表形式打印树结构
         while root:
@@ -83,25 +99,14 @@ class Forest:
         #         print(',', end='')
         #         self.root_first_traverse(root.sibling)
 
-    def root_last_traverse(self, root):  # 对应二叉树的中序遍历
-        while root:
-            if root.left:
-                self.root_last_traverse(root.left)
-            print(root, end='\t')
-            root = root.sibling
-        # if root:
-        #     self.root_last_traverse(root.left)
-        #     print(root, end='\t')
-        #     self.root_last_traverse(root.sibling)
-
-    def find_parent(self, key):  # 所有的遍历方式都行,但最好不要用递归
+    def find_parent(self, element):  # 层序遍历方式
         queue = deque([self.__root])
         while queue:
             node = queue.popleft()
             while node:
                 child = node.left
                 while child:
-                    if child.data == key.data:
+                    if child.data == element:
                         return node
                     child = child.sibling
                 if node.left:
@@ -148,5 +153,7 @@ if __name__ == '__main__':
     """
     forest.level_traverse()
     print(forest.max_depth(forest.root))
-    forest.show_route(forest.root)
-    forest.root_last_traverse(forest.root)
+    forest.root_last_traverse()
+    print(forest.find_parent(4))
+    # forest.show_route(forest.root)
+
