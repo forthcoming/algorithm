@@ -1,5 +1,14 @@
 from collections import deque
 
+'''
+树与二叉树,森林与二叉树之间转换唯一确定,任意一颗树对应的二叉树根节点无右子树
+树/森林的存储结构
+1. 双亲链表---并查集
+2. 孩子链表---图的一种存储方式（树也是一种特殊的图结构）
+3. 二叉链表---按照二叉树的结构存储（推荐,可以利用二叉树的研究方法研究）
+树/森林先序遍历对应二叉树先序遍历; 树/森林后序遍历对应二叉树中序遍历
+'''
+
 
 class Node:
     def __init__(self, data, left=None, sibling=None):
@@ -8,27 +17,12 @@ class Node:
         self.sibling = sibling
 
     def __str__(self):
-        return 'data:{}'.format(self.data)
+        return f'{self.data}'
 
 
 class Forest:
     def __init__(self, root=None):
         self.__root = root
-
-    def init(self):
-        """
-              0            1              0
-             / \         / | \         /     \
-            2   3   +   4  5  6   =   2       1
-                |       |  |           \     /
-                7       8  9            3   4
-                                        /  / \
-                                       7  8   5
-                                             / \
-                                            9   6
-        """
-        self.__root = Node(0, Node(2, sibling=Node(3, left=Node(7))),
-                           Node(1, Node(4, Node(8), Node(5, Node(9), Node(6)))))
 
     @property
     def root(self):
@@ -142,12 +136,17 @@ if __name__ == '__main__':
     forest = Forest()
     forest.create_forest([('#', 0), ('#', 1), (0, 2), (0, 3), (0, 4), (1, 5), (1, 6), (2, 7), (3, 8), (6, 9)])
     """                     
-           0           1       
-         / | \        / \       
-        2  3  4  +   5   6 
-        |  |             |       
-        7  8             9                       
+           0           1                   0
+         / | \        / \                /   \
+        2  3  4  +   5   6     =        2     1
+        |  |             |             / \    /
+        7  8             9            7   3  5
+                                         /\   \   
+                                        8  4   6
+                                               /
+                                              9   
     """
     forest.level_traverse()
     print(forest.max_depth(forest.root))
     forest.show_route(forest.root)
+    forest.root_last_traverse(forest.root)
