@@ -120,22 +120,41 @@ class Forest:
         else:
             return 0
 
-    def show_route(self, root, queue=deque()):  # 如果用[]来当做栈使用也可以
-        while root:
-            queue.append(root)
-            if root.left:
-                self.show_route(root.left)
-            else:
-                ends = queue[-1]
-                while True:
-                    node = queue.popleft()
-                    print(node, end=' ')
-                    queue.append(node)
-                    if node == ends:
-                        break
-                print()
-            queue.pop()
-            root = root.sibling
+    def find_path(self):
+        queue = deque()
+
+        def _find_path(root):
+            while root:
+                queue.append(root)
+                if root.left:
+                    _find_path(root.left)
+                else:
+                    ends = queue[-1]
+                    while True:
+                        node = queue.popleft()
+                        print(node, end=' ')
+                        queue.append(node)
+                        if node == ends:
+                            break
+                    print()
+                queue.pop()
+                root = root.sibling
+
+        _find_path(self.__root)
+
+    def find_path_v1(self):  # 回溯版root => leaf路径问题
+        path = []
+
+        def _find_path(root):
+            while root:
+                path.append(root.data)
+                _find_path(root.left)
+                if root.left is None:
+                    print(path)
+                path.pop()
+                root = root.sibling
+
+        _find_path(self.__root)
 
 
 if __name__ == '__main__':
@@ -156,5 +175,5 @@ if __name__ == '__main__':
     print(forest.max_depth(forest.root))
     forest.root_last_traverse()
     print(forest.find_parent(4))
-    forest.show_route(forest.root)
-
+    forest.find_path()
+    forest.find_path_v1()
