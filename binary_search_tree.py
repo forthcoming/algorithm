@@ -188,38 +188,38 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
                 #         print(i,end=' ')
                 #     print(r_child,end='\n')
 
-        # method 2:  可以看成DRL,然后再将结果翻转
-        # stack=[]
-        # result=[]
-        # root=self.__root        
+        # method2: 可以看成DRL, 然后再将结果翻转
+        # stack = []
+        # result = []
+        # root = self.__root
         # while root or stack:
         #     if root:
         #         result.append(root.data)
         #         if root.left:
         #             stack.append(root.left)
-        #         root=root.right  
+        #         root = root.right
         #     else:
-        #         root=stack.pop()
+        #         root = stack.pop()
         # while result:
         #     print(result.pop())
-
-        # method 3: 不推荐
-        # root=self.__root
-        # stack=[self.__root]
+        #
+        # method3: 不推荐
+        # root = self.__root
+        # stack = [self.__root]
         # while root or stack:
         #     if root:
-        #         if stack and stack[-1]==root:
+        #         if stack and stack[-1] == root:
         #             if root.right:
         #                 stack.append(root.right)
         #                 stack.append(root.right)
         #             if root.left:
         #                 stack.append(root.left)
-        #             root=root.left
+        #             root = root.left
         #         else:
         #             print(root)
-        #             root=None
+        #             root = None
         #     else:
-        #         root=stack.pop()
+        #         root = stack.pop()
 
     def breath_first_search(self):
         count = 0  # 结点个数
