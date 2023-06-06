@@ -166,7 +166,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
         if self.__root:
             _post_order(self.__root)
 
-    def post_order_stack(self):  # 后续遍历二叉树还可以用于打印从根节点到叶节点的路径
+    def post_order_stack(self):
         # method 1:  推荐
         root = self.__root
         stack = []  # 栈中的结点已经不包含左节点
@@ -183,7 +183,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
             else:
                 r_child = stack.pop()
                 print(r_child)
-                # if not(r_child.left or r_child.right):  # 打印root -> leaf路径
+                # if not(r_child.left or r_child.right):  # root => leaf路径问题, 此处是后序遍历
                 #     for i in stack:
                 #         print(i,end=' ')
                 #     print(r_child,end='\n')
