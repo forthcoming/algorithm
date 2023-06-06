@@ -351,7 +351,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
         while root or stack:
             if root:
                 if root.data == child:  # 找到了child,则查看child的所有父节点中哪个也属于sibling父节点即可
-                    return __class__.check(path, sibling)
+                    return BST.check(path, sibling)
                 path.append(root)
                 if root.right:
                     stack.append(root)
@@ -364,6 +364,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
                         node = path.pop()
                 root = root.right
 
+    @staticmethod
     def check(path, sibling):
         queue = deque()
         while path:
@@ -397,6 +398,8 @@ if __name__ == '__main__':
     for num in [49, 38, 65, 76, 13, 27, 52]:  # 时间复杂度介于O(nlogn)和O(n^2),后者出现在序列已经有序的情况下
         tree.add(num)
     print(tree.find_common_parent_stack(38, 52))
+    tree.find_path()
+    tree.find_path_stack()
 
     '''
     a,b,c,d,e,f=6,5,4,3,2,1
