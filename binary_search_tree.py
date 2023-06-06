@@ -259,13 +259,13 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
             if root:
                 path.append(root.data)
                 if root.right:
-                    stack.append(root)  # 这里不能让其右孩子入栈
-                elif not root.left:
+                    stack.append(root)  # 这里不能让其右孩子入栈,应为后面要通过root.left遍历删除path中的左孩子
+                elif not root.left:  # root已经是叶子结点,打印路径
                     print(path)
                 root = root.left
             else:
                 root = stack.pop()
-                if root.left:  # 一定要判断
+                if root.left:  # 一定要判断,打印完某条路径后,删除多余的左孩子
                     node = path.pop()
                     l_data = root.left.data
                     while l_data != node:
