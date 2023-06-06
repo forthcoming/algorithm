@@ -221,7 +221,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
         #     else:
         #         root=stack.pop()
 
-    def BFS(self):
+    def breath_first_search(self):
         count = 0  # 结点个数
         if self.__root:
             queue = deque([self.__root])
