@@ -1,4 +1,4 @@
-#  常用于外排序
+#  常用于外排序,由数组构成的完全二叉树,每个节点保存败者下标
 class LoserTree:
     def __init__(self, arr, key=lambda x, y: x > y):
         length = len(arr)
@@ -34,5 +34,16 @@ class LoserTree:
 
 
 if __name__ == "__main__":
+    '''
+                       3
+                       |
+                       0
+                  /         \
+                 2           6
+               /   \       /   \
+              1     4     5     L0
+              /\    /\    /\
+             L1 L2 L3 L4 L5 L6           
+    '''
     loser_tree = LoserTree([2, 4, 1, 0, 3, 7, 6])  # 外排序中每个归并段都是有序集合,这里相当于7个集合元素为1的归并段
     loser_tree.sort()
