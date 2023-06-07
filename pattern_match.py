@@ -1,9 +1,9 @@
-def bf(source, pattern, pos=0):
-    length_s = len(source)
+def bf(text, pattern, pos=0):
+    length_t = len(text)
     length_p = len(pattern)
     j = 0
-    while pos + j < length_s and j < length_p:
-        if source[pos + j] == pattern[j]:
+    while pos + j < length_t and j < length_p:
+        if text[pos + j] == pattern[j]:
             j += 1
         else:
             pos += 1
@@ -11,22 +11,22 @@ def bf(source, pattern, pos=0):
     return pos if j == length_p else -1
 
 
-def rabin_karp(source, pattern, radix=31):
-    length_s = len(source)
+def rabin_karp(text, pattern, radix=31):
+    length_t = len(text)
     length_p = len(pattern)
-    if length_s < length_p:
+    if length_t < length_p:
         return -1
-    hash_s = 0
+    hash_t = 0
     hash_p = 0
     offset = radix ** length_p
     for i in range(length_p):
-        hash_s = hash_s * radix + ord(source[i])  # rolling hash
+        hash_t = hash_t * radix + ord(text[i])  # rolling hash
         hash_p = hash_p * radix + ord(pattern[i])
-    if hash_s == hash_p:  # 此处可以做进一步检查,字符串是否相等
+    if hash_t == hash_p:  # 此处可以做进一步检查,字符串是否相等
         return 0
-    for j in range(length_p, length_s):
-        hash_s = hash_s * radix - ord(source[j - length_p]) * offset + ord(source[j])
-        if hash_s == hash_p:  # 此处可以做进一步检查,字符串是否相等
+    for j in range(length_p, length_t):
+        hash_t = hash_t * radix - ord(text[j - length_p]) * offset + ord(text[j])
+        if hash_t == hash_p:  # 此处可以做进一步检查,字符串是否相等
             return j - length_p + 1
     return -1
 
@@ -62,38 +62,38 @@ def build_next(pattern):
     return _next
 
 
-def kmp(source, pattern, pos_s=0):  # 时间复杂度O(s+p)
-    length_s = len(source)
+def kmp(text, pattern, pos_t=0):  # 时间复杂度O(s+p)
+    length_t = len(text)
     length_p = len(pattern)
     _next = build_next(pattern)
     pos_p = 0
-    while pos_p < length_p and pos_s < length_s:
-        if pos_p == -1 or source[pos_s] == pattern[pos_p]:
-            pos_s += 1
+    while pos_p < length_p and pos_t < length_t:
+        if pos_p == -1 or text[pos_t] == pattern[pos_p]:
+            pos_t += 1
             pos_p += 1
         else:
             pos_p = _next[pos_p]
-    return pos_s - pos_p if pos_p == length_p else -1
+    return pos_t - pos_p if pos_p == length_p else -1
 
 
-def sunday(source, pattern, pos_s=0):
-    length_s = len(source)
+def sunday(text, pattern, pos_t=0):
+    length_t = len(text)
     length_p = len(pattern)
     mapping = {each: index for index, each in enumerate(pattern)}  # 重要,后面出现的字符index覆盖前面重复出现的字符index
     pos_p = 0
-    while pos_p < length_p and pos_s < length_s:
-        if pattern[pos_p] == source[pos_s]:
-            pos_s += 1
+    while pos_p < length_p and pos_t < length_t:
+        if pattern[pos_p] == text[pos_t]:
+            pos_t += 1
             pos_p += 1
         else:
-            pos_s += length_p - pos_p  # 匹配失败时pos_s是source中参加匹配的最末位字符的下一位字符下标,应为这个字符一定会被比较
-            if pos_s >= length_s:
+            pos_t += length_p - pos_p  # 匹配失败时pos_t是text中参加匹配的最末位字符的下一位字符下标,应为这个字符一定会被比较
+            if pos_t >= length_t:
                 return -1
             else:
-                # 将source和pattern的source[pos_s]字符对齐,然后从头开始遍历,没找到返回-1,从pos_s下一个位置开始遍历
-                pos_s -= mapping.get(source[pos_s], -1)
+                # 将text和pattern的text[pos_t]字符对齐,然后从头开始遍历,没找到返回-1,从pos_t下一个位置开始遍历
+                pos_t -= mapping.get(text[pos_t], -1)
                 pos_p = 0
-    return pos_s - pos_p if pos_p == length_p else -1
+    return pos_t - pos_p if pos_p == length_p else -1
 
 
 if __name__ == "__main__":
