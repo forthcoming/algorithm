@@ -3,9 +3,10 @@ class LoserTree:
         length = len(arr)
         self.key = key
         self.extreme_value = float("inf") if key(1, 0) else -float("inf")
-        self.node = [length] * length  # 初始状态败者节点都指向leaves[-1]
+        self.node = [length] * length  # 保存败者下标的完全二叉树,初始状态败者节点都指向leaves[-1]
         self.count = length
         self.leaves = arr + [-self.extreme_value]
+        # for index in range(0, length):  # 待验证
         for index in range(length - 1, -1, -1):
             self.adjust(index)
 
@@ -22,13 +23,13 @@ class LoserTree:
         if self.count <= 0:
             return
         while True:
-            min_pos = self.node[0]
-            min_value = self.leaves[min_pos]
-            if min_value == self.extreme_value:
+            extreme_pos = self.node[0]
+            extreme_value = self.leaves[extreme_pos]
+            if extreme_value == self.extreme_value:
                 break
-            print(min_value)
-            self.leaves[min_pos] = self.extreme_value
-            self.adjust(min_pos)
+            print(extreme_value)
+            self.leaves[extreme_pos] = self.extreme_value
+            self.adjust(extreme_pos)
 
 
 if __name__ == "__main__":
