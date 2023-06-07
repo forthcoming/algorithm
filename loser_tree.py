@@ -1,3 +1,4 @@
+#  常用于外排序
 class LoserTree:
     def __init__(self, arr, key=lambda x, y: x > y):
         length = len(arr)
@@ -33,5 +34,5 @@ class LoserTree:
 
 
 if __name__ == "__main__":
-    loser_tree = LoserTree([2, 4, 1, 0, 3, 7, 6])
+    loser_tree = LoserTree([2, 4, 1, 0, 3, 7, 6])  # 外排序中每个归并段都是有序集合,这里相当于7个集合元素为1的归并段
     loser_tree.sort()
