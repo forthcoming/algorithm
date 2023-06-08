@@ -19,12 +19,12 @@ class TrieTree:  # 孩子-兄弟链表存储
         2. 匹配完word,但flag=False即word仅为某个单词前缀
         """
         root = self.__root
-        for index, alpha in enumerate(word):
+        for index, alphabet in enumerate(word):
             self._hot = root  # 指向遍历层的父节点
             self._index = index  # 指向匹配字符位置
             root = root.left
             while root:
-                if root.data == alpha:
+                if root.data == alphabet:
                     break
                 root = root.sibling
             else:
