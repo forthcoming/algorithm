@@ -1,5 +1,10 @@
 from collections import deque
 
+"""
+假定在𝑇𝑟𝑖𝑒树上遍历至𝑥得到的字符串为𝑤𝑜𝑟𝑑𝑥,且𝑓𝑎𝑖𝑙[𝑥]指向的是𝑦,则𝑤𝑜𝑟𝑑𝑦是𝑤𝑜𝑟𝑑𝑥在这棵树上所能匹配到的最长后缀,可能对应着另一个模式串
+AC自动机是一种有限状态自动机,当只有一个模式串时会退化为kmp算法
+"""
+
 
 class Node:
     def __init__(self):
@@ -54,5 +59,16 @@ class AcAutomaton:
 
 
 if __name__ == '__main__':
+    """
+                #
+             /  |  \
+            C   D   H
+           /\   |   |
+          C  D  H   Y
+          |  |
+          D  H
+          |
+          H  
+    """
     ac_automaton = AcAutomaton(["CD", "CDH", "CCDH", "HY", "DH", "CCD"])
     print(ac_automaton.search('GGCDHCCDHY'))
