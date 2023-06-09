@@ -49,7 +49,7 @@ class AcAutomaton:
                 parent = son
                 while son:
                     if son.length:
-                        result.append((end - son.length, end - 1))
+                        result.append((end - son.length, end))
                     son = son.fail
         return result
 
@@ -64,7 +64,7 @@ class AcAutomaton:
                     start = index
                 parent = parent.children[char]
                 if parent.is_word:
-                    result.append((start, end))
+                    result.append((start, end + 1))
                 if parent.children and end + 1 < len(text):
                     end += 1
                     char = text[end]
@@ -173,7 +173,6 @@ if __name__ == '__main__':
 #     s = "ushers"
 #     ct = CreateAcAutomaton(data, "model.pkl")
 #     print(ct.search(s))
-
 
 
 #
