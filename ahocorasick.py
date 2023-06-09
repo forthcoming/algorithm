@@ -10,17 +10,17 @@ class Node:
 
 
 class AcAutomaton:
-    def __init__(self, words):
+    def __init__(self, patterns):
         self.__root = Node()
-        for word in words:
-            self.insert(word)
+        for pattern in patterns:
+            self.insert(pattern)
 
-    def insert(self, word):
+    def insert(self, pattern):
         root = self.__root
-        for char in word:
+        for char in pattern:
             root = root.children.setdefault(char, Node())
         root.is_word = True
-        root.length = len(word)
+        root.length = len(pattern)
 
     def build_fail(self):
         queue = deque([self.__root])
@@ -173,3 +173,69 @@ if __name__ == '__main__':
 #     s = "ushers"
 #     ct = CreateAcAutomaton(data, "model.pkl")
 #     print(ct.search(s))
+
+
+
+#
+# class TrieNode:
+#     def __init__(self):
+#         self.children = {}
+#         self.is_end_of_word = False
+#         self.fail = None
+#         self.output = []
+#
+# class ACAutomaton:
+#     def __init__(self):
+#         self.root = TrieNode()
+#
+#     def add_pattern(self, pattern):
+#         current = self.root
+#         for char in pattern:
+#             if char not in current.children:
+#                 current.children[char] = TrieNode()
+#             current = current.children[char]
+#         current.is_end_of_word = True
+#
+#     def build(self):
+#         queue = []
+#         for child in self.root.children.values():
+#             queue.append(child)
+#             child.fail = self.root
+#
+#         while queue:
+#             current = queue.pop(0)
+#             for char, child in current.children.items():
+#                 queue.append(child)
+#                 fail_node = current.fail
+#
+#                 while fail_node and char not in fail_node.children:
+#                     fail_node = fail_node.fail
+#
+#                 child.fail = fail_node.children[char] if fail_node else self.root
+#                 child.output = child.fail.output + [child.fail] if child.fail.is_end_of_word else child.fail.output
+#
+#     def match(self, text):
+#         current = self.root
+#         matches = []
+#         for i, char in enumerate(text):
+#             while current and char not in current.children:
+#                 current = current.fail
+#             if not current:
+#                 current = self.root
+#                 continue
+#             current = current.children[char]
+#             matches.extend([j - len(pattern) + 1 for j in current.output])
+#
+#         return matches
+#
+# # 示例用法
+# ac = ACAutomaton()
+# ac.add_pattern("he")
+# ac.add_pattern("she")
+# ac.add_pattern("his")
+# ac.add_pattern("hers")
+# ac.build()
+#
+# text = "ushers"
+# matches = ac.match(text)
+# print(f"在文本 '{text}' 中找到的匹配位置为：{matches}")
