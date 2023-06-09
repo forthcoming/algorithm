@@ -11,7 +11,9 @@ class Node:
     def __init__(self):
         self.children = {}
         self.fail = None  # 失败指针
-        self.length = 0
+        self.exist = []  # 所有后缀串中属于模式串的长度
+        # self.char       # 当前节点字符(本算法不需要)
+        # self.is_end     # 根节点到当前节点是否是模式串(本算法不需要)
 
 
 class AcAutomaton:
@@ -25,7 +27,7 @@ class AcAutomaton:
         root = self.__root
         for char in pattern:
             root = root.children.setdefault(char, Node())
-        root.length = len(pattern)
+        root.exist = [len(pattern)]
 
     def build_fail(self):
         queue = deque([self.__root])
@@ -36,6 +38,7 @@ class AcAutomaton:
                 while next_node:
                     if char in next_node.children:
                         son.fail = next_node.children[char]
+                        son.exist += son.fail.exist
                         break
                     next_node = next_node.fail
                 else:
@@ -52,10 +55,8 @@ class AcAutomaton:
                 son = parent.children.get(char)
             if son:
                 parent = son
-                while son:
-                    if son.length:
-                        result.append((end - son.length, end))
-                    son = son.fail
+                for start in son.exist:
+                    result.append((end - start, end))
         return result
 
 
