@@ -1,4 +1,7 @@
-import random,binascii,hashlib
+import binascii
+import hashlib
+import random
+
 import numpy as np
 
 '''
@@ -92,57 +95,58 @@ RSA在通信过程中作用：
 客户端通过RSA的掩护,安全的和服务器商量好一个对称加密算法和密钥来保证后面通信过程内容的安全
 '''
 
+
 class Base:
 
     @staticmethod
-    def is_probable_prime(n, trials = 10): # Miller-Rabin检测,error_rate=.25**trials
+    def is_probable_prime(n, trials=10):  # Miller-Rabin检测,error_rate=.25**trials
         assert n > 1
-        if n == 2: # 2是素数
+        if n == 2:  # 2是素数
             return True
-        if not n&1: # 排除偶数
+        if not n & 1:  # 排除偶数
             return False
         s = 0
         d = n - 1
-        while not d&1:  # 把n-1写成(2^s)*d的形式
-            s+=1
-            d>>=1
-         
+        while not d & 1:  # 把n-1写成(2^s)*d的形式
+            s += 1
+            d >>= 1
+
         for i in range(trials):
             a = random.randrange(2, n)  # 每次的底a是不一样的,只要有一次未通过测试,则判定为合数
-            if __class__.power(a, d, n) != 1: # 相当于(a^d)%n
+            if __class__.power(a, d, n) != 1:  # 相当于(a^d)%n
                 for r in range(s):
-                    if __class__.power(a, 2 ** r * d, n) == n - 1: #相当于(a^((2^i)*d))%n
+                    if __class__.power(a, 2 ** r * d, n) == n - 1:  # 相当于(a^((2^i)*d))%n
                         break
                 else:
                     return False  # 以上条件都满足时,n一定是合数
         return True
 
     @staticmethod
-    def power(a,b,r):  # a**b%r or pow(a,b,r) 
-        res=1
+    def power(a, b, r):  # a**b%r or pow(a,b,r)
+        res = 1
         while b:
-            if b&1:
-                res=res*a%r  # 防止数字过大导致越界
-            b>>=1    # 隐式减去了1
-            a=a*a%r  # 防止a增大
+            if b & 1:
+                res = res * a % r  # 防止数字过大导致越界
+            b >>= 1  # 隐式减去了1
+            a = a * a % r  # 防止a增大
         return res
 
     @staticmethod
-    def power_v1(x,y):  # y可以是任意整数
+    def power_v1(x, y):  # y可以是任意整数
         # 分治法降低power时间复杂度到logn,效率 x**y = pow > power_v1
         result = 1
-        if y<0:
-            x=1/x
-            y=-y
+        if y < 0:
+            x = 1 / x
+            y = -y
         while y:
-            if y&1:
+            if y & 1:
                 result *= x
             x *= x
             y >>= 1
         return result
-    
+
     @staticmethod
-    def exgcd(a,b):  # 只有当a,b互素时算出的d才有实际意义
+    def exgcd(a, b):  # 只有当a,b互素时算出的d才有实际意义
         '''
         对于a' = b, b' = a%b = a - a / b * b而言,我们求得d, y使得a' d+b' y=gcd(a', b') 
         ===>
@@ -151,21 +155,23 @@ class Base:
         ay + b(d- a/b *y) = gcd(a, b)
         因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
         '''
+
         def _exgcd(a, b):
             if b:
-                d , y , common_divisor = _exgcd( b , a % b )
-                d , y = y, d - (a // b) * y
+                d, y, common_divisor = _exgcd(b, a % b)
+                d, y = y, d - (a // b) * y
             else:
                 '''
                 当b=0时gcd(a,b) = a ; ad + 0y = a
                 所以d=1, y可以是任意数,但一般选0,这样会使所求的模反元素d最小, common_divisor=a
                 '''
                 d, y, common_divisor = 1, 0, a
-            return d,y,common_divisor
-        d,y,common_divisor = _exgcd(a,b)
-        while d<0: # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
-            d+=b
-        return d,common_divisor
+            return d, y, common_divisor
+
+        d, y, common_divisor = _exgcd(a, b)
+        while d < 0:  # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
+            d += b
+        return d, common_divisor
 
     @staticmethod
     def exgcd_iter(a, b):
@@ -177,15 +183,15 @@ class Base:
         其中kn = a//b, a,b是每次迭代中的a,b,思考为啥最后一项是[1,0]
         '''
         _b = b
-        M=np.eye(2,dtype=np.int64)  # 初始化单位矩阵
+        M = np.eye(2, dtype=np.int64)  # 初始化单位矩阵
         while b:
-            M = M @ np.array([[0,1],[1,-(a//b)]])  # 注意-(a//b)要加括号
+            M = M @ np.array([[0, 1], [1, -(a // b)]])  # 注意-(a//b)要加括号
             a, b = b, a % b
         d = M[0][0]
         if d < 0:
             d += _b
         return d, a
-    
+
     @staticmethod
     def exgcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
         '''
@@ -200,27 +206,28 @@ class Base:
         此处的rn即为最大公约数
         '''
         _b = b
-        M=np.eye(2,dtype=np.int64)
+        M = np.eye(2, dtype=np.int64)
         while b:
-            M=M@np.array([[a//b,1],[1,0]])  # 注意不能用*
-            a,b=b,a%b
-        D=M[0][0]*M[1][1]-M[1][0]*M[0][1]   # 计算行列式(值是1或者-1,取决于循环的次数)
-        d = M[1][1] // D                    # M的逆矩阵M' = M* / D, M[1][1]对应M*[0][0]
-        while d<0: 
+            M = M @ np.array([[a // b, 1], [1, 0]])  # 注意不能用*
+            a, b = b, a % b
+        D = M[0][0] * M[1][1] - M[1][0] * M[0][1]  # 计算行列式(值是1或者-1,取决于循环的次数)
+        d = M[1][1] // D  # M的逆矩阵M' = M* / D, M[1][1]对应M*[0][0]
+        while d < 0:
             d += _b
-        return d,a
+        return d, a
 
     @staticmethod
-    def factorization(n): # 因式分解
-        factor=2
-        while n!=1:
-            idx=0
-            while not n%factor:
-                idx+=1
+    def factorization(n):  # 因式分解
+        factor = 2
+        while n != 1:
+            idx = 0
+            while not n % factor:
+                idx += 1
                 n /= factor
             if idx:
-                print(factor,idx)
-            factor+=1
+                print(factor, idx)
+            factor += 1
+
 
 class RSA(Base):
     def __init__(self):
@@ -229,76 +236,77 @@ class RSA(Base):
         Q = self.generate_prime()
         while P == Q:
             Q = self.generate_prime()
-        phi=(P-1) * (Q-1)
+        phi = (P - 1) * (Q - 1)
         self.module = P * Q  # 公钥
-        self.e = random.randrange(3,phi,2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.d,common_divisor=self.exgcd(self.e,phi) # 私钥
-        while common_divisor!=1:
-            self.e+=2
-            self.d,common_divisor=self.exgcd(self.e,phi)
-    
+        self.e = random.randrange(3, phi, 2)  # 公钥,跟phi互质的任意数,这里必须是奇数
+        self.d, common_divisor = self.exgcd(self.e, phi)  # 私钥
+        while common_divisor != 1:
+            self.e += 2
+            self.d, common_divisor = self.exgcd(self.e, phi)
+
     @staticmethod
     def generate_prime():
-        prime=random.randrange((1<<199)+1,1<<300,2)
+        prime = random.randrange((1 << 199) + 1, 1 << 300, 2)
         while not __class__.is_probable_prime(prime):
-            prime+=2
+            prime += 2
         return prime
 
-    def encryption(self,message): 
-        message=int(binascii.hexlify(bytes(message,encoding='utf8')),16)
-        assert(0<=message<self.module)
-        return self.power(message,self.e,self.module)
+    def encryption(self, message):
+        message = int(binascii.hexlify(bytes(message, encoding='utf8')), 16)
+        assert (0 <= message < self.module)
+        return self.power(message, self.e, self.module)
 
-    def decryption(self,cipher):
-        cipher=self.power(cipher,self.d,self.module)
+    def decryption(self, cipher):
+        cipher = self.power(cipher, self.d, self.module)
         # return binascii.unhexlify(bytes(hex(cipher),encoding='utf8')[2:])
-        res=[]
+        res = []
         while cipher:
-            res.append(chr(cipher&255))
-            cipher>>=8
+            res.append(chr(cipher & 255))
+            cipher >>= 8
         return ''.join(res[::-1])
+
 
 class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,也不能进行密钥交换,只用于签名,它比RSA要快很多
     def __init__(self):
-        self.q=random.randrange((1<<159)+1,1<<160,2) # 公钥,160bit位奇数里面挑选
+        self.q = random.randrange((1 << 159) + 1, 1 << 160, 2)  # 公钥,160bit位奇数里面挑选
         while not self.is_probable_prime(self.q):
-            self.q+=2
+            self.q += 2
 
-        factor=1<<300 
-        self.p=factor*self.q+1  # 公钥
+        factor = 1 << 300
+        self.p = factor * self.q + 1  # 公钥
         while not self.is_probable_prime(self.p):
-            factor+=1
-            self.p=factor*self.q+1
+            factor += 1
+            self.p = factor * self.q + 1
 
-        self.g=pow(random.randrange(2,self.p-1),factor,self.p)  # 公钥
-        self.x=random.randrange(1,self.q)  # 私钥
-        self.y=pow(self.g,self.x,self.p)  # 公钥
-   
-    def sha(self,message):
-        return int(hashlib.sha256(message.encode('utf8')).hexdigest(),16)
+        self.g = pow(random.randrange(2, self.p - 1), factor, self.p)  # 公钥
+        self.x = random.randrange(1, self.q)  # 私钥
+        self.y = pow(self.g, self.x, self.p)  # 公钥
 
-    def sign(self,message):
-        k=random.randrange(1,self.q)
-        r=pow(self.g,k,self.p)%self.q
-        Hm=self.sha(message)
-        s=(Hm+self.x*r)*self.exgcditer(k,self.q)[0]
-        return r,s
+    def sha(self, message):
+        return int(hashlib.sha256(message.encode('utf8')).hexdigest(), 16)
 
-    def check(self,message,r,s):
-        w=self.exgcditer(s,self.q)[0]
-        Hm=self.sha(message)
-        u1=Hm*w%self.q
-        u2=r*w%self.q
-        v=pow(self.g,u1,self.p)*pow(self.y,u2,self.p)%self.p%self.q
-        return v==r
+    def sign(self, message):
+        k = random.randrange(1, self.q)
+        r = pow(self.g, k, self.p) % self.q
+        Hm = self.sha(message)
+        s = (Hm + self.x * r) * self.exgcditer(k, self.q)[0]
+        return r, s
+
+    def check(self, message, r, s):
+        w = self.exgcditer(s, self.q)[0]
+        Hm = self.sha(message)
+        u1 = Hm * w % self.q
+        u2 = r * w % self.q
+        v = pow(self.g, u1, self.p) * pow(self.y, u2, self.p) % self.p % self.q
+        return v == r
+
 
 if __name__ == "__main__":
-    rsa=RSA() 
-    message='akatsuki'
+    rsa = RSA()
+    message = 'akatsuki'
     print(rsa.decryption(rsa.encryption(message)))
 
-    dsa=DSA()
-    message='avatar'
-    r,s=dsa.sign(message)
-    print(dsa.check(message,r,s))  # True
-    
+    dsa = DSA()
+    message = 'avatar'
+    r, s = dsa.sign(message)
+    print(dsa.check(message, r, s))  # True
