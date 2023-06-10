@@ -49,14 +49,15 @@ class AcAutomaton:
         result = []
         parent = self.__root
         for end, char in enumerate(text, 1):
-            son = parent.children.get(char)
-            while (not son) and (parent != self.__root):
+            while True:
+                if char in parent.children:
+                    parent = parent.children[char]
+                    for start in parent.output:
+                        result.append((end - start, end))
+                    break
+                if parent == self.__root:
+                    break
                 parent = parent.fail
-                son = parent.children.get(char)
-            if son:
-                parent = son
-                for start in son.output:
-                    result.append((end - start, end))
         return result
 
 
