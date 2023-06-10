@@ -1,7 +1,8 @@
-from collections import deque
-import random, os
-import numpy as np
+import os
+import random
 from itertools import permutations
+
+import numpy as np
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
@@ -347,14 +348,9 @@ def zeros(n):
 
 
 # 由随机范围[2,7]得到随机范围[5,12]
-import random
-
-f = lambda: random.randrange(2, 8)  # 等概率產生[2-7]
-
-
 def range_5_to_12():  # [5,12]
-    # f随机长度是6,range_5_to_12长度是8,f至少需要执行2次才能覆盖[5,12]
-    total = (f() - 2) * 6 + f() - 2  # [0,35],两个f()不能合并,必须调用2次
+    # f = random.randrange(2, 8)等概率產生[2-7], f随机长度是6,range_5_to_12长度是8,f至少需要执行2次才能覆盖[5,12]
+    total = (random.randrange(2, 8) - 2) * 6 + random.randrange(2, 8) - 2  # [0,35],两个f()不能合并,必须调用2次
     if 32 <= total <= 35:
         return range_5_to_12()  # 此处可以用for循环代替
     return total // 4 + 5
