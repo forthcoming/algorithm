@@ -33,31 +33,27 @@ class AcAutomaton:
         queue = deque([self.__root])
         while queue:
             node = queue.popleft()
-            for char, son in node.children.items():
-                next_node = node.fail
-                while next_node:
-                    if char in next_node.children:
-                        son.fail = next_node.children[char]
-                        son.output += son.fail.output
-                        break
-                    next_node = next_node.fail
+            for char, child in node.children.items():
+                queue.append(child)
+                fail_node = node.fail
+                while fail_node and char not in fail_node.children:
+                    fail_node = fail_node.fail
+                if fail_node:
+                    child.fail = fail_node.children[char]
+                    child.output += child.fail.output
                 else:
-                    son.fail = self.__root
-                queue.append(son)
+                    child.fail = self.__root
 
     def search(self, text):
         result = []
         parent = self.__root
         for end, char in enumerate(text, 1):
-            while True:
-                if char in parent.children:
-                    parent = parent.children[char]
-                    for start in parent.output:
-                        result.append((end - start, end))
-                    break
-                if parent == self.__root:
-                    break
+            while parent != self.__root and char not in parent.children:
                 parent = parent.fail
+            if char in parent.children:
+                parent = parent.children[char]
+                for i in parent.output:
+                    result.append((end - i, end))
         return result
 
 
