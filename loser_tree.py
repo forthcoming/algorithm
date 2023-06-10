@@ -6,12 +6,16 @@ class LoserTree:
         self.extreme_value = float("inf") if key(1, 0) else -float("inf")
         self.node = [length] * length  # 保存败者下标的完全二叉树,初始状态败者节点都指向leaves[-1]
         self.count = length
-        self.leaves = arr + [-self.extreme_value]
+        self.leaves = arr + [-self.extreme_value]  # 这里必须取反,否则只会有最上方的根节点被赋值
         # for index in range(0, length):  # 待验证
         for index in range(length - 1, -1, -1):
             self.adjust(index)
 
     def adjust(self, index):
+        """
+        边看作其下面叶子结点的最小值; 非叶子结点等于其左右两条边的最大值
+        当某个叶子结点值改变时,对应父边的值会改变,会影响到父节点值的改变,进而改变父节点的父边值改变,以此递归至根节点
+        """
         parent = (self.count + index) >> 1
         while parent > 0:
             if self.key(self.leaves[index], self.leaves[self.node[parent]]):
