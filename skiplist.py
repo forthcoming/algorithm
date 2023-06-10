@@ -4,7 +4,6 @@ from typing import Generic, List, Optional, Tuple, TypeVar
 KT = TypeVar("KT")
 VT = TypeVar("VT")
 
-
 '''
 Based on "Skip Lists: A Probabilistic Alternative to Balanced Trees" by William Pugh https://epaperpress.com/sortsearch/download/skiplist.pdf
 
@@ -13,6 +12,8 @@ On average, each element appears in 1/(1-p) lists,The skip list contains log(1/p
 The expected number of steps in each linked list is at most 1/p, which can be seen by tracing the search path backwards from the target until reaching an element that appears in the next higher list or reaching the beginning of the current list. 
 Therefore, the total expected cost of a search is 1/p*log(1/p,n) which is O(logn), when p is a constant. By choosing different values of p, it is possible to trade search costs against storage costs.
 '''
+
+
 class Node(Generic[KT, VT]):
     def __init__(self, key: KT, value: VT):
         self.key = key
@@ -239,6 +240,7 @@ class SkipList(Generic[KT, VT]):
 
         return None
 
+
 def main():
     skip_list = SkipList()
     skip_list.insert(2, "2")
@@ -254,4 +256,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-    
