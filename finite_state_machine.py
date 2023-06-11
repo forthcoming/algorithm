@@ -1,8 +1,9 @@
 """
 有限状态自动机FSM包括确定有限自动机deterministic finite automata(DFA)、非确定有限自动机non-deterministic finite automata(NFA)等
 DFA由M=(Q,∑,q0,F,δ)组成,Q是有限状态集合,∑是有限输入字符集合,q0是初始状态且属于Q,F是可接受状态且属于Q,δ是状态转移函数
-DFA是一种特殊的NFA,任意一个NFA都可以找到一个与之等价的DFA,NFA的M'中只有δ与DFA不同,区别是NFA在接收到字母后可以有0到多个转移函数
+DFA是一种特殊的NFA,任意一个NFA都可以找到一个与之等价的DFA,NFA的M'中只有δ与DFA不同,区别是NFA在接收到字母后可以有多个转移函数
 FSM状态转移图是一个有向图,接受状态用双圈表示,一个箭头指向表示开始状态顶点
+正则文法跟有限状态机一一对应
 """
 
 
@@ -63,6 +64,6 @@ if __name__ == "__main__":
     dfa.add_transition("一", "1", "零")
     dfa.add_transition("二", "0", "一")
     dfa.add_transition("二", "1", "二")
-    result = dfa.process("01111110")  # 126
+    result = dfa.process("01111110")  # 126,或者用正则语言/^1((10*1)|(01*0))*10*$/判断
 
     print(result)

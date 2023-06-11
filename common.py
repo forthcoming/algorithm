@@ -76,6 +76,9 @@ def catalan_number(m, n):
 
     通项公式catalan_number(m,n) = C(n,m+n) - C(m+1,m+n)
     利用翻折思想,把第一个不符合要求的地方后面的排列互换,就能得到一个新的排列,且该排列跟原先不符合的排列一一对应
+
+    类似问题:错排
+    n封信装入不同信封,全装错的个数D(n) = (n-1)[D(n-1) + D(n-2)],思想是寻找子结构,其中D(1)=0, D(2)=1
     """
     # result = [[0] * (n+1) for _ in range(m+1)]
     # for i in range(m+1):
