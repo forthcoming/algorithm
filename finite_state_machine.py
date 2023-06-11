@@ -62,6 +62,6 @@ if __name__ == "__main__":
     dfa.add_transition("一", "1", "零")
     dfa.add_transition("二", "0", "一")
     dfa.add_transition("二", "1", "二")
-    result = dfa.process("1111")
+    result = dfa.process("01111110")  # 126
 
     print(result)
