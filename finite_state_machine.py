@@ -44,12 +44,24 @@ class DFA:
 
 if __name__ == "__main__":
     dfa = DFA()
-    dfa.add_state(["A", "B", "C"])
+    """
+    判断二进制串能否被3整除的状态转移表
+        字母0    1
+    状态        
+     零     零   一
+     一     二   零
+     二     一   二
+    """
+    dfa.add_state(["零", "一", "二"])
     dfa.add_alphabet("01")
-    dfa.set_initial_state("A")
-    dfa.add_final_state(["C"])
-    dfa.add_transition("A", "0", "B")
-    dfa.add_transition("B", "1", "C")
-    result = dfa.process("0101")
+    dfa.set_initial_state("零")
+    dfa.add_final_state(["零"])
+    dfa.add_transition("零", "0", "零")
+    dfa.add_transition("零", "1", "一")
+    dfa.add_transition("一", "0", "二")
+    dfa.add_transition("一", "1", "零")
+    dfa.add_transition("二", "0", "一")
+    dfa.add_transition("二", "1", "二")
+    result = dfa.process("1111")
 
     print(result)
