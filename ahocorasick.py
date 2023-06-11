@@ -30,6 +30,7 @@ class AcAutomaton:
         root.output = [len(pattern)]
 
     def build_fail(self):
+        # 由递推关系可知当前节点的跳转节点必在自己的上层,所以采用广度优先遍历
         queue = deque([self.__root])
         while queue:
             node = queue.popleft()
@@ -39,7 +40,9 @@ class AcAutomaton:
                 while fail_node and char not in fail_node.children:
                     fail_node = fail_node.fail
                 if fail_node:
+                    # 由于child.children和fail_node.children都有多个,因此不能想kmp中的next数组那样继续优化缩短后缀长度
                     child.fail = fail_node.children[char]
+                    # 遍历第二层的时候output包含了前一层, 遍历第三层的时候output包含了前两层, 由递推关系, output只需累加其最长后缀对应的output即可保证不重不漏
                     child.output += child.fail.output
                 else:
                     child.fail = self.__root
