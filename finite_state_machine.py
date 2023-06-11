@@ -1,6 +1,7 @@
 """
 有限状态自动机FSM包括确定有限自动机deterministic finite automata(DFA)、非确定有限自动机non-deterministic finite automata(NFA)等
-DFA由(Q,∑,q0,F,δ)组成,Q是有限状态集合,∑是有限输入字符集合,q0是初始状态且属于Q,F是可接受状态且属于Q,δ是状态转移函数
+DFA由M=(Q,∑,q0,F,δ)组成,Q是有限状态集合,∑是有限输入字符集合,q0是初始状态且属于Q,F是可接受状态且属于Q,δ是状态转移函数
+DFA是一种特殊的NFA,任意一个NFA都可以找到一个与之等价的DFA,NFA的M'中只有δ与DFA不同,区别是NFA在接收到字母后可以有0到多个转移函数
 FSM状态转移图是一个有向图,接受状态用双圈表示,一个箭头指向表示开始状态顶点
 """
 
