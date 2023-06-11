@@ -33,10 +33,10 @@ class AcAutomaton:
         # 由递推关系可知当前节点的跳转节点必在自己的上层,所以采用广度优先遍历
         queue = deque([self.__root])
         while queue:
-            node = queue.popleft()
-            for char, child in node.children.items():
+            parent = queue.popleft()
+            for char, child in parent.children.items():
                 queue.append(child)
-                fail_node = node.fail
+                fail_node = parent.fail
                 while fail_node and char not in fail_node.children:
                     fail_node = fail_node.fail
                 if fail_node:
