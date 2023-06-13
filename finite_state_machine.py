@@ -34,7 +34,7 @@ class DFA:
     def add_transition(self, from_state, symbol, to_state):
         self.__transitions.setdefault(from_state, {})[symbol] = to_state
 
-    def process(self, alphabet):
+    def process(self, alphabet) -> bool:
         current_state = self.__initial_state
         for symbol in alphabet:
             if symbol not in self.__alphabet:
