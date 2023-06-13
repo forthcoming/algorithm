@@ -32,10 +32,7 @@ class DFA:
         self.__final_states |= set(states)
 
     def add_transition(self, from_state, symbol, to_state):
-        if from_state in self.__transitions:
-            self.__transitions[from_state][symbol] = to_state
-        else:
-            self.__transitions[from_state] = {symbol: to_state}
+        self.__transitions.setdefault(from_state, {})[symbol] = to_state
 
     def process(self, alphabet):
         current_state = self.__initial_state
