@@ -145,7 +145,7 @@ def get_pos(natural_number, pos, radix):
 
 
 # 桶排序(跟基数排序类似,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
-def bucket_sort(arr, radix=10):
+def bucket_sort(arr, radix: int = 10):
     bucket = [[] for _ in range(1 << radix)]  # 不能用 [[]]*(1 << radix)
     bit = 0
     while True:
