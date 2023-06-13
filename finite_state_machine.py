@@ -19,17 +19,17 @@ class DFA:
         self.__initial_state = None  # q0
         self.__final_states = set()  # F
 
-    def add_state(self, states):
-        self.__states |= set(states)
+    def add_state(self, states: set):
+        self.__states |= states
 
-    def add_alphabet(self, alphabet):
-        self.__alphabet |= set(alphabet)
+    def add_alphabet(self, alphabet: set):
+        self.__alphabet |= alphabet
 
     def set_initial_state(self, state):
         self.__initial_state = state
 
-    def add_final_state(self, states):
-        self.__final_states |= set(states)
+    def add_final_state(self, states: set):
+        self.__final_states |= states
 
     def add_transition(self, from_state, symbol, to_state):
         self.__transitions.setdefault(from_state, {})[symbol] = to_state
@@ -55,10 +55,10 @@ if __name__ == "__main__":
      一     二   零
      二     一   二
     """
-    dfa.add_state(["零", "一", "二"])
-    dfa.add_alphabet("01")
+    dfa.add_state({"零", "一", "二"})
+    dfa.add_alphabet({"0", "1"})
     dfa.set_initial_state("零")
-    dfa.add_final_state(["零"])
+    dfa.add_final_state({"零"})
     dfa.add_transition("零", "0", "零")
     dfa.add_transition("零", "1", "一")
     dfa.add_transition("一", "0", "二")
