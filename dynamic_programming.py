@@ -56,13 +56,13 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
                 dp[idx] = dp[_idx] + 1
                 path[idx] = _idx  # 经典,记录每一个dp[i]前面的第一个元素下标
 
+    print(dp)
     for idx in range(length):
         result = [arr[idx]]
         while path[idx] != -1:
             idx = path[idx]
             result.append(arr[idx])
         print(result[::-1])
-    print(dp)
 
 
 def LCS(x='abcbdab', y='bdcaba'):  # O(m*n)
@@ -125,15 +125,13 @@ def LCS(x='abcbdab', y='bdcaba'):
     print(dp)
 
 
-'''
-编号从0开始,每第k个被杀死,队列,环形链表均可实现
-0,   1,    2,    ...,k-1,   k,k+1,...,n-1   # 规模n
-n-k  n-k+1 n-k+2,...,killed,0,  1,...,n-k-1 # 杀死第k个得规模n-1
-f(n, k) = (f(n-1, k) + k) % n 
-'''
-
-
-def josephus(n, k):
+def josephus(n, k):  # 约瑟夫环问题
+    """
+    编号从0开始,每第k个被杀死,队列,环形链表均可实现
+    0,   1,    2,    ...,k-1,   k,k+1,...,n-1   # 规模n
+    n-k  n-k+1 n-k+2,...,killed,0,  1,...,n-k-1 # 杀死第k个得规模n-1
+    f(n, k) = (f(n-1, k) + k) % n
+    """
     dp = 0
     for idx in range(2, n + 1):
         dp = (dp + k) % idx  # 还能优化
