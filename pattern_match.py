@@ -173,4 +173,3 @@ if __name__ == "__main__":
     """
     ac_automaton = AcAutomaton(["CD", "CDH", "CCDH", "HY", "DH", "CCD"])
     print(ac_automaton.search('GGCDHCCDHY'))
-   
