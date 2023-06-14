@@ -24,47 +24,51 @@ def max_add_subarray(arr):  # 最大连续和子序列
     return maximum
 
 
-def coin_number(amount, coins):  # 找出由coins组合面值为amount的最小组合数
-    dp = [0] * (amount + 1)
+def coin_number(amount, coins):  # 找出由coins组合面值为amount的最小组合数,背包问题
+    dp = [float("inf")] * (amount + 1)
+    dp[0] = 0
     for sub_amount in range(1, amount + 1):
-        _ = float("inf")
         for coin in coins:
             if sub_amount >= coin:
-                _ = min(_, dp[sub_amount - coin])
-        dp[sub_amount] = _ + 1
+                dp[sub_amount] = min(dp[sub_amount], dp[sub_amount - coin])
+        dp[sub_amount] += 1
     return dp[amount]
 
 
-def coin_combination(amount, coins):  # 找出由coins组合面值为amount的所有组合
+def coin_change(amount, coins):  # 找出由coins组合面值为amount的所有组合(注意不是排列问题),背包问题,非常经典
     dp = [0] * (amount + 1)
     dp[0] = 1
-    for coin in coins:  # 第i次循环后,dp[j]的值为用前i种硬币组成金额j的方法数,复杂度是O(mn),m是多少种钱币
-        for idx in range(coin, amount + 1):
-            dp[idx] += dp[idx - coin]  # dp[j]由{不含v[i]币值,含至少一个v[i]}组成
+    for coin in coins:  # 第i次循环后,dp[sub_amount]的值为用前i种硬币组成金额j的方法数,复杂度是O(mn),m是多少种钱币
+        for sub_amount in range(coin, amount + 1):
+            dp[sub_amount] += dp[sub_amount - coin]  # 假设coins=[1,2,5],dp[9]可以看做由1,2,5构成的4元所有组合+由1,2构成的9元所有组合
     return dp[amount]
 
 
-'''
-跳台阶问题
-一个台阶总共有n级,如果一次可以跳1级,也可以跳2级,求总共有多少跳法
-我们把n级台阶时的跳法看成是n的函数记为f(n),当n>2时第一次跳的时候就有两种不同的选择
-一是第一次只跳1级,此时跳法数目等于后面剩下的n-1级台阶的跳法数目,即为f(n-1)
-一种选择是第一次跳2级,此时跳法数目等于后面剩下的n-2级台阶的跳法数目,即为f(n-2)
-因此n级台阶时的不同跳法的总数f(n)=f(n-1)+f(n-2),上述问题就是我们平常所熟知的Fibonacci数列问题
-由于上述递推关系属于2阶常系数线性齐次递推关系,因此可以利用特征方程求解通项
-如果一个人上台阶可以一次上1个,2个或者3个呢
-f(1)=1
-f(2)=2
-f(3)=4
-......
-f(n)=f(n-1)+f(n-2)+f(n-3) n > 3
-'''
+def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序得到新的数组与原数组构成longest_common_seq问题
+    if not arr:
+        return 0
+    length = len(arr)
+    dp = [1] * length  # dp[i]意思是数组0到i之中最长递增子序列
+    path = [-1] * length
+    for idx in range(1, length):
+        for _idx in range(idx):
+            if arr[idx] >= arr[_idx] and dp[idx] < dp[_idx] + 1:
+                dp[idx] = dp[_idx] + 1
+                path[idx] = _idx  # 经典,记录每一个dp[i]前面的第一个元素下标
+
+    for idx in range(length):
+        result = [arr[idx]]
+        while path[idx] != -1:
+            idx = path[idx]
+            result.append(arr[idx])
+        print(result[::-1])
+    print(dp)
 
 
 def LCS(x='abcbdab', y='bdcaba'):  # O(m*n)
     xlen = len(x)
     ylen = len(y)
-    dp = [[0] * (ylen + 1) for i in range(xlen + 1)]
+    dp = [[0] * (ylen + 1) for _ in range(xlen + 1)]
     for i in range(xlen):
         for j in range(ylen):
             if x[i] == y[j]:
@@ -121,63 +125,6 @@ def LCS(x='abcbdab', y='bdcaba'):
     print(dp)
 
 
-# 最长递增子序列
-def longest_incr_seq(arr=[1, -1, 2, -3, 4, -5, 6, -7]):  # O(n^2),还可以将arr排序得到新的数组与原数组构成LCS问题
-    if not arr:
-        return 0
-    length = len(arr)
-    dp = [1] * length  # dp[i]意思是数组0到i之中最长递增子序列
-    path = [-1] * length
-    for idx in range(1, length):
-        for _idx in range(idx):
-            if arr[idx] >= arr[_idx] and dp[idx] < dp[_idx] + 1:
-                dp[idx] = dp[_idx] + 1
-                path[idx] = _idx  # 经典,记录每一个dp[i]前面的第一个元素下标
-
-    for idx in range(length):
-        result = [arr[idx]]
-        while path[idx] != -1:
-            idx = path[idx]
-            result.append(arr[idx])
-        print(result[::-1])
-    print(dp)
-
-
-'''
-多源最短路算法时间复杂度是O(V^3),适用于邻接矩阵表示的稠密图,稀疏图则可以迭代调用Dijkstra函数V次即可
-graph=[
-    [0,2,6,4],
-    [float('inf'),0,3,float('inf')],
-    [7,float('inf'),0,1],
-    [5,float('inf'),12,0],
-]
-'''
-
-
-def floyd(graph):
-    length = len(graph)
-    path = [[-1] * length for j in range(length)]
-    for k in range(length):  # k要写外面,里面的i,j是对称的,随便嵌套没所谓
-        for i in range(length):
-            for j in range(length):
-                if graph[i][j] > graph[i][k] + graph[k][j]:  # 加=不影响graph结果,但会影响path导致路径出错
-                    graph[i][j] = graph[i][k] + graph[k][j]
-                    path[i][j] = k
-
-    def __show(i, j):
-        if path[i][j] == -1:
-            print(f'{i}=>{j}', end=' ')
-        else:
-            __show(i, path[i][j])
-            __show(path[i][j], j)
-            # print(f'{path[i][j]}=>{j}',end=' ')  # error
-
-    for i in range(length):
-        for j in range(length):
-            __show(i, j)
-            print(f'shortest path is {graph[i][j]}')
-
-
 '''
 编号从0开始,每第k个被杀死,队列,环形链表均可实现
 0,   1,    2,    ...,k-1,   k,k+1,...,n-1   # 规模n
@@ -197,4 +144,5 @@ if __name__ == "__main__":
     print(max_product_subarray((1, 2, -2, -1, 5, -4)))
     print(max_add_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))
     print(coin_number(9, [2, 1, 5]))
-    print(coin_combination(9, [2, 1, 5]))
+    print(coin_change(9, [2, 1, 5]))
+    longest_incr_seq([1, -1, 2, -3, 4, -5, 6, -7])
