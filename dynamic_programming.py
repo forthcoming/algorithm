@@ -125,19 +125,6 @@ def LCS(x='abcbdab', y='bdcaba'):
     print(dp)
 
 
-def josephus(n, k):  # 约瑟夫环问题
-    """
-    编号从0开始,每第k个被杀死,队列,环形链表均可实现
-    0,   1,    2,    ...,k-1,   k,k+1,...,n-1   # 规模n
-    n-k  n-k+1 n-k+2,...,killed,0,  1,...,n-k-1 # 杀死第k个得规模n-1
-    f(n, k) = (f(n-1, k) + k) % n
-    """
-    dp = 0
-    for idx in range(2, n + 1):
-        dp = (dp + k) % idx  # 还能优化
-    return dp
-
-
 if __name__ == "__main__":
     print(max_product_subarray((1, 2, -2, -1, 5, -4)))
     print(max_add_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))
