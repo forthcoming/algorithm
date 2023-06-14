@@ -1,60 +1,47 @@
-def max_product_subarray(arr=(2, 3, -2, 4)):  # 最大乘积子序列
+def max_product_subarray(arr) -> float:  # 最大连续积子序列
     if arr is None:
-        return 0
-    res = cur_max = cur_min = arr[0]
-    for element in arr[1:]:
-        cur_max *= element
-        cur_min *= element
-        cur_min = min(cur_max, cur_min, element)
-        cur_max = max(cur_max, cur_min, element)
-        if cur_max > res:
-            res = cur_max
-    return res
+        return float("inf")
+    max_product = cur_max = cur_min = arr[0]
+    for each in arr[1:]:
+        if each < 0:
+            cur_max, cur_min = cur_min, cur_max
+        cur_max = max(each, cur_max * each)
+        cur_min = min(each, cur_min * each)
+        if cur_max > max_product:
+            max_product = cur_max
+
+        # cur_max *= each
+        # cur_min *= each  # 此时的cur_min和cur_max不一定是最大最小值
+        # cur_min, cur_max = min(each, cur_min, cur_max), max(each, cur_min, cur_max)  # 如果不连写,需要给cur_min设置临时值
+    return max_product
 
 
-# 求连续子列和的最大值
-def max_add_subarray(li):
-    value = 0
-    maximum = -float('inf')
-    for i in li:
-        value += i
-        if value > maximum:
-            maximum = value
-        if value < 0:
-            value = 0
-    return maximum
-
-
-def max_add_subarray_v1(li):
-    dp = maximum = li[0]
-    for x in li[1:]:
-        dp = max(x, dp + x)
+def max_add_subarray(arr):  # 最大连续和子序列
+    dp = maximum = -float("inf")
+    for each in arr:
+        dp = max(each, dp + each)
         maximum = max(maximum, dp)
     return maximum
 
 
-# 给定币值n,找出由coins=[1,2,5,10]硬币的所有组合数
-def coin_combination(n):
-    coins = [1, 2, 5, 10]  # 硬币大小可随意排列,但初始化dp[0]=1,其余为0
-    dp = [0] * (n + 1)
-    dp[0] = 1
-    for coin in coins:  # 第i次循环后,dp[j]的值为用前i种硬币组成金额j的方法数,复杂度是O(mn),m是多少种钱币
-        for idx in range(coin, n + 1):
-            dp[idx] += dp[idx - coin]  # dp[j]由{不含v[i]币值,含至少一个v[i]}组成
-    print(dp[n])
-
-
-# 给定币值n,找出由coins=[1,3,5]硬币的最小组合数
-def coin_number(n):
-    coins = [1, 2, 5]
-    dp = [0] * (n + 1)
-    for sub_amount in range(1, n + 1):
+def coin_number(amount, coins):  # 找出由coins组合面值为amount的最小组合数
+    dp = [0] * (amount + 1)
+    for sub_amount in range(1, amount + 1):
         _ = float("inf")
         for coin in coins:
             if sub_amount >= coin:
                 _ = min(_, dp[sub_amount - coin])
-        dp[sub_amount] = _+1
-    print(dp)
+        dp[sub_amount] = _ + 1
+    return dp[amount]
+
+
+def coin_combination(amount, coins):  # 找出由coins组合面值为amount的所有组合
+    dp = [0] * (amount + 1)
+    dp[0] = 1
+    for coin in coins:  # 第i次循环后,dp[j]的值为用前i种硬币组成金额j的方法数,复杂度是O(mn),m是多少种钱币
+        for idx in range(coin, amount + 1):
+            dp[idx] += dp[idx - coin]  # dp[j]由{不含v[i]币值,含至少一个v[i]}组成
+    return dp[amount]
 
 
 '''
@@ -206,4 +193,8 @@ def josephus(n, k):
     return dp
 
 
-coin_number(7)
+if __name__ == "__main__":
+    print(max_product_subarray((1, 2, -2, -1, 5, -4)))
+    print(max_add_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))
+    print(coin_number(9, [2, 1, 5]))
+    print(coin_combination(9, [2, 1, 5]))
