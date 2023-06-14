@@ -31,10 +31,10 @@ def josephus(n, k):  # 约瑟夫环问题
     new = (old+n-k) % n 或者 old = (new+k) % n
     f(n, k) = (f(n-1, k) + k) % n
     """
-    dp = 0
+    survive = 0  # 只有一个人的时候,留下人的编号
     for _n in range(2, n + 1):
-        dp = (dp + k) % _n
-    return dp
+        survive = (survive + k) % _n
+    return survive
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
