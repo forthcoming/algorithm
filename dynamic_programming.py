@@ -53,7 +53,7 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
     for idx in range(1, length):
         for _idx in range(idx):
             if arr[idx] >= arr[_idx] and dp[idx] < dp[_idx] + 1:
-                dp[idx] = dp[_idx] + 1
+                dp[idx] = dp[_idx] + 1  # 如果最长递增子序列有多个,这里只记录第一次出现
                 path[idx] = _idx  # 经典,记录每一个dp[i]前面的第一个元素下标
 
     print(dp)
