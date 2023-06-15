@@ -72,7 +72,7 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
     if not arr:
         return 0
     length = len(arr)
-    dp = [1] * length  # dp[i]意思是数组0到i之中最长递增子序列
+    dp = [1] * length  # dp[i]意思是以arr[i]结尾的最长递增子序列长度
     path = [-1] * length
     for idx in range(1, length):
         for _idx in range(idx):
@@ -89,14 +89,45 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
         print(result[::-1])
 
 
-def longest_common_seq(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m+n)
+def longest_common_seq(string_x, string_y):  # 最长公共子序列,O(m*n)
     len_x = len(string_x)
     len_y = len(string_y)
     dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]  # d[i][j]指子串string_x[0:i]与string_y[0:j]的最长公共子序列长度
+    for i in range(len_x):
+        for j in range(len_y):
+            if string_x[i] == string_y[j]:
+                dp[i + 1][j + 1] = dp[i][j] + 1
+            else:
+                """
+                假设a = dp[i,j], b = dp[i-1,j], c = dp[i,j-1]
+                (a>=b) && (a>=c) && (x[i] != y[j]) =>
+                (a>=b) && (a>=c) && ((a<=b) || (a<=c)) =>
+                ((a>=b) && (a>=c) && (a<=b)) || ((a>=b) && (a>=c) && (a<=c)) =>
+                ((a==b) && (a>=c)) || ((a==c) && (a>=b)) =>
+                a=max(b,c)
+                """
+                dp[i + 1][j + 1] = max(dp[i + 1][j], dp[i][j + 1])
+    result = []
+    while len_x and len_y:  # 最长公共子序列不止一个,回溯的不同方向能找到所有解
+        if dp[len_x][len_y] == dp[len_x - 1][len_y]:
+            len_x -= 1
+        elif dp[len_x][len_y] == dp[len_x][len_y - 1]:
+            len_y -= 1
+        else:
+            len_x -= 1
+            len_y -= 1
+            result.append(string_x[len_x])
+    print(result[::-1])
+
+
+def longest_common_seq_recur(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m+n)
+    len_x = len(string_x)
+    len_y = len(string_y)
+    dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]
 
     def _solve(x, y, _len_x, _len_y):
         if _len_x and _len_y and not dp[_len_x][_len_y]:
-            if x[_len_x - 1] == y[_len_y - 1]:
+            if x[_len_x - 1] == y[_len_y - 1]:  # dp每个位置不一定都遍历到
                 dp[_len_x][_len_y] = _solve(x, y, _len_x - 1, _len_y - 1) + 1
             else:
                 dp[_len_x][_len_y] = max(_solve(x, y, _len_x - 1, _len_y), _solve(x, y, _len_x, _len_y - 1))
@@ -107,31 +138,8 @@ def longest_common_seq(string_x, string_y):  # 最长公共子序列带备忘录
         print(i)
 
 
-def LCS(x='abcbdab', y='bdcaba'):  # O(m*n)
-    xlen = len(x)
-    ylen = len(y)
-    dp = [[0] * (ylen + 1) for _ in range(xlen + 1)]
-    for i in range(xlen):
-        for j in range(ylen):
-            if x[i] == y[j]:
-                dp[i + 1][j + 1] = dp[i][j] + 1
-            else:
-                dp[i + 1][j + 1] = max(dp[i + 1][j], dp[i][j + 1])
-    result = []
-    while xlen and ylen:  # 最长公共子序列不止一个,回溯的不同方向能找到所有解
-        if dp[xlen][ylen] == dp[xlen - 1][ylen]:
-            xlen -= 1
-        elif dp[xlen][ylen] == dp[xlen][ylen - 1]:
-            ylen -= 1
-        else:
-            xlen -= 1
-            ylen -= 1
-            result.append(x[xlen])
-    print(result[::-1])
-
-
 # 空间压缩法(没看懂)
-def LCS(x='abcbdab', y='bdcaba'):
+def LCS(x, y):
     if len(x) < len(y):
         x, y = y, x
     dp = [0] * (len(y) + 1)
@@ -155,4 +163,24 @@ if __name__ == "__main__":
     print(coin_number(9, [2, 1, 5]))
     print(coin_change(9, [2, 1, 5]))
     longest_incr_seq([1, -1, 2, -3, 4, -5, 6, -7])
+    """
+    初始状态(8 X 7)
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 0, 0, 0]
+    最终状态(8 X 7)
+    [0, 0, 0, 0, 0, 0, 0]
+    [0, 0, 0, 0, 1, 1, 1]
+    [0, 1, 1, 1, 1, 2, 2]
+    [0, 1, 1, 2, 2, 2, 2]
+    [0, 1, 1, 2, 2, 3, 3]
+    [0, 1, 2, 2, 2, 3, 3]
+    [0, 1, 2, 2, 3, 3, 4]
+    [0, 1, 2, 2, 3, 4, 4]
+    """
     longest_common_seq('abcbdab', 'bdcaba')
