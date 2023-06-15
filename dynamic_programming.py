@@ -89,7 +89,7 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
         print(result[::-1])
 
 
-def longest_common_seq(string_x, string_y):  # 最长公共子序列,O(m*n)
+def longest_common_subseq(string_x, string_y):  # 最长公共子序列,O(m*n)
     len_x = len(string_x)
     len_y = len(string_y)
     dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]  # d[i][j]指子串string_x[0:i]与string_y[0:j]的最长公共子序列长度
@@ -121,7 +121,7 @@ def longest_common_seq(string_x, string_y):  # 最长公共子序列,O(m*n)
     print(result[::-1])
 
 
-def longest_common_seq_recur(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m+n)
+def longest_common_subseq_recur(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m+n)
     len_x = len(string_x)
     len_y = len(string_y)
     dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]
@@ -139,7 +139,7 @@ def longest_common_seq_recur(string_x, string_y):  # 最长公共子序列带备
         print(i)
 
 
-def longest_common_seq_zip(string_x, string_y):  # 最长公共子序列空间压缩法, 待看
+def longest_common_subseq_zip(string_x, string_y):  # 最长公共子序列空间压缩法, 待看
     len_x = len(string_x)
     len_y = len(string_y)
     if len_x < len_y:
@@ -159,65 +159,62 @@ def longest_common_seq_zip(string_x, string_y):  # 最长公共子序列空间�
     print(dp)
 
 
-def longest_common_substring(S, T):  # 寻找2字符串中的最长公共子串(特殊的子序列),待看
-    # m, n = len(T), len(S)
-    # max_len = 0
-    # jpos = -1
-    # matrix = [[i == j for j in S] for i in T]  # 可以考虑用二进制使其降到一维数组
-    #
+def longest_common_substring(string_x, string_y):  # 寻找2字符串中的最长公共子串(特殊的子序列)
+    x_pos = max_length = 0
+    len_x, len_y = len(string_x), len(string_y)
+    dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]  # d[i+1][j+1]代表以string_x[i]和string_y[j]结尾最长公共子串
+    for i in range(len_x):
+        for j in range(len_y):
+            if string_x[i] == string_y[j]:
+                dp[i + 1][j + 1] = dp[i][j] + 1
+                if dp[i + 1][j + 1] > max_length:
+                    max_length = dp[i + 1][j + 1]
+                    x_pos = i + 1
+            else:
+                dp[i + 1][j + 1] = 0
+    return string_x[x_pos - max_length:x_pos]
+
+    # x_pos = max_length = 0
+    # len_x, len_y = len(string_x), len(string_y)
+    # dp = [0] * (len_y + 1)  # 压缩版,还可以以min(len_x,len_y)作为dp长度近一步压缩
+    # for i in range(len_x):
+    #     pre = 0
+    #     for j in range(len_y):
+    #         if string_x[i] == string_y[j]:
+    #             cur = dp[j] + 1
+    #             if cur > max_length:
+    #                 max_length = cur
+    #                 x_pos = i + 1
+    #         else:
+    #             cur = 0
+    #         dp[j] = pre
+    #         pre = cur
+    # return string_x[x_pos - max_length:x_pos]
+
+    # len_x, len_y = len(string_x), len(string_y)
+    # xj = jpos = max_len = 0
+    # matrix = [[i == j for j in string_x] for i in string_y]  # 可以考虑用二进制使其降到一维数组
     # i_start = 0
-    # for k in range(m - 1, -n, -1):
+    # for k in range(len_y - 1, -len_x, -1):
     #     if k < 0:
     #         i_start = -k
-    #
     #     i, j = k + i_start, i_start
     #     flag = True
-    #     length = 0
-    #     while i < m and j < n:
-    #         if matrix[i][j]:
-    #             length += 1
-    #             if flag:
-    #                 sj = j
-    #                 flag = False
-    #         elif not flag:  # 这里注意了，只有flag被改为False才执行
-    #             if length > max_len:
-    #                 max_len = length
-    #                 jpos = sj
+    #     while i < len_y and j < len_x:
+    #         if flag and matrix[i][j]:
+    #             xj = j
+    #             flag = False
+    #         elif (not flag) and (not matrix[i][j]):  # 这里注意了，只有flag被改为False才执行
+    #             if j - xj > max_len:
+    #                 max_len = j - xj
+    #                 jpos = xj
     #             flag = True
-    #             length = 0
     #         i += 1
     #         j += 1
-    #     if length > max_len:  # 别忘了
-    #         max_len = length
-    #         jpos = sj
-    # return S[jpos:jpos + max_len]
-
-    m, n = len(T), len(S)
-    sj = jpos = max_len = 0
-    matrix = [[i == j for j in S] for i in T]  # 可以考虑用二进制使其降到一维数组
-
-    i_start = 0
-    for k in range(m - 1, -n, -1):
-        if k < 0:
-            i_start = -k
-
-        i, j = k + i_start, i_start
-        flag = True
-        while i < m and j < n:
-            if flag and matrix[i][j]:
-                sj = j
-                flag = False
-            elif (not flag) and (not matrix[i][j]):  # 这里注意了，只有flag被改为False才执行
-                if j - sj > max_len:
-                    max_len = j - sj
-                    jpos = sj
-                flag = True
-            i += 1
-            j += 1
-        if matrix[i - 1][j - 1] and j - sj > max_len:  # 别忘了
-            max_len = j - sj
-            jpos = sj
-    return S[jpos:jpos + max_len]
+    #     if matrix[i - 1][j - 1] and j - xj > max_len:  # 别忘了
+    #         max_len = j - xj
+    #         jpos = xj
+    # return string_x[jpos:jpos + max_len]
 
 
 if __name__ == "__main__":
@@ -248,5 +245,6 @@ if __name__ == "__main__":
     b[0, 1, 2, 2, 3, 3, 4]
      [0, 1, 2, 2, 3, 4, 4]
     """
-    longest_common_seq('abcbdab', 'bdcaba')  # ['b', 'c', 'b', 'a']
-    longest_common_seq_zip('bdcaba', 'abcbdab')
+    longest_common_subseq('abcbdab', 'bdcaba')  # ['b', 'c', 'b', 'a']
+    longest_common_subseq_zip('bdcaba', 'abcbdab')
+    print(longest_common_substring("abcdefghijklmnop", "abcsafjklmnopqrstuvw"))  # jklmnop
