@@ -139,7 +139,7 @@ def longest_common_seq_recur(string_x, string_y):  # 最长公共子序列带备
         print(i)
 
 
-def longest_common_seq_zip(string_x, string_y):  # 最长公共子序列空间压缩法(没看懂)
+def longest_common_seq_zip(string_x, string_y):  # 最长公共子序列空间压缩法, 待看
     len_x = len(string_x)
     len_y = len(string_y)
     if len_x < len_y:
@@ -157,6 +157,67 @@ def longest_common_seq_zip(string_x, string_y):  # 最长公共子序列空间�
             t[0] = t[1]
         dp[-1] = t[0]
     print(dp)
+
+
+def longest_common_substring(S, T):  # 寻找2字符串中的最长公共子串(特殊的子序列),待看
+    # m, n = len(T), len(S)
+    # max_len = 0
+    # jpos = -1
+    # matrix = [[i == j for j in S] for i in T]  # 可以考虑用二进制使其降到一维数组
+    #
+    # i_start = 0
+    # for k in range(m - 1, -n, -1):
+    #     if k < 0:
+    #         i_start = -k
+    #
+    #     i, j = k + i_start, i_start
+    #     flag = True
+    #     length = 0
+    #     while i < m and j < n:
+    #         if matrix[i][j]:
+    #             length += 1
+    #             if flag:
+    #                 sj = j
+    #                 flag = False
+    #         elif not flag:  # 这里注意了，只有flag被改为False才执行
+    #             if length > max_len:
+    #                 max_len = length
+    #                 jpos = sj
+    #             flag = True
+    #             length = 0
+    #         i += 1
+    #         j += 1
+    #     if length > max_len:  # 别忘了
+    #         max_len = length
+    #         jpos = sj
+    # return S[jpos:jpos + max_len]
+
+    m, n = len(T), len(S)
+    sj = jpos = max_len = 0
+    matrix = [[i == j for j in S] for i in T]  # 可以考虑用二进制使其降到一维数组
+
+    i_start = 0
+    for k in range(m - 1, -n, -1):
+        if k < 0:
+            i_start = -k
+
+        i, j = k + i_start, i_start
+        flag = True
+        while i < m and j < n:
+            if flag and matrix[i][j]:
+                sj = j
+                flag = False
+            elif (not flag) and (not matrix[i][j]):  # 这里注意了，只有flag被改为False才执行
+                if j - sj > max_len:
+                    max_len = j - sj
+                    jpos = sj
+                flag = True
+            i += 1
+            j += 1
+        if matrix[i - 1][j - 1] and j - sj > max_len:  # 别忘了
+            max_len = j - sj
+            jpos = sj
+    return S[jpos:jpos + max_len]
 
 
 if __name__ == "__main__":
