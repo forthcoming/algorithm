@@ -145,7 +145,7 @@ def longest_common_subseq_zip(string_x, string_y):  # 最长公共子序列空�
     if len_x < len_y:
         string_x, string_y = string_y, string_x
         len_x, len_y = len_y, len_x
-    dp = [0] * (len_y + 1)  # longest_common_seq中dp的最后一行
+    dp = [0] * (len_y + 1)  # longest_common_subseq中dp的最后一行
     for i in range(len_x):
         t = [0, 0]
         for j in range(len_y):
