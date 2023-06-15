@@ -18,6 +18,7 @@ NPC问题也是NP-Hard问题如旅行商问题(Traveling Salesman Problem)、背
 import os
 import random
 from itertools import permutations
+from collections import deque
 
 import numpy as np
 
@@ -35,6 +36,32 @@ def josephus(n, k):  # 约瑟夫环问题
     for _n in range(2, n + 1):
         survive = (survive + k) % _n
     return survive
+
+
+def range_5_to_12():  # 由随机范围[2,7]得到随机范围[5,12]
+    # f = random.randrange(2, 8)等概率產生[2-7], f随机长度是6,range_5_to_12长度是8,f至少需要执行2次才能覆盖[5,12]
+    total = (random.randrange(2, 8) - 2) * 6 + random.randrange(2, 8) - 2  # [0,35],两个f()不能合并,必须调用2次
+    if 32 <= total <= 35:
+        return range_5_to_12()  # 此处可以用for循环代替
+    return total // 4 + 5
+
+
+def young_tableau(arr, element):  # 杨氏矩阵查找
+    # 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
+    # 以右上角为例,当右上角大于要查找的数字时排除一行,当右上角大于要查找的数字时排除一列
+    row = len(arr) - 1
+    column = len(arr[0]) - 1
+    r = 0
+    c = column
+    while c >= 0 and r <= row:
+        value = arr[r, c]
+        if element < value:
+            c -= 1
+        elif element > value:
+            r += 1
+        else:
+            return True
+    return False
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
@@ -283,27 +310,6 @@ def eight_queen_v2(number=8):  # 低效
             print()
 
 
-# 杨氏矩阵查找
-# 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
-# 以右上角为例,当右上角大于要查找的数字时排除一行,当右上角大于要查找的数字时排除一列
-def young_search(li, element):
-    m = len(li) - 1
-    n = len(li[0]) - 1
-    r = 0
-    c = n
-    flag = False
-    while c >= 0 and r <= m:
-        value = li[r, c]
-        if value > element:
-            c = c - 1
-        elif value < element:
-            r = r + 1
-        else:
-            flag = True
-            break
-    return flag
-
-
 # 汉诺塔
 def hanoi(n, left='left', middle='middle', right='right'):
     if n == 1:
@@ -380,25 +386,6 @@ def zeros(n):
         cnt += n // step
         step *= 5
     return cnt
-
-
-# 由随机范围[2,7]得到随机范围[5,12]
-def range_5_to_12():  # [5,12]
-    # f = random.randrange(2, 8)等概率產生[2-7], f随机长度是6,range_5_to_12长度是8,f至少需要执行2次才能覆盖[5,12]
-    total = (random.randrange(2, 8) - 2) * 6 + random.randrange(2, 8) - 2  # [0,35],两个f()不能合并,必须调用2次
-    if 32 <= total <= 35:
-        return range_5_to_12()  # 此处可以用for循环代替
-    return total // 4 + 5
-
-
-def test(n=1000000):
-    avg = 0
-    for i in range(n):
-        avg += range_5_to_12()
-    print(avg / n)
-
-
-test()  # 8.5
 
 
 # 筛选素数
@@ -640,9 +627,6 @@ def tow_sum(l, num):  # 前提是l有序，如果无序，可考虑先线性排�
             end -= 1
         else:
             begin += 1
-
-
-from collections import deque
 
 
 def triangles(n):  # 杨辉三角
