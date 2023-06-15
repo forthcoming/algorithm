@@ -113,10 +113,11 @@ def longest_common_seq(string_x, string_y):  # 最长公共子序列,O(m*n)
             len_x -= 1
         elif dp[len_x][len_y] == dp[len_x][len_y - 1]:
             len_y -= 1
-        else:
+        else:  # 注意这里要求string_x和string_y子串结尾都是满足要求的最后一个字符才行
             len_x -= 1
             len_y -= 1
-            result.append(string_x[len_x])
+            # result.append(string_x[len_x])
+            result.append(string_y[len_y])
     print(result[::-1])
 
 
@@ -138,15 +139,17 @@ def longest_common_seq_recur(string_x, string_y):  # 最长公共子序列带备
         print(i)
 
 
-# 空间压缩法(没看懂)
-def LCS(x, y):
-    if len(x) < len(y):
-        x, y = y, x
-    dp = [0] * (len(y) + 1)
-    for i in range(len(x)):
+def longest_common_seq_zip(string_x, string_y):  # 最长公共子序列空间压缩法(没看懂)
+    len_x = len(string_x)
+    len_y = len(string_y)
+    if len_x < len_y:
+        string_x, string_y = string_y, string_x
+        len_x, len_y = len_y, len_x
+    dp = [0] * (len_y + 1)  # longest_common_seq中dp的最后一行
+    for i in range(len_x):
         t = [0, 0]
-        for j in range(len(y)):
-            if x[i] == y[j]:
+        for j in range(len_y):
+            if string_x[i] == string_y[j]:
                 t[1] = dp[j] + 1
             else:
                 t[1] = max(t[0], dp[j + 1])
@@ -184,4 +187,5 @@ if __name__ == "__main__":
     b[0, 1, 2, 2, 3, 3, 4]
      [0, 1, 2, 2, 3, 4, 4]
     """
-    longest_common_seq('abcbdab', 'bdcaba')
+    longest_common_seq('abcbdab', 'bdcaba')  # ['b', 'c', 'b', 'a']
+    longest_common_seq_zip('bdcaba', 'abcbdab')
