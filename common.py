@@ -29,7 +29,7 @@ def josephus(n, k):  # 约瑟夫环问题
     n-k, n-k+1, n-k+2,...,killed, 0, 1,...,  n-k-2, n-k-1 # 杀死第k个得规模n-1
     当杀掉一个人后会从k作为起始位置继续报数,设新下标为new,旧下标old,则
     new = (old+n-k) % n 或者 old = (new+k) % n
-    f(n, k) = (f(n-1, k) + k) % n
+    f(n, k) = (f(n-1, k) + k) % n , f(n,k)意思是n个人报数k的约瑟夫环游戏最终留下谁
     """
     survive = 0  # 只有一个人的时候,留下人的编号
     for _n in range(2, n + 1):
