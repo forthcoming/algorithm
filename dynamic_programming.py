@@ -89,6 +89,24 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
         print(result[::-1])
 
 
+def longest_common_seq(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m+n)
+    len_x = len(string_x)
+    len_y = len(string_y)
+    dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]  # d[i][j]指子串string_x[0:i]与string_y[0:j]的最长公共子序列长度
+
+    def _solve(x, y, _len_x, _len_y):
+        if _len_x and _len_y and not dp[_len_x][_len_y]:
+            if x[_len_x - 1] == y[_len_y - 1]:
+                dp[_len_x][_len_y] = _solve(x, y, _len_x - 1, _len_y - 1) + 1
+            else:
+                dp[_len_x][_len_y] = max(_solve(x, y, _len_x - 1, _len_y), _solve(x, y, _len_x, _len_y - 1))
+        return dp[_len_x][_len_y]
+
+    _solve(string_x, string_y, len_x, len_y)
+    for i in dp:
+        print(i)
+
+
 def LCS(x='abcbdab', y='bdcaba'):  # O(m*n)
     xlen = len(x)
     ylen = len(y)
@@ -110,25 +128,6 @@ def LCS(x='abcbdab', y='bdcaba'):  # O(m*n)
             ylen -= 1
             result.append(x[xlen])
     print(result[::-1])
-
-
-# 带备忘录版递归
-def LCS(x='abcbdab', y='bdcaba'):  # O(m+n)
-    xlen = len(x)
-    ylen = len(y)
-    dp = [[0] * (ylen + 1) for i in range(xlen + 1)]
-
-    def _solve(x, y, xlen, ylen):
-        if xlen and ylen and not dp[xlen][ylen]:
-            if x[xlen - 1] == y[ylen - 1]:
-                dp[xlen][ylen] = _solve(x, y, xlen - 1, ylen - 1) + 1
-            else:
-                dp[xlen][ylen] = max(_solve(x, y, xlen - 1, ylen), _solve(x, y, xlen, ylen - 1))
-        return dp[xlen][ylen]
-
-    _solve(x, y, xlen, ylen)
-    for i in dp:
-        print(i)
 
 
 # 空间压缩法(没看懂)
@@ -156,5 +155,4 @@ if __name__ == "__main__":
     print(coin_number(9, [2, 1, 5]))
     print(coin_change(9, [2, 1, 5]))
     longest_incr_seq([1, -1, 2, -3, 4, -5, 6, -7])
-
-
+    longest_common_seq('abcbdab', 'bdcaba')
