@@ -16,6 +16,30 @@ def max_product_subarray(arr) -> float:  # 最大连续积子序列
     return max_product
 
 
+def max_product_subarray_dac(arr, start, end) -> float:  # 最大连续积子序列(分治法divide and conquer),复杂度O(nlogn)
+    if start == end:
+        return arr[start]
+    mid = (start + end) >> 1
+    max_left = max_product_subarray_dac(arr, start, mid)
+    max_right = max_product_subarray_dac(arr, mid + 1, end)
+    max_middle = cur_max = cur_min = arr[mid] * arr[mid + 1]
+    # 考虑乘积=0可以进一步优化
+    for idx in range(mid - 1, -1, -1):  # 这里需要注意数组切片的坑,如果mid-1小于0,仍然会切片
+        element = arr[idx]
+        if element < 0:
+            cur_max, cur_min = cur_min, cur_max
+        cur_max *= element
+        cur_min *= element
+        max_middle = max(max_middle, cur_max)
+    for each in arr[mid + 2:]:
+        if each < 0:
+            cur_max, cur_min = cur_min, cur_max
+        cur_max *= each
+        cur_min *= each
+        max_middle = max(max_middle, cur_max)
+    return max(max_left, max_right, max_middle)
+
+
 def max_add_subarray(arr):  # 最大连续和子序列
     dp = maximum = -float("inf")
     for each in arr:
@@ -127,7 +151,10 @@ def LCS(x='abcbdab', y='bdcaba'):
 
 if __name__ == "__main__":
     print(max_product_subarray((1, 2, -2, -1, 5, -4)))
+    print(max_product_subarray_dac((1, 2, -2, -1, 5, -4), 0, 5))
     print(max_add_subarray([-2, 1, -3, 4, -1, 2, 1, -5, 4]))
     print(coin_number(9, [2, 1, 5]))
     print(coin_change(9, [2, 1, 5]))
     longest_incr_seq([1, -1, 2, -3, 4, -5, 6, -7])
+
+
