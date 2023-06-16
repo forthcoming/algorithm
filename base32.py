@@ -11,7 +11,7 @@ alphabet = b"ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"
 _b32tab2 = None
 
 
-def encode_base32(message):  # base64.b32encode(b'abcd')
+def encode_base32(message):  # base64.b32encode()
     length = len(message)
     idx = 0
     buffer = 0
@@ -114,5 +114,6 @@ def decode_base32(message):
 
 
 if __name__ == "__main__":
-    x = b"abcde"
-
+    info = b"abcde"
+    print(decode_base32(encode_base32_v2(info)))
+    print(base64.b32decode(base64.b32encode(info)))
