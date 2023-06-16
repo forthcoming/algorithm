@@ -14,21 +14,23 @@ def bf(text, pattern, pos=0):
     return pos if j == length_p else -1
 
 
-def rabin_karp(text, pattern, radix=31):
+def rabin_karp(text, pattern, radix=31):  # radix 31 131 1313 13131 131313 etc.
+    text = text.encode()
+    pattern = pattern.encode()
     length_t = len(text)
     length_p = len(pattern)
     if length_t < length_p:
         return -1
     hash_t = 0
     hash_p = 0
-    offset = radix ** length_p
     for i in range(length_p):
-        hash_t = hash_t * radix + ord(text[i])  # rolling hash
-        hash_p = hash_p * radix + ord(pattern[i])
+        hash_t = hash_t * radix + text[i]  # rolling hash,字符串哈希都可以这么用,又叫BKDRHash
+        hash_p = hash_p * radix + pattern[i]
     if hash_t == hash_p:  # 此处可以做进一步检查,字符串是否相等
         return 0
+    offset = radix ** length_p
     for j in range(length_p, length_t):
-        hash_t = hash_t * radix - ord(text[j - length_p]) * offset + ord(text[j])
+        hash_t = hash_t * radix - text[j - length_p] * offset + text[j]
         if hash_t == hash_p:  # 此处可以做进一步检查,字符串是否相等
             return j - length_p + 1
     return -1
@@ -159,6 +161,7 @@ class AcAutomaton:
 
 
 if __name__ == "__main__":
+    print(rabin_karp("bbc abcdab abcdabcdabde", "abcdabd"))
     print(kmp("bbc abcdab abcdabcdabde", "abcdabd"))
     """
                 #

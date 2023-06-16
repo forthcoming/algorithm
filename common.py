@@ -72,6 +72,10 @@ def young_tableau(arr, element):  # 杨氏矩阵查找
     return False
 
 
+def number_hash(number, digit, a=(5 ** .5 - 1) / 2):
+    return int(a * number % 1 * digit)  # 数字哈希方法有除留取余法,平方取中法(按比特位取中),折叠法,字符串哈希用rolling hash
+
+
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 def BFS_search():  # 也可以用邻接表实现
     method = 0
@@ -489,27 +493,6 @@ def topK(li, left, right, k, result):  # 不包含right,结果存入result
             result += li[index:right]
             if right - index < k:
                 topK(li, left, index, k - right + index, result)
-
-
-'''
-哈希
-数据量n/哈希表长度m=[.65,.85],比值越小效率越高
-处理冲突的方法有开放地址法,链地址法(推荐),前者不太适合删除操作,应为删除的元素要做特殊标记
-哈希函数的值域必须在表长范围之内，同时希望关键字不同所得哈希函数值也不同
-'''
-# 数字哈希
-Hash = lambda num, m, A=(5 ** .5 - 1) / 2: int(A * num % 1 * m)  # 除留取余法,平方取中法(按比特位取中),折叠法
-
-
-# 字符串哈希
-def BKDRHash(string, radix=31):
-    # radix 31 131 1313 13131 131313 etc.
-
-    string = bytearray(string.encode())
-    hash_value = 0
-    for i in string:
-        hash_value = hash_value * radix + i
-    return hash_value
 
 
 '''
