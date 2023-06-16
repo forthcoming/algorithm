@@ -1,9 +1,9 @@
-'''
+"""
 n个顶点的无向图最多含n(n-1)/2条边,有向图最多含n(n-1)条边
 G(V,E)满足2*E=所有顶点的度之和
 图可以用邻接矩阵或邻接表表示
 邻接矩阵是一个对角线元素为0的n阶方阵,无向图邻接矩阵是对称矩阵
-'''
+"""
 
 # to be continued
 
@@ -11,6 +11,15 @@ from collections import deque
 
 UDG = 1  # 无向图
 DG = 0  # 有向图
+
+
+class Node:
+    def __init__(self, data, edge=None):
+        self.data = data
+        self.edge = edge
+
+    def __eq__(self, other):
+        return self.data == other.data
 
 
 class Edge:
@@ -187,6 +196,17 @@ class Graph:  # 邻接表存储
                     flag = False
 
     def find_path(self, start, end):  # 回溯法,常与DFS配合使用
+        """
+        已知有向图graph如下,求给定两点间的所有路径(1代表可达)
+        graph=[  # 有向图
+            [0,1,1,0,0,1],
+            [1,0,0,0,0,0],
+            [0,1,0,1,0,0],
+            [0,1,0,0,0,1],
+            [0,0,0,1,0,0],
+            [0,0,0,0,1,0],
+        ]
+        """
         vertices = set()
         path = []
         result = []
@@ -209,17 +229,120 @@ class Graph:  # 邻接表存储
 
         _find_path(start, end)
         return result
-        '''
-        已知有向图graph如下,求给定两点间的所有路径(1代表可达)
-        graph=[  # 有向图
-            [0,1,1,0,0,1],
-            [1,0,0,0,0,0],
-            [0,1,0,1,0,0],
-            [0,1,0,0,0,1],
-            [0,0,0,1,0,0],
-            [0,0,0,0,1,0],
-        ] 
-        '''
+
+    def topSortByDFS(self):  # 拓扑排序,相当于后续遍历,只适用于有向无环图(不能判断是否有环)
+        flag = [False] * self.length
+        result = []
+
+        def _traverse(i):
+            flag[i] = True
+            edge = self.vertices[i].edge
+            while edge:
+                vertex = edge.vertex
+                if not flag[vertex]:
+                    _traverse(vertex)
+                edge = edge.right
+            result.append(self.vertices[i].data)
+
+        for i in range(self.length):
+            if not flag[i]:
+                _traverse(i)
+        return result[::-1]
+
+    # 时间复杂度是O(V^2),适用于稠密图
+    def Prim(self, pos):  # 待斐波那契堆改进！！！
+        MST = [Node(each.data) for each in self.vertices]
+        Dist = [{'dist': float('inf'), 'parent': -1, 'pos': i} for i in range(self.length)]
+        collected = [False] * self.length
+
+        collected[pos] = True
+        edge = self.vertices[pos].edge
+        while edge:
+            Dist[edge.vertex]['dist'] = edge.weight
+            Dist[edge.vertex]['parent'] = pos
+            edge = edge.right
+        for i in range(1, self.length):
+            vertex = {'dist': float('inf')}
+            for each in Dist:
+                if not collected[each['pos']] and each['dist'] < vertex['dist']:
+                    vertex = each
+
+            edge = Edge(vertex['pos'], vertex['dist'], MST[vertex['parent']].edge)
+            MST[vertex['parent']].edge = edge
+            collected[vertex['pos']] = True
+            edge = self.vertices[vertex['pos']].edge
+            while edge:
+                if not collected[edge.vertex] and Dist[edge.vertex]['dist'] > edge.weight:
+                    Dist[edge.vertex]['dist'] = edge.weight
+                    Dist[edge.vertex]['parent'] = vertex['pos']
+                edge = edge.right
+        return MST
+
+    # 时间复杂度是O(ElgV)或者O(ElgE),适用于稀疏图
+    def Kruskal(self):
+        from heapq import heappop, heappush
+        class Distance:
+            def __init__(self, dist, starts, ends):
+                self.dist = dist
+                self.starts = starts
+                self.ends = ends
+
+            def __lt__(self, other):
+                return self.dist < other.dist
+
+        MST = [Node(each.data) for each in self.vertices]
+        vertices = UnionFindSet([-1] * self.length)  # 需要导入自定义的并查集类
+
+        h = []
+        for pos, each in enumerate(self.vertices):
+            edge = each.edge
+            while edge:
+                heappush(h, Distance(edge.weight, pos, edge.vertex))
+                edge = edge.right
+
+        edgeNum = self.length
+        while edgeNum > 1:
+            if not h:
+                print('图不连通,不存在最小生成树')
+                break
+            v = heappop(h)
+            if vertices.union(v.starts, v.ends):
+                edge = Edge(v.ends, v.dist, MST[v.starts].edge)
+                MST[v.starts].edge = edge
+                edgeNum -= 1
+
+    # 无权图单源最短路问题可以看作是对图的广度遍历
+    def Dijkstra(self, source):  # 要求所有边权重都是非负数
+        from heapq import heappop, heappush
+        class Distance:
+            def __init__(self, dist, pos):
+                self.dist = dist
+                self.pos = pos
+
+            def __lt__(self, other):
+                return self.dist < other.dist
+
+        Dist = [float('inf')] * self.length  # 正无穷大
+        Path = [source] * self.length
+        collected = [False] * self.length
+
+        Dist[source] = 0
+        h = []
+        heappush(h, Distance(Dist[source], source))
+        while h:
+            pos = heappop(h).pos  # 弹出dist最小的顶点并求得其坐标
+            if not collected[pos]:
+                collected[pos] = True
+                edge = self.vertices[pos].edge
+                while edge:
+                    edgeIndex = edge.vertex
+                    if Dist[edgeIndex] > edge.weight + Dist[pos]:
+                        Dist[edgeIndex] = edge.weight + Dist[pos]
+                        Path[edgeIndex] = pos
+                        heappush(h, Distance(Dist[edgeIndex], edgeIndex))  # 由于Dist的初始化为inf,so从source开始的所有联通点都有机会进入堆h
+                    edge = edge.right
+        for path, dist in zip(Path, Dist):
+            print(f'parent:{path} dist:{dist}')
 
 
 if __name__ == '__main__':
