@@ -164,7 +164,7 @@ def binary_search_recur(arr, left, right, num):
         return -1
 
 
-def cycle_search(arr, target):  # 移位有序数组查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
+def cycle_search(arr, target):  # 移位有序数组查找, eg: arr=[6, 7, 8, 9, 0, 1, 2, 3, 4, 5]
     left = 0
     right = len(arr) - 1
     while left <= right:
@@ -182,6 +182,28 @@ def cycle_search(arr, target):  # 移位有序数组查找(eg: li=[4,5,6,7,8,9,0
             else:
                 right = mid - 1
     return -1
+
+
+def one_to_another(one, another):  # 对于一对正整数one,another,对one只能进行加1,减1,乘2操作,最少进行几次操作得到another,BFS
+    visited = {one}  # 重要
+    queue = deque(((one, 0),))  # 注意写法
+    while queue:
+        number, level = queue.popleft()
+        if number == another:
+            return level
+        level += 1
+        number_plus = number + 1
+        number_minus = number - 1
+        number_twice = number << 1
+        if number_plus not in visited:
+            visited.add(number_plus)
+            queue.append((number_plus, level))
+        if number_minus not in visited:
+            visited.add(number_minus)
+            queue.append((number_minus, level))
+        if number_twice not in visited:
+            visited.add(number_twice)
+            queue.append((number_twice, level))
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
@@ -480,30 +502,6 @@ def shortest_path():
             Y = y + j
             if 0 <= X < m and 0 <= Y < n and maze[X][Y]:
                 queue.append(Node(X, Y, node))
-
-
-# 对于一对正整数a,b,对a只能进行加1,减1,乘2操作,最少对a进行几次操作能得到b
-def atob(a, b):  # BFS
-    result = deque([a, '#'])
-    cnt = 0
-    visited = {a}
-    while result:
-        data = result.popleft()
-        if data == '#':
-            cnt += 1
-            result.append('#')
-        elif data == b:
-            return cnt
-        else:
-            if data - 1 not in visited:
-                result.append(data - 1)
-                visited.add(data - 1)
-            if data + 1 not in visited:
-                result.append(data + 1)
-                visited.add(data + 1)
-            if data << 1 not in visited:
-                result.append(data << 1)
-                visited.add(data << 1)
 
 
 '''
