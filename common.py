@@ -76,6 +76,67 @@ def number_hash(number, digit, a=(5 ** .5 - 1) / 2):
     return int(a * number % 1 * digit)  # 数字哈希方法有除留取余法,平方取中法(按比特位取中),折叠法,字符串哈希用rolling hash
 
 
+def hanoi(n, left='L', middle='M', right='R'):  # 汉诺塔
+    if n == 1:
+        print('{} --> {}'.format(left, right))
+    else:
+        hanoi(n - 1, left, right, middle)
+        print('{} --> {}'.format(left, right))
+        hanoi(n - 1, middle, left, right)
+
+
+def hanoi_stack(n):
+    stack = [(n, 'L', 'M', 'R')]
+    while stack:
+        number, left, middle, right = stack.pop()
+        if number > 1:
+            stack.append((number - 1, middle, left, right))
+            stack.append((1, left, middle, right))
+            stack.append((number - 1, left, right, middle))
+        else:
+            print('{} --> {}'.format(left, right))
+
+
+def zeros(n):  # 统计阶乘数n末尾0的个数,实质就是统计[1,n]中含多少个因子5
+    step = 5
+    cnt = 0
+    while step <= n:
+        cnt += n // step
+        step *= 5
+    return cnt
+
+
+def count_bit_64(number):  # 计算某个自然数中比特位为1的个数是基数还是偶数
+    base = 1
+    for _ in range(6):
+        number ^= number >> base  # 第一次执行完,number最低位表示之前末2位1的奇偶性,第二次执行完,number最低位表示之前末4位1的奇偶性
+        base <<= 1
+    return number & 1
+
+
+def alpha_change(alphabet):  # 大小写互转
+    five = 1 << 5
+    alphabet = ord(alphabet)
+    if alphabet & five:
+        alphabet &= ~five  # 指定位取0, 0100000101011010 A~Z
+    else:
+        alphabet |= five  # 指定位取1, 0110000101111010 a~z
+    return chr(alphabet)
+
+
+def count_leading_zeros(number, length=64):  # 2分查找思想
+    right = length
+    left = 0  # 注意这里从0开始
+    mid = (right + left) >> 1
+    while left < right:  # 不能有等号
+        if number >> mid:
+            left = mid + 1
+        else:
+            right = mid
+        mid = (right + left) >> 1
+    return length - right  # 此时left == right
+
+
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 def BFS_search():  # 也可以用邻接表实现
     method = 0
@@ -215,14 +276,6 @@ def push_pop_v1(push, out):
     return True  # 也可以直接return not stack
 
 
-def count_bit_64(number):  # 计算某个自然数中比特位为1的个数是基数还是偶数
-    base = 1
-    for _ in range(6):
-        number ^= number >> base  # 第一次执行完,number最低位表示之前末2位1的奇偶性,第二次执行完,number最低位表示之前末4位1的奇偶性
-        base <<= 1
-    return number & 1
-
-
 def hamming_weight_64(number):
     # number = (number & 0x5555555555555555) + ((number >> 1) & 0x5555555555555555)
     # number = (number & 0x3333333333333333) + ((number >> 2) & 0x3333333333333333)
@@ -240,23 +293,6 @@ def hamming_weight_64(number):
     number = number + (number >> 16)
     number = number + (number >> 32)
     return number & 0x0000007F
-
-
-def count_leading_zeros_64(number):  # 2分查找思想
-    zero = 0
-    if number == 0:
-        zero = 64
-    else:
-        mid = 32
-        half_mid = 32
-        while half_mid:
-            if not (number >> mid):
-                _ = 64 - mid
-                zero += _
-                number <<= _
-            half_mid >>= 1
-            mid += half_mid
-    return zero
 
 
 # 八皇后问题
@@ -322,44 +358,6 @@ def eight_queen_v2(number=8):  # 低效
             print()
 
 
-# 汉诺塔
-def hanoi(n, left='left', middle='middle', right='right'):
-    if n == 1:
-        print('{} --> {}'.format(left, right))
-    else:
-        hanoi(n - 1, left, right, middle)
-        print('{} --> {}'.format(left, right))
-        hanoi(n - 1, middle, left, right)
-
-
-def hanoi_stack(n):  # 类似于二叉树中序遍历
-    stack = []
-    args = [n, 'left', 'middle', 'right']
-    while True:
-        number, left, middle, right = args
-        if number > 1:
-            stack.append([number - 1, middle, left, right])
-            stack.append([1, left, middle, right])
-            args = [number - 1, left, right, middle]
-        else:
-            print('{} --> {}'.format(left, right))
-            if stack:
-                args = stack.pop()
-            else:
-                break
-
-    # stack = [[n,'left','middle','right']]
-    # while stack:
-    #     args = stack.pop()
-    #     number,left,middle,right = args
-    #     if number>1:
-    #         stack.append([number-1,middle,left,right])
-    #         stack.append([1,left,middle,right])
-    #         stack.append([number-1,left,right,middle])
-    #     else:
-    #         print('{} --> {}'.format(left,right))
-
-
 class UUID4:
     __slots__ = 'value'
 
@@ -388,16 +386,6 @@ class UUID4:
     def __str__(self):
         hexadecimal = '%032x' % self.value
         return f'{hexadecimal[:8]}-{hexadecimal[8:12]}-{hexadecimal[12:16]}-{hexadecimal[16:20]}-{hexadecimal[20:]}'
-
-
-# 统计阶乘数n末尾0的个数,实质就是统计[1,n]中含多少个因子5
-def zeros(n):
-    step = 5
-    cnt = 0
-    while step <= n:
-        cnt += n // step
-        step *= 5
-    return cnt
 
 
 # 筛选素数
@@ -755,18 +743,9 @@ def python(n=4):  # 更常规
         print(i)
 
 
-# 大小写互转
 # 已知正整数a,判断a是否为2的n次方 a&(a-1)或者a-(a&-a)是否等于0
 # ^运算符满足交换律, 结合律, x^y^x=y x^x=0 x^0=x
-# int main() {
-#     char a='b';
-#     int five=1<<5;
-#     a^=five;     //指定位取反
-#     if (a & five)
-#         a &= ~five; //指定位取0  //0100000101011010 'A' ~ 'Z'
-#     else
-#         a |= five; //指定位取1   //0110000101111010 'a' ~ 'z'
-# }
+
 
 # 划分最大无冲突子集问题
 def division(R):
