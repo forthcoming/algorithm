@@ -125,16 +125,63 @@ def alpha_change(alphabet):  # 大小写互转
 
 
 def count_leading_zeros(number, length=64):  # 2分查找思想
-    right = length
     left = 0  # 注意这里从0开始
-    mid = (right + left) >> 1
+    right = length
     while left < right:  # 不能有等号
+        mid = (left + right) >> 1
         if number >> mid:
             left = mid + 1
         else:
             right = mid
-        mid = (right + left) >> 1
     return length - right  # 此时left == right
+
+
+def binary_search(arr, num):  # 二分查找,序列必须有序,ASL=(n+1)*log(n+1)/n - 1
+    left = 0
+    right = len(arr)
+    while left <= right:
+        mid = (left + right) >> 1
+        if arr[mid] > num:
+            right = mid - 1
+        elif arr[mid] < num:
+            left = mid + 1
+        else:
+            return mid
+    return -1
+
+
+def binary_search_recur(arr, left, right, num):
+    if left <= right:
+        mid = (left + right) >> 1
+        if arr[mid] > num:
+            right = mid - 1
+        elif arr[mid] < num:
+            left = mid + 1
+        else:
+            return mid
+        return binary_search_recur(arr, left, right, num)
+    else:
+        return -1
+
+
+def cycle_search(arr, target):  # 移位有序数组查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
+    left = 0
+    right = len(arr) - 1
+    while left <= right:
+        mid = (left + right) >> 1
+        if arr[mid] == target:
+            return mid
+        if arr[left] <= arr[mid]:
+            if arr[left] <= target < arr[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        else:
+            if arr[mid] < target <= arr[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+    return -1
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
@@ -390,7 +437,7 @@ class UUID4:
 
 # 筛选素数
 def prime(num):
-    a = [1 for i in range(0, num + 1)]
+    a = [1 for _ in range(0, num + 1)]
     for i in range(2, int(num ** .5) + 1):
         if a[i]:
             j = i
@@ -543,54 +590,6 @@ def bisect_left(a, x, lo=0, hi=None):
         else:
             hi = mid
     return lo
-
-
-# 二分查找,序列必须有序,ASL=(n+1)*log(n+1)/n - 1
-def binary_search(li, left, right, num):
-    while left <= right:
-        index = (left + right) >> 1
-        if li[index] > num:
-            right = index - 1
-        elif li[index] < num:
-            left = index + 1
-        else:
-            return index
-    return -1
-
-
-def recur_binary_search(li, left, right, num):
-    if left <= right:
-        index = (left + right) >> 1
-        if li[index] > num:
-            right = index - 1
-        elif li[index] < num:
-            left = index + 1
-        else:
-            return index
-        return recur_binary_search(li, left, right, num)
-    else:
-        return -1
-
-
-# 移位有序数组查找(eg: li=[4,5,6,7,8,9,0,1,2,3])
-def cycle_search(li, target):
-    left = 0
-    right = len(li) - 1
-    while left <= right:
-        mid = (left + right) >> 1
-        if li[mid] == target:
-            return mid
-        if li[left] <= li[mid]:
-            if li[left] <= target < li[mid]:
-                right = mid - 1
-            else:
-                left = mid + 1
-        else:
-            if li[mid] < target <= li[right]:
-                left = mid + 1
-            else:
-                right = mid - 1
-    return -1
 
 
 # 寻找和为定值的两个数(towsum([1,3,4,5,6,7,8,9,10,11],12))
