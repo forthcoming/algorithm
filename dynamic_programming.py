@@ -139,26 +139,6 @@ def longest_common_subseq_recur(string_x, string_y):  # 最长公共子序列带
         print(i)
 
 
-def longest_common_subseq_zip(string_x, string_y):  # 最长公共子序列空间压缩法, 待看
-    len_x = len(string_x)
-    len_y = len(string_y)
-    if len_x < len_y:
-        string_x, string_y = string_y, string_x
-        len_x, len_y = len_y, len_x
-    dp = [0] * (len_y + 1)  # longest_common_subseq中dp的最后一行
-    for i in range(len_x):
-        t = [0, 0]
-        for j in range(len_y):
-            if string_x[i] == string_y[j]:
-                t[1] = dp[j] + 1
-            else:
-                t[1] = max(t[0], dp[j + 1])
-            dp[j] = t[0]
-            t[0] = t[1]
-        dp[-1] = t[0]
-    print(dp)
-
-
 def longest_common_substring(string_x, string_y):  # 寻找2字符串中的最长公共子串(特殊的子序列)
     x_pos = max_length = 0
     len_x, len_y = len(string_x), len(string_y)
@@ -189,6 +169,7 @@ def longest_common_substring(string_x, string_y):  # 寻找2字符串中的最�
     #             cur = 0
     #         dp[j] = pre
     #         pre = cur
+    #     dp[-1] = pre  # 本算法可以不处理该值
     # return string_x[x_pos - max_length:x_pos]
 
     # len_x, len_y = len(string_x), len(string_y)
@@ -246,5 +227,4 @@ if __name__ == "__main__":
      [0, 1, 2, 2, 3, 4, 4]
     """
     longest_common_subseq('abcbdab', 'bdcaba')  # ['b', 'c', 'b', 'a']
-    longest_common_subseq_zip('bdcaba', 'abcbdab')
     print(longest_common_substring("abcdefghijklmnop", "abcsafjklmnopqrstuvw"))  # jklmnop

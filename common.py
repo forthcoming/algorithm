@@ -45,6 +45,14 @@ def range_5_to_12():  # 由随机范围[2,7]得到随机范围[5,12]
         return range_5_to_12()  # 此处可以用for循环代替
     return total // 4 + 5
 
+    # result = float("inf")
+    # while result > 12:
+    #     if random.randrange(2, 8) < 5:
+    #         result = random.randrange(2, 8) + 3
+    #     else:
+    #         result = random.randrange(2, 8) + 9
+    # return result
+
 
 def young_tableau(arr, element):  # 杨氏矩阵查找
     # 在一个m行n列二维数组中,每一行都按照从左到右递增的顺序排序,每一列都按照从上到下递增的顺序排序,请完成一个函数,输入这样的一个二维数组和一个整数,判断数组中是否含有该整数
