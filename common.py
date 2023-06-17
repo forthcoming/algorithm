@@ -313,41 +313,38 @@ def catalan_number(m, n):
 
 def push_pop(push, out):  # 判断入栈出栈序列是否合法
     stack = []
-    j = 0
-    for i in out:
-        if stack and stack[-1] == i:
-            stack.pop()
-            continue
-        while j < len(push):
+    i = j = 0
+    if len(push) != len(out):
+        return False
+    while i < len(push):  # 当push和out长度想同时i一定先于j增加到最末位
+        if not stack or out[j] != stack[-1]:
+            stack.append(push[i])
+            i += 1
+        if out[j] == stack[-1]:
             j += 1
-            if push[j - 1] == i:
-                break
-            else:
-                stack.append(push[j - 1])
+            stack.pop()
+    while stack:
+        if stack.pop() == out[j]:
+            j += 1
         else:
             return False
-    return True  # 也可以直接return not stack
+    return True
 
     # stack = []
-    # push_idx = out_idx = 0
-    # while push_idx < len(push) and out_idx < len(out):
-    #     item = push[push_idx]
-    #     if item == out[out_idx]:
-    #         out_idx += 1
-    #         push_idx += 1
-    #     elif stack and stack[-1] == out[out_idx]:
+    # j = 0
+    # for i in out:
+    #     if stack and stack[-1] == i:
     #         stack.pop()
-    #         out_idx += 1
+    #         continue
+    #     while j < len(push):
+    #         j += 1
+    #         if push[j - 1] == i:
+    #             break
+    #         else:
+    #             stack.append(push[j - 1])
     #     else:
-    #         stack.append(item)
-    #         push_idx += 1
-    #
-    # while out_idx < len(out):
-    #     if not stack or stack[-1] != out[out_idx]:
     #         return False
-    #     out_idx += 1
-    #     stack.pop()
-    # return True
+    # return True  # 也可以直接return not stack
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
