@@ -206,6 +206,78 @@ def one_to_another(one, another):  # 对于一对正整数one,another,对one只�
             queue.append((number_twice, level))
 
 
+def tow_sum(arr, number):  # 寻找升序数组和为定值的两个数,eg [1,3,4,5,6,7,8,9,10,11]
+    begin, end = 0, len(arr) - 1
+    while begin < end:
+        total = arr[begin] + arr[end]
+        if total == number:
+            print(begin, end)
+            end -= 1
+            begin += 1
+        elif total > number:
+            end -= 1
+        else:
+            begin += 1
+
+
+def get_prime(num):  # 筛选素数
+    a = [1] * (num + 1)
+    for i in range(2, int(num ** .5) + 1):
+        if a[i]:
+            j = i
+            while j * i <= num:
+                a[i * j] = 0
+                j += 1
+    return [i for i in range(2, num + 1) if a[i]]
+
+
+def pascal_triangle(level):  # 杨辉三角
+    queue = deque([1])
+    for k in range(level):
+        queue.append(0)
+        print(' ' * (level - k - 1), end='')
+        for _ in range(k + 1):
+            cur = queue.popleft()
+            cur += queue[0]
+            print(cur, end='  ')
+            queue.append(cur)
+        print()
+
+
+def catalan_number(m, n):
+    """
+    背景: m+n个人排队买票,并且满足m≥n,票价为50元,其中m个人有且仅有一张50元钞票,n个人有且仅有一张100元钞票,初始时候售票窗口没有钱,问有多少种排队的情况数能够让大家都买到票
+    catalan_number(m,n) = catalan_number(m-1,n) + catalan_number(m,n-1)
+    递归出口: catalan_number(m,0) = 1; catalan_number(m,n) = 0,m<n
+
+    通项公式catalan_number(m,n) = C(n,m+n) - C(m+1,m+n)
+    利用翻折思想,把第一个不符合要求的地方后面的排列互换,就能得到一个新的排列,且该排列跟原先不符合的排列一一对应
+
+    类似问题:错排
+    n封信装入不同信封,全装错的个数D(n) = (n-1)[D(n-1) + D(n-2)],思想是寻找子结构,其中D(1)=0, D(2)=1
+    """
+    # result = [[0] * (n+1) for _ in range(m+1)]
+    # for i in range(m+1):
+    #     for j in range(n+1):
+    #         if j==0:
+    #             result[i][j] = 1
+    #         elif i>=j:
+    #             result[i][j] = result[i-1][j] + result[i][j-1]
+    # return result[m][n]
+
+    result = [0] * (n + 1)
+    result[0] = 1
+    for i in range(1, m + 1):
+        for j in range(n + 1):
+            if j == 0:
+                result[j] = 1
+            elif i >= j:
+                result[j] += result[j - 1]
+            else:
+                result[j] = 0
+    return result[-1]
+
+
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 def BFS_search():  # 也可以用邻接表实现
     method = 0
@@ -267,40 +339,6 @@ def BFS_search():
 # (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
 matrix = np.array([[0, 0, 1, 1, 1], [0, 0, 1, 1, 1], [0, 0, 0, 1, 0], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]])
 _ = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
-
-
-def catalan_number(m, n):
-    """
-    背景: m+n个人排队买票,并且满足m≥n,票价为50元,其中m个人有且仅有一张50元钞票,n个人有且仅有一张100元钞票,初始时候售票窗口没有钱,问有多少种排队的情况数能够让大家都买到票
-    catalan_number(m,n) = catalan_number(m-1,n) + catalan_number(m,n-1)
-    递归出口: catalan_number(m,0) = 1; catalan_number(m,n) = 0,m<n
-
-    通项公式catalan_number(m,n) = C(n,m+n) - C(m+1,m+n)
-    利用翻折思想,把第一个不符合要求的地方后面的排列互换,就能得到一个新的排列,且该排列跟原先不符合的排列一一对应
-
-    类似问题:错排
-    n封信装入不同信封,全装错的个数D(n) = (n-1)[D(n-1) + D(n-2)],思想是寻找子结构,其中D(1)=0, D(2)=1
-    """
-    # result = [[0] * (n+1) for _ in range(m+1)]
-    # for i in range(m+1):
-    #     for j in range(n+1):
-    #         if j==0:
-    #             result[i][j] = 1
-    #         elif i>=j:
-    #             result[i][j] = result[i-1][j] + result[i][j-1]
-    # return result[m][n]
-
-    result = [0] * (n + 1)
-    result[0] = 1
-    for i in range(1, m + 1):
-        for j in range(n + 1):
-            if j == 0:
-                result[j] = 1
-            elif i >= j:
-                result[j] += result[j - 1]
-            else:
-                result[j] = 0
-    return result[-1]
 
 
 # 判断入栈出栈序列是否合法
@@ -457,18 +495,6 @@ class UUID4:
         return f'{hexadecimal[:8]}-{hexadecimal[8:12]}-{hexadecimal[12:16]}-{hexadecimal[16:20]}-{hexadecimal[20:]}'
 
 
-# 筛选素数
-def prime(num):
-    a = [1 for _ in range(0, num + 1)]
-    for i in range(2, int(num ** .5) + 1):
-        if a[i]:
-            j = i
-            while j * i <= num:
-                a[i * j] = 0
-                j += 1
-    return [i for i in range(2, num + 1) if a[i]]
-
-
 # 广度优先遍历,查找无权图最短路径
 def shortest_path():
     class Node:
@@ -588,45 +614,6 @@ def bisect_left(a, x, lo=0, hi=None):
         else:
             hi = mid
     return lo
-
-
-# 寻找和为定值的两个数(towsum([1,3,4,5,6,7,8,9,10,11],12))
-def tow_sum(l, num):  # 前提是l有序，如果无序，可考虑先线性排序（参照桶排序），或者直接边哈希边判断(Python可以使用set)
-    begin, end = 0, len(l) - 1
-    while begin < end:
-        total = l[begin] + l[end]
-        if total == num:
-            print('begin:{},end:{},l[begin]:{},l[end]:{}'.format(begin, end, l[begin], l[end]))
-            end -= 1
-            begin += 1
-        elif total > num:
-            end -= 1
-        else:
-            begin += 1
-
-
-def triangles(n):  # 杨辉三角
-    queue = deque([1])
-    for k in range(n):
-        print(' ' * (n - k - 1), end='')
-        queue.append(0)
-        while True:
-            s = queue.popleft()
-            e = queue[0]
-            total = s + e
-            queue.append(total)
-            print(total, end=' ')
-            if not e:
-                print()
-                break
-
-
-def triangles_lazy():
-    L = [1]
-    while True:
-        yield L
-        L.append(0)
-        L = [L[i - 1] + L[i] for i in range(len(L))]
 
 
 # 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'ddddftddjh' => '4dft2djh')
