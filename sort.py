@@ -1,8 +1,37 @@
 import random
 
 
-# 选择排序(非稳定排序)
-def select_sort(arr):
+def odd_even_sort(arr):  # 奇偶排序/rgb排序
+    i, j = 0, len(arr) - 1
+    while i < j:
+        if arr[i] & 1:
+            i += 1
+        else:
+            arr[i], arr[j] = arr[j], arr[i]
+            j -= 1
+
+    # i = -1
+    # for j in range(len(arr)):
+    #     if arr[j] & 1:
+    #         i += 1
+    #         arr[i], arr[j] = arr[j], arr[i]
+
+
+def rgb_sort(arr):
+    index, start, end = 0, 0, len(arr) - 1
+    while index < end:
+        if arr[index] == 'r':
+            arr[index], arr[start] = arr[start], arr[index]
+            start += 1
+            index += 1
+        elif arr[index] == 'b':
+            arr[index], arr[end] = arr[end], arr[index]
+            end -= 1
+        else:
+            index += 1
+
+
+def select_sort(arr):  # 选择排序(非稳定排序)
     length = len(arr)
     for i in range(length - 1):
         min_index = i

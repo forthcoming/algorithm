@@ -467,36 +467,6 @@ def eight_queen_v2(number=8):  # 低效
             print()
 
 
-class UUID4:
-    __slots__ = 'value'
-
-    def __init__(self):
-        value = int.from_bytes(os.urandom(16), byteorder='big')  # 0 <= value < 1<<128, 还有int.to_bytes
-        version = 4
-        # Set the variant to RFC 4122.
-        value &= ~(0xc000 << 48)
-        value |= 0x8000 << 48
-        # Set the version number.
-        value &= ~(0xf000 << 64)
-        value |= version << 76
-        object.__setattr__(self, 'value', value)
-
-    def __setattr__(self, name, value):
-        raise TypeError('UUID objects are immutable')
-
-    def __le__(self, other):
-        if isinstance(other, UUID4):
-            return self.value <= other.value
-        return NotImplemented
-
-    def __int__(self):
-        return self.value
-
-    def __str__(self):
-        hexadecimal = '%032x' % self.value
-        return f'{hexadecimal[:8]}-{hexadecimal[8:12]}-{hexadecimal[12:16]}-{hexadecimal[16:20]}-{hexadecimal[20:]}'
-
-
 # 广度优先遍历,查找无权图最短路径
 def shortest_path():
     class Node:
@@ -638,37 +608,6 @@ def encryption(string):
     elif number > 1:
         result += '{}{}'.format(number, tmp)
     return result
-
-
-# 奇偶调序/rgb排序
-def odd_even_sort(l):
-    # i,j=0,len(l)-1
-    # while i<j:
-    #    if not l[i]&1:
-    #        l[i],l[j]=l[j],l[i]
-    #        j-=1
-    #    else:
-    #        i+=1
-
-    i = -1
-    for j in range(len(l) - 1):
-        if l[j] & 1:
-            i += 1
-            l[i], l[j] = l[j], l[i]
-
-
-def rgb(l):
-    index, start, end = 0, 0, len(l) - 1
-    while index < end:
-        if l[index] == 'r':
-            l[index], l[start] = l[start], l[index]
-            start += 1
-            index += 1
-        elif l[index] == 'b':
-            l[index], l[end] = l[end], l[index]
-            end -= 1
-        else:
-            index += 1
 
 
 # 蛇形填数
