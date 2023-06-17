@@ -425,11 +425,7 @@ def python(n):  # 蛇形填数
 
 
 def top_k(arr, k):  # 选择数组中最大的k个数,不包含right,结果存入result
-    '''
-    1.构建一个大顶堆
-    2.构建一个大小为k的小顶堆
-    3.快排变形
-    '''
+    # 构建一个大顶堆; 构建一个大小为k的小顶堆; 快排变形
     result = []
 
     def _top_k(left, right):
