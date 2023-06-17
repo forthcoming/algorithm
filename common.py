@@ -424,27 +424,27 @@ def python(n):  # 蛇形填数
     #     print(i)
 
 
-def top_k(arr, k):  # 选择数组中最大的k个数,不包含right,结果存入result
-    # 构建一个大顶堆; 构建一个大小为k的小顶堆; 快排变形
-    result = []
+def top_k(arr, k):  # 选择数组中第k个数,构建一个大顶堆; 构建一个大小为k的小顶堆; 快排变形
+    length = len(arr)
+    index = length - k
 
     def _top_k(left, right):
-        if 0 < k <= right - left:
-            index = left
-            for i in range(left + 1, right):
-                if arr[i] < arr[left]:
-                    index += 1
-                    arr[i], arr[index] = arr[index], arr[i]
-            arr[index], arr[left] = arr[left], arr[index]
-            if right - index > k:
-                top_k(arr, index + 1, right, k, result)
-            else:
-                result += arr[index:right]
-                if right - index < k:
-                    top_k(arr, left, index, k - right + index, result)
+        if left > right:
+            return
+        mid = left
+        for idx in range(left + 1, right + 1):
+            if arr[idx] < arr[left]:
+                mid += 1
+                arr[idx], arr[mid] = arr[mid], arr[idx]
+        arr[mid], arr[left] = arr[left], arr[mid]
+        if index == mid:
+            return arr[index]
+        elif index < mid:
+            return _top_k(left, mid - 1)
+        else:
+            return _top_k(mid + 1, right)
 
-    _top_k(0, len(arr))
-    return result
+    return _top_k(0, length - 1)
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
@@ -733,3 +733,4 @@ if __name__ == "__main__":
         0b000011010,
     ]
     print(division(R))
+    print(top_k([2, 1, 5, 6, 3, 2, 8, 1, 9, 10, 5, 2, 7], 6))
