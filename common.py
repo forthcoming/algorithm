@@ -253,34 +253,73 @@ def catalan_number(m, n):
 
     如果把0看成入栈操作,1看成出栈操作,就是说给定6个元素,合法的入栈出栈序列有多少个? 有N个节点的二叉树共有多少种情形?
 
-    递归公式catalan_number(m,n) = catalan_number(m-1,n) + catalan_number(m,n-1) ; catalan_number(m,0) = 1; catalan_number(m,n) = 0,m<n
+    当第m+n是50元时总共有catalan_number(m-1,n),当第m+n是100元时总共有catalan_number(m,n-1),可得递推公式
+    catalan_number(m,n) = catalan_number(m-1,n) + catalan_number(m,n-1); catalan_number(m,0) = 1; catalan_number(m,n) = 0,m<n
+
     通项公式catalan_number(m,n) = C(n,m+n) - C(m+1,m+n)
     h(n) = C(2n,n)/(n+1) = C(2n,n)-C(2n,n-1) = h(n-1)*(4n-2)/(n+1) = h(0)*h(n-1)+h(1)*h(n-2)+...+h(n-1)*h(0)
-    利用翻折思想,把第一个不符合要求的地方后面的排列互换,就能得到一个新的排列,且该排列跟原先不符合的排列一一对应
+    利用翻折思想,把第一个不符合要求的地方后面的排列值互换,总体就能得到一个新的排列,且该排列跟原先不符合的排列一一对应
 
-    类似问题:错排
+    错排
     n封信装入不同信封,全装错的个数D(n) = (n-1)[D(n-1) + D(n-2)],思想是寻找子结构,其中D(1)=0, D(2)=1
     """
-    # result = [[0] * (n+1) for _ in range(m+1)]
-    # for i in range(m+1):
-    #     for j in range(n+1):
-    #         if j==0:
+    # result = [[0] * (n + 1) for _ in range(m + 1)]
+    # for i in range(m + 1):
+    #     for j in range(n + 1):
+    #         if j == 0:
     #             result[i][j] = 1
-    #         elif i>=j:
-    #             result[i][j] = result[i-1][j] + result[i][j-1]
+    #         elif i >= j:
+    #             result[i][j] = result[i - 1][j] + result[i][j - 1]
     # return result[m][n]
 
     result = [0] * (n + 1)
     result[0] = 1
     for i in range(1, m + 1):
-        for j in range(n + 1):
-            if j == 0:
-                result[j] = 1
-            elif i >= j:
+        for j in range(1, n + 1):
+            if i >= j:
                 result[j] += result[j - 1]
             else:
                 result[j] = 0
     return result[-1]
+
+
+def push_pop(push, out):  # 判断入栈出栈序列是否合法
+    stack = []
+    j = 0
+    for i in out:
+        if stack and stack[-1] == i:
+            stack.pop()
+            continue
+        while j < len(push):
+            j += 1
+            if push[j - 1] == i:
+                break
+            else:
+                stack.append(push[j - 1])
+        else:
+            return False
+    return True  # 也可以直接return not stack
+
+    # stack = []
+    # push_idx = out_idx = 0
+    # while push_idx < len(push) and out_idx < len(out):
+    #     item = push[push_idx]
+    #     if item == out[out_idx]:
+    #         out_idx += 1
+    #         push_idx += 1
+    #     elif stack and stack[-1] == out[out_idx]:
+    #         stack.pop()
+    #         out_idx += 1
+    #     else:
+    #         stack.append(item)
+    #         push_idx += 1
+    #
+    # while out_idx < len(out):
+    #     if not stack or stack[-1] != out[out_idx]:
+    #         return False
+    #     out_idx += 1
+    #     stack.pop()
+    # return True
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
@@ -344,48 +383,6 @@ def BFS_search():
 # (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
 matrix = np.array([[0, 0, 1, 1, 1], [0, 0, 1, 1, 1], [0, 0, 0, 1, 0], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]])
 _ = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
-
-
-# 判断入栈出栈序列是否合法
-def push_pop(push, out):
-    stack = []
-    push_idx = out_idx = 0
-    while push_idx < len(push) and out_idx < len(out):
-        item = push[push_idx]
-        if item == out[out_idx]:
-            out_idx += 1
-            push_idx += 1
-        elif stack and stack[-1] == out[out_idx]:
-            stack.pop()
-            out_idx += 1
-        else:
-            stack.append(item)
-            push_idx += 1
-
-    while out_idx < len(out):
-        if not stack or stack[-1] != out[out_idx]:
-            return False
-        out_idx += 1
-        stack.pop()
-    return True
-
-
-def push_pop_v1(push, out):
-    stack = []
-    j = 0
-    for i in out:
-        if stack and stack[-1] == i:
-            stack.pop()
-            continue
-        while j < len(push):
-            j += 1
-            if push[j - 1] == i:
-                break
-            else:
-                stack.append(push[j - 1])
-        else:
-            return False
-    return True  # 也可以直接return not stack
 
 
 def hamming_weight_64(number):
