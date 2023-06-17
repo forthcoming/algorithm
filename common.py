@@ -184,6 +184,34 @@ def cycle_search(arr, target):  # 移位有序数组查找, eg: arr=[6, 7, 8, 9,
     return -1
 
 
+def bisect_right(arr, x):
+    """
+    Return the index where to insert item x in list arr, assuming arr is sorted.
+    if x already appears in the list, arr.insert(x) will insert just after the rightmost x already there.
+    """
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) >> 1
+        if x < arr[mid]:
+            high = mid - 1
+        else:
+            low = mid + 1
+    return low
+
+
+def bisect_left(arr, x):
+    low = 0
+    high = len(arr) - 1
+    while low <= high:
+        mid = (low + high) >> 1
+        if x > arr[mid]:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return low
+
+
 def one_to_another(one, another):  # 对于一对正整数one,another,对one只能进行加1,减1,乘2操作,最少进行几次操作得到another,BFS
     visited = {one}  # 重要
     queue = deque(((one, 0),))  # 注意写法
@@ -541,51 +569,6 @@ def sqrt(t, precision=20):
     for i in range(precision):
         border = .5 * (border + t / border)  # 牛顿法,收敛速度快,优于二分法
     print(border)
-
-
-def bisect_right(a, x, lo=0, hi=None):
-    """
-    Return the index where to insert item x in list a, assuming a is sorted.
-    The return value i is such that all e in a[:i] have e <= x, and all e in a[i:] have e > x.  
-    So if x already appears in the list, a.insert(x) will insert just after the rightmost x already there.
-    """
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) >> 1
-        if x < a[mid]:
-            hi = mid  # 此处不能写作hi = mid - 1, 可能会越界
-        else:
-            lo = mid + 1  # 此处必须写作hi = mid + 1, 应为mid只取了整数部分
-    return lo
-
-
-def bisect_right_v1(a, x):
-    lo = 0
-    hi = len(a) - 1
-    while lo <= hi:
-        mid = (lo + hi) >> 1
-        if x < a[mid]:
-            hi = mid - 1
-        else:
-            lo = mid + 1
-    return lo
-
-
-def bisect_left(a, x, lo=0, hi=None):
-    if lo < 0:
-        raise ValueError('lo must be non-negative')
-    if hi is None:
-        hi = len(a)
-    while lo < hi:
-        mid = (lo + hi) >> 1
-        if a[mid] < x:
-            lo = mid + 1
-        else:
-            hi = mid
-    return lo
 
 
 # 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'ddddftddjh' => '4dft2djh')
