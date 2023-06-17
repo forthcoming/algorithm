@@ -447,75 +447,11 @@ def top_k(arr, k):  # 选择数组中第k个数,构建一个大顶堆; 构建一
     return _top_k(0, length - 1)
 
 
-# ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
-def BFS_search():  # 也可以用邻接表实现
-    method = 0
-    queue = deque([4, -1])  # 4代表A,-1代表第一层
-    matrix = [
-        0b11010,
-        0b11101,
-        0b00010,
-        0b00111,
-        0b00111,
-    ]
-    length = len(matrix)
-    while True:
-        member = queue.popleft()
-        if member <= -5:
-            break
-        elif member < 0:
-            queue.append(member - 1)
-        else:
-            row = matrix[member]
-            for idx in range(length):
-                if row >> idx & 1:
-                    queue.append(idx)
-    while queue:
-        if queue.pop() == 4:
-            method += 1
-    return method
-
-
-def BFS_search():
-    method = 0
-    queue = deque([0, -1])  # 0代表A,-1代表第一层
-    matrix = [
-        [0, 0, 1, 1, 1],
-        [0, 0, 1, 1, 1],
-        [0, 0, 0, 1, 0],
-        [1, 1, 1, 0, 1],
-        [1, 1, 0, 1, 0],
-    ]
-    length = len(matrix)
-    while True:
-        member = queue.popleft()
-        if member <= -5:
-            break
-        elif member < 0:
-            queue.append(member - 1)
-        else:
-            row = matrix[member]
-            for idx in range(length):
-                if row[idx]:
-                    queue.append(idx)
-    while queue:
-        if queue.pop() == 0:
-            method += 1
-    return method
-
-
-# matrix[i][j]代表经过一次传球i到j所有可能次数
-# (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
-matrix = np.array([[0, 0, 1, 1, 1], [0, 0, 1, 1, 1], [0, 0, 0, 1, 0], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]])
-_ = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
-
-
-# 广度优先遍历,查找无权图最短路径
-def shortest_path():
+def shortest_path():  # 广度优先遍历,查找无权图最短路径
     class Node:
-        def __init__(self, x, y, left=None):
-            self.pos = (x, y)
-            self.left = left
+        def __init__(self, _x, _y, parent=None):
+            self.pos = (_x, _y)
+            self.parent = parent
 
     maze = [  # 1代表可达,注意区分与邻接矩阵表示图的区别
         [1, 0, 1, 0, 1, 1, 1, 0],
@@ -535,7 +471,7 @@ def shortest_path():
         if x == m - 1 and y == n - 1:
             while node:
                 print(node.pos)
-                node = node.left
+                node = node.parent
             break
         maze[x][y] = 0
         for i, j in zip([-1, -1, 0, 1, 1, 1, 0, -1], [0, 1, 1, 1, 0, -1, -1, -1]):
@@ -543,6 +479,39 @@ def shortest_path():
             Y = y + j
             if 0 <= X < m and 0 <= Y < n and maze[X][Y]:
                 queue.append(Node(X, Y, node))
+
+
+def ball_game():  # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会传给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
+    # matrix[i][j]代表经过一次传球i到j所有可能次数
+    # (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
+    # matrix = np.array([[0, 0, 1, 1, 1], [0, 0, 1, 1, 1], [0, 0, 0, 1, 0], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]])
+    # method = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
+
+    queue = deque([4, -1])  # 4代表A,-1代表第一层
+    matrix = [  # 也可以用邻接表实现
+        0b11010,
+        0b11101,
+        0b00010,
+        0b00111,
+        0b00111,
+    ]
+    length = len(matrix)
+    while True:
+        member = queue.popleft()
+        if member <= -5:
+            break
+        elif member < 0:
+            queue.append(member - 1)
+        else:
+            row = matrix[member]
+            for idx in range(length):
+                if row >> idx & 1:
+                    queue.append(idx)
+    method = 0
+    while queue:
+        if queue.pop() == 4:
+            method += 1
+    return method
 
 
 def hamming_weight_64(number):
@@ -734,3 +703,5 @@ if __name__ == "__main__":
     ]
     print(division(R))
     print(top_k([2, 1, 5, 6, 3, 2, 8, 1, 9, 10, 5, 2, 7], 6))
+    shortest_path()
+    print(ball_game())
