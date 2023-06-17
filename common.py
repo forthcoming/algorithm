@@ -495,29 +495,30 @@ def ball_game():
     ])
     method = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
     """
-    queue = deque([4, -1])  # 4代表A,-1代表第一层
-    matrix = [  # 也可以用邻接表实现
-        0b11010,
-        0b11101,
-        0b00010,
-        0b00111,
-        0b00111,
-    ]
+    member_a = 4
+    queue = deque(((member_a, 0),))
+    matrix = [  # # # A B C D E
+        0b11010,  # E
+        0b11101,  # D
+        0b00010,  # C
+        0b00111,  # B
+        0b00111,  # A
+    ]  # 也可以用邻接表实现
     length = len(matrix)
-    while True:
-        member = queue.popleft()
-        if member <= -5:
+    while queue:
+        member, level = queue.popleft()
+        if level >= 5:
             break
-        elif member < 0:
-            queue.append(member - 1)
         else:
+            level += 1
             row = matrix[member]
             for idx in range(length):
                 if row >> idx & 1:
-                    queue.append(idx)
+                    queue.append((idx, level))
     method = 0
     while queue:
-        if queue.pop() == 4:
+        member, _ = queue.pop()
+        if member == member_a:
             method += 1
     return method
 
