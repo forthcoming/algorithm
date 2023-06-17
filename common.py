@@ -124,6 +124,28 @@ def alpha_change(alphabet):  # 大小写互转
     return chr(alphabet)
 
 
+# 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'qddddftddjhh' => 'q4dft2dj2h')
+def encode_string(string):
+    result = ""
+    pre = ''
+    count = 1
+    for char in string:
+        if char == pre:
+            count += 1
+        else:
+            if count >= 2:
+                result = f'{result}{count}{pre}'
+            else:
+                result = f'{result}{pre}'
+            pre = char
+            count = 1
+    if count >= 2:
+        result = f'{result}{count}{pre}'
+    else:
+        result = f'{result}{pre}'
+    return result
+
+
 def count_leading_zeros(number, length=64):  # 2分查找思想
     left = 0  # 注意这里从0开始
     right = length
@@ -605,28 +627,6 @@ def eight_queen_v2(number=8):  # 低效
             print()
 
 
-# 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'ddddftddjh' => '4dft2djh')
-def encryption(string):
-    result = ''
-    number = 0
-    tmp = ''
-    for char in string:
-        if char == tmp:
-            number += 1
-        else:
-            if number == 1:
-                result += tmp
-            elif number > 1:
-                result += '{}{}'.format(number, tmp)
-            number = 1
-            tmp = char
-    if number == 1:
-        result += tmp
-    elif number > 1:
-        result += '{}{}'.format(number, tmp)
-    return result
-
-
 # 划分最大无冲突子集问题
 def division(R):
     length = len(R)
@@ -714,3 +714,4 @@ if __name__ == "__main__":
     print(top_k([2, 1, 5, 6, 3, 2, 8, 1, 9, 10, 5, 2, 7], 6))
     shortest_path()
     print(ball_game())
+    print(encode_string('qddddftddjhh'))
