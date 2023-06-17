@@ -424,6 +424,28 @@ def python(n):  # 蛇形填数
     #     print(i)
 
 
+def top_k(li, left, right, k, result):  # 不包含right,结果存入result
+    '''
+    选择数组中最大的k个数
+    1.构建一个大顶堆
+    2.构建一个大小为k的小顶堆
+    3.快排变形
+    '''
+    if 0 < k <= right - left:
+        index = left
+        for i in range(left + 1, right):
+            if li[i] < li[left]:
+                index += 1
+                li[i], li[index] = li[index], li[i]
+        li[index], li[left] = li[left], li[index]
+        if right - index > k:
+            top_k(li, index + 1, right, k, result)
+        else:
+            result += li[index:right]
+            if right - index < k:
+                top_k(li, left, index, k - right + index, result)
+
+
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 def BFS_search():  # 也可以用邻接表实现
     method = 0
@@ -485,6 +507,41 @@ def BFS_search():
 # (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
 matrix = np.array([[0, 0, 1, 1, 1], [0, 0, 1, 1, 1], [0, 0, 0, 1, 0], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]])
 _ = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
+
+
+# 广度优先遍历,查找无权图最短路径
+def shortest_path():
+    class Node:
+        def __init__(self, x, y, left=None):
+            self.pos = (x, y)
+            self.left = left
+
+    maze = [  # 1代表可达,注意区分与邻接矩阵表示图的区别
+        [1, 0, 1, 0, 1, 1, 1, 0],
+        [0, 1, 1, 0, 0, 1, 0, 1],
+        [1, 0, 0, 1, 1, 0, 0, 0],
+        [0, 1, 1, 0, 0, 1, 1, 0],
+        [0, 1, 1, 1, 0, 0, 1, 0],
+        [1, 0, 0, 0, 1, 1, 1, 1],
+    ]
+    m = len(maze)
+    n = len(maze[0])
+    queue = deque()
+    queue.append(Node(0, 0))
+    while queue:
+        node = queue.popleft()
+        x, y = node.pos
+        if x == m - 1 and y == n - 1:
+            while node:
+                print(node.pos)
+                node = node.left
+            break
+        maze[x][y] = 0
+        for i, j in zip([-1, -1, 0, 1, 1, 1, 0, -1], [0, 1, 1, 1, 0, -1, -1, -1]):
+            X = x + i
+            Y = y + j
+            if 0 <= X < m and 0 <= Y < n and maze[X][Y]:
+                queue.append(Node(X, Y, node))
 
 
 def hamming_weight_64(number):
@@ -569,65 +626,6 @@ def eight_queen_v2(number=8):  # 低效
             print()
 
 
-# 广度优先遍历,查找无权图最短路径
-def shortest_path():
-    class Node:
-        def __init__(self, x, y, left=None):
-            self.pos = (x, y)
-            self.left = left
-
-    maze = [  # 1代表可达,注意区分与邻接矩阵表示图的区别
-        [1, 0, 1, 0, 1, 1, 1, 0],
-        [0, 1, 1, 0, 0, 1, 0, 1],
-        [1, 0, 0, 1, 1, 0, 0, 0],
-        [0, 1, 1, 0, 0, 1, 1, 0],
-        [0, 1, 1, 1, 0, 0, 1, 0],
-        [1, 0, 0, 0, 1, 1, 1, 1],
-    ]
-    m = len(maze)
-    n = len(maze[0])
-    queue = deque()
-    queue.append(Node(0, 0))
-    while queue:
-        node = queue.popleft()
-        x, y = node.pos
-        if x == m - 1 and y == n - 1:
-            while node:
-                print(node.pos)
-                node = node.left
-            break
-        maze[x][y] = 0
-        for i, j in zip([-1, -1, 0, 1, 1, 1, 0, -1], [0, 1, 1, 1, 0, -1, -1, -1]):
-            X = x + i
-            Y = y + j
-            if 0 <= X < m and 0 <= Y < n and maze[X][Y]:
-                queue.append(Node(X, Y, node))
-
-
-'''
-选择数组中最大的k个数
-1.构建一个大顶堆
-2.构建一个大小为k的小顶堆
-3.快排变形
-'''
-
-
-def topK(li, left, right, k, result):  # 不包含right,结果存入result
-    if 0 < k <= right - left:
-        index = left
-        for i in range(left + 1, right):
-            if li[i] < li[left]:
-                index += 1
-                li[i], li[index] = li[index], li[i]
-        li[index], li[left] = li[left], li[index]
-        if right - index > k:
-            topK(li, index + 1, right, k, result)
-        else:
-            result += li[index:right]
-            if right - index < k:
-                topK(li, left, index, k - right + index, result)
-
-
 # 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'ddddftddjh' => '4dft2djh')
 def encryption(string):
     result = ''
@@ -650,10 +648,6 @@ def encryption(string):
     return result
 
 
-# 已知正整数a,判断a是否为2的n次方 a&(a-1)或者a-(a&-a)是否等于0
-# ^运算符满足交换律, 结合律, x^y^x=y x^x=0 x^0=x
-
-
 # 划分最大无冲突子集问题
 def division(R):
     length = len(R)
@@ -666,7 +660,7 @@ def division(R):
         if index <= pre:  # 这里必须要有等号,否则当只剩最后一个元素时会陷入死循环
             group_index += 1
             clash = 0
-            # clash=set()  # 对应的R=[{1,5},{0,4,5,7,8},{5,6},{4,8},{1,3,6,8},{0,1,2,6},{2,4,5},{1},{1,3,4}]
+            # clash=set()  # 对应的R=[{1,5},{0,4,5,7,8},{5,6},{4,8},{1,3,6,8},{0,1,2,6},{2,4,5},{1},{1,3,4}]
         if clash >> index & 1:
             # if index in clash:
             A.append(index)
@@ -677,26 +671,7 @@ def division(R):
     return result
 
 
-'''
-项目A = {0, 1, 2, 3, 4, 5, 6, 7, 8}
-冲突集合R = { (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
-'''
-R = [
-    0b000100010,
-    0b110110001,
-    0b001100000,
-    0b100010000,
-    0b101001010,
-    0b001000111,
-    0b000110100,
-    0b000000010,
-    0b000011010,
-]
-print(division(R))
-
-
-# 中缀表达式转后缀表达式
-def transform(exp):
+def transform(exp):  # 中缀表达式转后缀表达式
     operators = {'#': -1, '(': 0, '+': 1, '-': 1, ')': 2, '*': 2, '/': 2, '%': 2}
     precede = lambda a, b: operators[a] >= operators[b]
     stack = ['#']
@@ -721,8 +696,7 @@ def transform(exp):
     return suffix
 
 
-# 计算后缀表达式
-def evaluation(suffix):
+def evaluation(suffix):  # 计算后缀表达式
     stack = []
     operators = {
         '+': lambda x, y: x + y,
@@ -739,3 +713,22 @@ def evaluation(suffix):
             x = stack.pop()
             stack.append(operators[ch](x, y))
     print(stack.pop())
+
+
+if __name__ == "__main__":
+    '''
+    项目A = {0, 1, 2, 3, 4, 5, 6, 7, 8}
+    冲突集合R = { (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
+    '''
+    R = [
+        0b000100010,
+        0b110110001,
+        0b001100000,
+        0b100010000,
+        0b101001010,
+        0b001000111,
+        0b000110100,
+        0b000000010,
+        0b000011010,
+    ]
+    print(division(R))
