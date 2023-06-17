@@ -147,14 +147,14 @@ class Base:
 
     @staticmethod
     def exgcd(a, b):  # 只有当a,b互素时算出的d才有实际意义
-        '''
-        对于a' = b, b' = a%b = a - a / b * b而言,我们求得d, y使得a' d+b' y=gcd(a', b') 
+        """
+        对于a' = b, b' = a%b = a - a / b * b而言,我们求得d, y使得a' d+b' y=gcd(a', b')
         ===>
-        bd + (a - a/b *b)y = gcd(a' , b') = gcd(a, b) , 注意到这里的/是C语言中的除法 
+        bd + (a - a/b *b)y = gcd(a' , b') = gcd(a, b) , 注意到这里的/是C语言中的除法
         ===>
         ay + b(d- a/b *y) = gcd(a, b)
         因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
-        '''
+        """
 
         def _exgcd(a, b):
             if b:
@@ -175,13 +175,13 @@ class Base:
 
     @staticmethod
     def exgcd_iter(a, b):
-        '''
+        """
         由ad + by = g; bd1 + a%by1 = g可以得到
         d   0  1    d1   0  1    0  1          0  1    1
           =       *    =       *       * ... *       *
         y   1 -k1   y1   1 -k1   1 -k2         1 -dn   0
         其中kn = a//b, a,b是每次迭代中的a,b,思考为啥最后一项是[1,0]
-        '''
+        """
         _b = b
         M = np.eye(2, dtype=np.int64)  # 初始化单位矩阵
         while b:
@@ -194,17 +194,17 @@ class Base:
 
     @staticmethod
     def exgcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
-        '''
+        """
         a=q0*b+r1
         b=q1*r1+r2
         r1=q2*r2+r3
         ......
-        rn-1=qn*rn+0  
+        rn-1=qn*rn+0
         a    q0 1   q1 1          qn 1   rn        rn
-          =       *      ...... *      *     = M * 
+          =       *      ...... *      *     = M *
         b    1  0   1  0          1  0   0          0
         此处的rn即为最大公约数
-        '''
+        """
         _b = b
         M = np.eye(2, dtype=np.int64)
         while b:
