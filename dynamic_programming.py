@@ -47,6 +47,15 @@ def max_add_subarray(arr):  # 最大连续和子序列
         maximum = max(maximum, dp)
     return maximum
 
+    # total = maximum = 0  # 在线算法,待看
+    # for each in arr:
+    #     total += each
+    #     if total > maximum:
+    #         maximum = total
+    #     elif total < 0:
+    #         total = 0
+    # return maximum
+
 
 def coin_number(amount, coins):  # 找出由coins组合面值为amount的最小组合数,背包问题
     dp = [float("inf")] * (amount + 1)
