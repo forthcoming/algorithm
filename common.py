@@ -424,26 +424,30 @@ def python(n):  # 蛇形填数
     #     print(i)
 
 
-def top_k(li, left, right, k, result):  # 不包含right,结果存入result
+def top_k(arr, k):  # 选择数组中最大的k个数,不包含right,结果存入result
     '''
-    选择数组中最大的k个数
     1.构建一个大顶堆
     2.构建一个大小为k的小顶堆
     3.快排变形
     '''
-    if 0 < k <= right - left:
-        index = left
-        for i in range(left + 1, right):
-            if li[i] < li[left]:
-                index += 1
-                li[i], li[index] = li[index], li[i]
-        li[index], li[left] = li[left], li[index]
-        if right - index > k:
-            top_k(li, index + 1, right, k, result)
-        else:
-            result += li[index:right]
-            if right - index < k:
-                top_k(li, left, index, k - right + index, result)
+    result = []
+
+    def _top_k(left, right):
+        if 0 < k <= right - left:
+            index = left
+            for i in range(left + 1, right):
+                if arr[i] < arr[left]:
+                    index += 1
+                    arr[i], arr[index] = arr[index], arr[i]
+            arr[index], arr[left] = arr[left], arr[index]
+            if right - index > k:
+                top_k(arr, index + 1, right, k, result)
+            else:
+                result += arr[index:right]
+                if right - index < k:
+                    top_k(arr, left, index, k - right + index, result)
+
+    _top_k(0, len(arr))
 
 
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
