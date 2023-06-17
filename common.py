@@ -481,12 +481,20 @@ def shortest_path():  # 广度优先遍历,查找无权图最短路径
                 queue.append(Node(X, Y, node))
 
 
-def ball_game():  # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会传给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
-    # matrix[i][j]代表经过一次传球i到j所有可能次数
-    # (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
-    # matrix = np.array([[0, 0, 1, 1, 1], [0, 0, 1, 1, 1], [0, 0, 0, 1, 0], [1, 1, 1, 0, 1], [1, 1, 0, 1, 0]])
-    # method = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
-
+def ball_game():
+    """
+    ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会传给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
+    matrix[i][j]代表经过一次传球i到j所有可能次数
+    (matrix@matrix)[i][j]代表经过两次传球i到j所有可能次数
+    matrix = np.array([
+        [0, 0, 1, 1, 1],
+        [0, 0, 1, 1, 1],
+        [0, 0, 0, 1, 0],
+        [1, 1, 1, 0, 1],
+        [1, 1, 0, 1, 0]
+    ])
+    method = (matrix @ matrix @ matrix @ matrix @ matrix)[0][0]  # 有向图长度为k路径数问题
+    """
     queue = deque([4, -1])  # 4代表A,-1代表第一层
     matrix = [  # 也可以用邻接表实现
         0b11010,
