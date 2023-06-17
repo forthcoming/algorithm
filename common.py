@@ -347,6 +347,83 @@ def push_pop(push, out):  # 判断入栈出栈序列是否合法
     # return True  # 也可以直接return not stack
 
 
+def sqrt(t, precision=20):
+    """
+    Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
+    x=1  # x也可以是2
+    for i in range(10):
+    x=(3*x**4+10)/(4*x**3+1)
+    """
+    assert t > 0 and type(precision) == int and precision > 0
+    border = t  # border也可以是2t等
+    for i in range(precision):
+        border = .5 * (border + t / border)  # 牛顿法,收敛速度快,优于二分法
+    return border
+
+
+def python(n):  # 蛇形填数
+    """
+    假如n=4,则会按步长4,3,3,2,2,1,1沿右下左上方向遍历
+    """
+    arr = [[0] * n for _ in range(n)]
+    arr[0] = list(range(1, n + 1))
+    x = 0
+    y = n - 1
+    step = count = n
+    while step > 0:
+        step -= 1
+        for _ in range(step):
+            x += 1
+            count += 1
+            arr[x][y] = count
+        for _ in range(step):
+            y -= 1
+            count += 1
+            arr[x][y] = count
+        step -= 1
+        for _ in range(step):
+            x -= 1
+            count += 1
+            arr[x][y] = count
+        for _ in range(step):
+            y += 1
+            count += 1
+            arr[x][y] = count
+    for i in arr:
+        print(i)
+
+    # count = 1
+    # x = y = 0
+    # arr = [[0] * n for _ in range(n)]
+    # while count <= n ** 2:
+    #     while y < n and not arr[x][y]:
+    #         arr[x][y] = count
+    #         y += 1
+    #         count += 1
+    #     y -= 1
+    #     x += 1
+    #     while x < n and not arr[x][y]:
+    #         arr[x][y] = count
+    #         x += 1
+    #         count += 1
+    #     x -= 1
+    #     y -= 1
+    #     while y >= 0 and not arr[x][y]:
+    #         arr[x][y] = count
+    #         y -= 1
+    #         count += 1
+    #     y += 1
+    #     x -= 1
+    #     while x >= 0 and not arr[x][y]:
+    #         arr[x][y] = count
+    #         x -= 1
+    #         count += 1
+    #     x += 1
+    #     y += 1
+    # for i in arr:
+    #     print(i)
+
+
 # ABCDE五人互相传球,其中A与B不会互相传球,C只会传给D,E不会穿给C,问从A开始第一次传球,经过5次传球后又传回到A有多少种传法
 def BFS_search():  # 也可以用邻接表实现
     method = 0
@@ -551,23 +628,6 @@ def topK(li, left, right, k, result):  # 不包含right,结果存入result
                 topK(li, left, index, k - right + index, result)
 
 
-'''
-牛顿/二分法求平方根问题(幂级数展开也能求近似值)
-# Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
-x=1  # x也可以是2
-for i in range(10):
-    x=(3*x**4+10)/(4*x**3+1)
-'''
-
-
-def sqrt(t, precision=20):
-    assert t > 0 and type(precision) == int and precision > 0
-    border = t  # border也可以是2t等
-    for i in range(precision):
-        border = .5 * (border + t / border)  # 牛顿法,收敛速度快,优于二分法
-    print(border)
-
-
 # 字符串压缩(一串字母(a~z)组成的字符串,将字符串中连续出席的重复字母进行压缩,'ddddftddjh' => '4dft2djh')
 def encryption(string):
     result = ''
@@ -588,64 +648,6 @@ def encryption(string):
     elif number > 1:
         result += '{}{}'.format(number, tmp)
     return result
-
-
-# 蛇形填数
-# def python(n=4):
-#     RIGHT,DOWN,LEFT,UP=0,1,2,3
-#     direct=RIGHT
-#     count=1
-#     x=0
-#     y=-1
-#     lists=[[0]*n for _ in range(n)]
-#     for i in range(2*n-1,0,-1):
-#         for _ in range((i+1)>>1,0,-1):
-#             if direct==RIGHT:
-#                 y+=1
-#             elif direct==DOWN:
-#                 x+=1
-#             elif direct==LEFT:
-#                 y-=1
-#             else:
-#                 x-=1
-#             lists[x][y]=count
-#             count+=1
-#         direct=(direct+1)&3
-#     for i in lists:
-#         print(i)
-
-def python(n=4):  # 更常规
-    count = 1
-    x = 0
-    y = 0
-    lists = [[0] * n for _ in range(n)]
-    while count <= n ** 2:
-        while y < n and not lists[x][y]:
-            lists[x][y] = count
-            y += 1
-            count += 1
-        y -= 1
-        x += 1
-        while x < n and not lists[x][y]:
-            lists[x][y] = count
-            x += 1
-            count += 1
-        x -= 1
-        y -= 1
-        while y >= 0 and not lists[x][y]:
-            lists[x][y] = count
-            y -= 1
-            count += 1
-        y += 1
-        x -= 1
-        while x >= 0 and not lists[x][y]:
-            lists[x][y] = count
-            x -= 1
-            count += 1
-        x += 1
-        y += 1
-    for i in lists:
-        print(i)
 
 
 # 已知正整数a,判断a是否为2的n次方 a&(a-1)或者a-(a&-a)是否等于0
