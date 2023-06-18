@@ -540,46 +540,46 @@ def ball_game():
     return method
 
 
-def print_n_queens(rows):
-    tmp = [0] * len(rows)
-    for k in rows:
-        tmp[k] = 1
+def print_n_queens(columns):
+    tmp = [0] * len(columns)
+    for column in columns:
+        tmp[column] = 1
         print(tmp)
-        tmp[k] = 0
+        tmp[column] = 0
     print()
 
 
 def n_queens(number=8):  # 八皇后问题,低效
-    for rows in permutations(range(number)):
-        for column in range(1, number):  # 第一行不用检测
-            row = rows[column]
-            for _column in range(column):
-                if column - _column == abs(row - rows[_column]):
+    for columns in permutations(range(number)):
+        for row in range(1, number):  # 第一行不用检测
+            column = columns[row]
+            for _row in range(row):
+                if row - _row == abs(column - columns[_row]):
                     break
             else:  # 目的是为了跳出2层for循环 ，也可以设置一个bool类型来区分
                 continue
             break
         else:
-            print_n_queens(rows)
+            print_n_queens(columns)
 
 
 def n_queens_recur(number=8):
-    rows = [0] * number
+    columns = [0] * number  # columns[i]=j意思是第i+1行第j+1列为1
 
-    # stack = []    # 回溯法
+    # stack = []    # 回溯法,此处stack功能等价于rows
     def _solve(level):
         if level < number:
             for i in range(number):
                 for j in range(level):
-                    if i == rows[j] or level - j == abs(i - rows[j]):  # 注意这里需要对列方向和斜方向做判断
+                    if i == columns[j] or level - j == abs(i - columns[j]):  # 注意这里需要对列方向和斜方向做判断
                         break
                 else:
                     # stack.append(i)
-                    rows[level] = i
+                    columns[level] = i
                     _solve(level + 1)
                     # stack.pop()
         else:
-            print_n_queens(rows)
+            print_n_queens(columns)
 
     _solve(0)
 
