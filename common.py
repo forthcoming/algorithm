@@ -540,13 +540,31 @@ def ball_game():
     return method
 
 
-# 八皇后问题
+def n_queens(number=8):  # 八皇后问题,低效
+    for order in permutations(range(number)):
+        for column in range(1, number):  # 第一行不用检测
+            row = order[column]
+            for _column in range(column):
+                if column - _column == abs(row - order[_column]):
+                    break
+            else:  # 目的是为了跳出2层for循环 ，也可以设置一个bool类型来区分
+                continue
+            break
+        else:
+            tmp = [0] * number
+            for k in order:
+                tmp[k] = 1
+                print(tmp)
+                tmp[k] = 0
+            print()
+
+
 # 程序一行一行地寻找可以放皇后的地方,过程带三个参数row、ld和rd,分别表示在纵列和两个对角线方向的限制条件下这一行的哪些地方不能放
-def eight_queen(num=8, stack=[], row=0, ld=0, rd=0):  # 效率最高
-    up_limit = (1 << num) - 1
+def n_queens_bit(number=8, stack=[], row=0, ld=0, rd=0):  # 效率最高
+    up_limit = (1 << number) - 1
     if row == up_limit:
         for i in stack:
-            print([int(j) for j in '{:b}'.format(i).rjust(num, '0')])
+            print([int(j) for j in '{:b}'.format(i).rjust(number, '0')])
         print()
     else:
         position = up_limit & ~(row | ld | rd)  # 每个1比特位代表当前行的对应列可以放皇后
@@ -554,11 +572,11 @@ def eight_queen(num=8, stack=[], row=0, ld=0, rd=0):  # 效率最高
             pos = position & -position  # 取最低位1
             position ^= pos  # 最低位1置为0
             stack.append(pos)
-            eight_queen(num, stack, row | pos, (ld | pos) << 1, (rd | pos) >> 1)  # 神来之笔
+            n_queens_bit(number, stack, row | pos, (ld | pos) << 1, (rd | pos) >> 1)  # 神来之笔
             stack.pop()
 
 
-def eight_queen_v1(number=8):
+def n_queens_recur(number=8):
     _ = [0] * number
 
     # stack = []    # 回溯法
@@ -582,25 +600,6 @@ def eight_queen_v1(number=8):
             print()
 
     _solve(0)
-
-
-def eight_queen_v2(number=8):  # 低效
-    for _ in permutations(range(number)):
-        for column in range(1, number):  # 第一行不用检测
-            row = _[column]
-            for _column in range(column):
-                if column - _column == abs(row - _[_column]):
-                    break
-            else:  # 目的是为了跳出2层for循环 ，也可以设置一个bool类型来区分
-                continue
-            break
-        else:
-            tmp = [0] * number
-            for k in _:
-                tmp[k] = 1
-                print(tmp)
-                tmp[k] = 0
-            print()
 
 
 def hamming_weight_64(number):
@@ -710,3 +709,4 @@ if __name__ == "__main__":
     shortest_path()
     print(ball_game())
     print(encode_string('qddddftddjhh'))
+    n_queens(4)
