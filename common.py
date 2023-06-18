@@ -585,20 +585,25 @@ def n_queens_recur(number=8):
 
 
 # 程序一行一行地寻找可以放皇后的地方,过程带三个参数row、ld和rd,分别表示在纵列和两个对角线方向的限制条件下这一行的哪些地方不能放
-def n_queens_bit(number=8, stack=[], row=0, ld=0, rd=0):  # 效率最高
-    up_limit = (1 << number) - 1
-    if row == up_limit:
-        for i in stack:
-            print([int(j) for j in '{:b}'.format(i).rjust(number, '0')])
-        print()
-    else:
-        position = up_limit & ~(row | ld | rd)  # 每个1比特位代表当前行的对应列可以放皇后
-        while position:
-            pos = position & -position  # 取最低位1
-            position ^= pos  # 最低位1置为0
-            stack.append(pos)
-            n_queens_bit(number, stack, row | pos, (ld | pos) << 1, (rd | pos) >> 1)  # 神来之笔
-            stack.pop()
+def n_queens_bit(number=8):  # 效率最高
+    stack = []
+
+    def _n_queens_bit(row, ld, rd):
+        up_limit = (1 << number) - 1
+        if row == up_limit:
+            for i in stack:
+                print([int(j) for j in '{:b}'.format(i).rjust(number, '0')])
+            print()
+        else:
+            position = up_limit & ~(row | ld | rd)  # 每个1比特位代表当前行的对应列可以放皇后
+            while position:
+                pos = position & -position  # 取最低位1
+                position ^= pos  # 最低位1置为0
+                stack.append(pos)
+                _n_queens_bit(row | pos, (ld | pos) << 1, (rd | pos) >> 1)  # 神来之笔
+                stack.pop()
+
+    _n_queens_bit(0, 0, 0)
 
 
 def hamming_weight_64(number):
