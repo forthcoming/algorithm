@@ -99,7 +99,7 @@ RSA在通信过程中作用：
 class Base:
     @staticmethod
     def sha(text):
-        return int(hashlib.sha256(text.encode('utf8')).hexdigest(), 16)
+        return int(hashlib.sha256(text.encode('utf8')).hexdigest(), 16)  # 16进制的字符串转换成十进制整数
 
     @staticmethod
     def power(a: int, b: int, m: int):  # a**b%m or pow(a,b,m)
@@ -109,20 +109,8 @@ class Base:
             if b & 1:
                 result = result * a % m  # 防止数字过大导致越界
             b >>= 1  # 隐式减去了1
-            a = a * a % m  # 防止a增大
-        return result
-
-    @staticmethod
-    def factorization(n):  # 因式分解
-        factor = 2
-        while n != 1:
-            idx = 0
-            while not n % factor:
-                idx += 1
-                n /= factor
-            if idx:
-                print(factor, idx)
-            factor += 1
+            a = a * a % m
+        return result % m  # 针对b=0的情况
 
     @staticmethod
     def miller_rabin(n, trials=10):  # error_rate=.25**trials

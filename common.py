@@ -21,6 +21,20 @@ from collections import deque
 import numpy as np
 
 
+def factorization(n):  # 因式分解
+    result = ''
+    factor = 2
+    while n != 1:
+        idx = 0
+        while not n % factor:
+            idx += 1
+            n /= factor
+        if idx:
+            result += f'{factor}**{idx} '
+        factor += 1
+    print(result)
+
+
 def josephus(n, k):  # 约瑟夫环问题
     """
     编号从0开始,每第k个被杀死,队列,环形链表均可实现
