@@ -120,19 +120,18 @@ class Base:
             return False
         s = 0
         d = n - 1
-        while not d & 1:  # 把n-1写成(2^s)*d的形式
+        while not d & 1:  # n-1=(2^s)*d
             s += 1
             d >>= 1
-
-        for i in range(trials):
-            a = random.randrange(2, n)  # 每次的底a是不一样的,只要有一次未通过测试,则判定为合数
-            if __class__.power(a, d, n) != 1:  # 相当于(a^d)%n
-                for r in range(s):
-                    if __class__.power(a, 2 ** r * d, n) == n - 1:  # 相当于(a^((2^i)*d))%n
+        for _ in range(trials):
+            a = random.randrange(2, n-1)  # 范围[2,n-2]
+            if Base.power(a, d, n) != 1:  # (a^d)%n
+                for _s in range(s):
+                    if Base.power(a, 2 ** _s * d, n) == n - 1:  # (a^((2^_s)*d))%n
                         break
                 else:
-                    return False  # 以上条件都满足时,n一定是合数
-        return True
+                    return False  # 一定不是素数
+        return True  # 大概率是素数
 
     @staticmethod
     def generate_prime():
