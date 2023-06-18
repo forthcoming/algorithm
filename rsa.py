@@ -97,30 +97,6 @@ RSA在通信过程中作用：
 
 
 class Base:
-
-    @staticmethod
-    def is_probable_prime(n, trials=10):  # Miller-Rabin检测,error_rate=.25**trials
-        assert n > 1
-        if n == 2:  # 2是素数
-            return True
-        if not n & 1:  # 排除偶数
-            return False
-        s = 0
-        d = n - 1
-        while not d & 1:  # 把n-1写成(2^s)*d的形式
-            s += 1
-            d >>= 1
-
-        for i in range(trials):
-            a = random.randrange(2, n)  # 每次的底a是不一样的,只要有一次未通过测试,则判定为合数
-            if __class__.power(a, d, n) != 1:  # 相当于(a^d)%n
-                for r in range(s):
-                    if __class__.power(a, 2 ** r * d, n) == n - 1:  # 相当于(a^((2^i)*d))%n
-                        break
-                else:
-                    return False  # 以上条件都满足时,n一定是合数
-        return True
-
     @staticmethod
     def power(a, b, r):  # a**b%r or pow(a,b,r)
         res = 1
@@ -144,6 +120,29 @@ class Base:
             x *= x
             y >>= 1
         return result
+
+    @staticmethod
+    def is_probable_prime(n, trials=10):  # Miller-Rabin检测,error_rate=.25**trials
+        assert n > 1
+        if n == 2:  # 2是素数
+            return True
+        if not n & 1:  # 排除偶数
+            return False
+        s = 0
+        d = n - 1
+        while not d & 1:  # 把n-1写成(2^s)*d的形式
+            s += 1
+            d >>= 1
+
+        for i in range(trials):
+            a = random.randrange(2, n)  # 每次的底a是不一样的,只要有一次未通过测试,则判定为合数
+            if __class__.power(a, d, n) != 1:  # 相当于(a^d)%n
+                for r in range(s):
+                    if __class__.power(a, 2 ** r * d, n) == n - 1:  # 相当于(a^((2^i)*d))%n
+                        break
+                else:
+                    return False  # 以上条件都满足时,n一定是合数
+        return True
 
     @staticmethod
     def extended_gcd(a, b):  # 只有当a,b互素时算出的d才有实际意义
