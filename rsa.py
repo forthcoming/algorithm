@@ -98,6 +98,10 @@ RSA在通信过程中作用：
 
 class Base:
     @staticmethod
+    def sha(message):
+        return int(hashlib.sha256(message.encode('utf8')).hexdigest(), 16)
+
+    @staticmethod
     def power(a, b, r):  # a**b%r or pow(a,b,r)
         res = 1
         while b:
@@ -123,10 +127,9 @@ class Base:
 
     @staticmethod
     def is_probable_prime(n, trials=10):  # Miller-Rabin检测,error_rate=.25**trials
-        assert n > 1
         if n == 2:  # 2是素数
             return True
-        if not n & 1:  # 排除偶数
+        if n == 1 or n & 1 == 0:  # 这里不用加括号,与c运算符优先级有区别
             return False
         s = 0
         d = n - 1
@@ -143,6 +146,13 @@ class Base:
                 else:
                     return False  # 以上条件都满足时,n一定是合数
         return True
+
+    @staticmethod
+    def generate_prime():
+        prime = random.randrange((1 << 199) + 1, 1 << 300, 2)
+        while not Base.is_probable_prime(prime):
+            prime += 2
+        return prime
 
     @staticmethod
     def extended_gcd(a, b):  # 只有当a,b互素时算出的d才有实际意义
@@ -243,13 +253,6 @@ class RSA(Base):
             self.e += 2
             self.d, common_divisor = self.extended_gcd(self.e, phi)
 
-    @staticmethod
-    def generate_prime():
-        prime = random.randrange((1 << 199) + 1, 1 << 300, 2)
-        while not __class__.is_probable_prime(prime):
-            prime += 2
-        return prime
-
     def encryption(self, message):
         message = int(binascii.hexlify(bytes(message, encoding='utf8')), 16)
         assert (0 <= message < self.module)
@@ -280,10 +283,6 @@ class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,�
         self.g = pow(random.randrange(2, self.p - 1), factor, self.p)  # 公钥
         self.x = random.randrange(1, self.q)  # 私钥
         self.y = pow(self.g, self.x, self.p)  # 公钥
-
-    @staticmethod
-    def sha(message):
-        return int(hashlib.sha256(message.encode('utf8')).hexdigest(), 16)
 
     def sign(self, message):
         k = random.randrange(1, self.q)
