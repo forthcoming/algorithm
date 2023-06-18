@@ -146,7 +146,7 @@ class Base:
         return result
 
     @staticmethod
-    def exgcd(a, b):  # 只有当a,b互素时算出的d才有实际意义
+    def extended_gcd(a, b):  # 只有当a,b互素时算出的d才有实际意义
         """
         对于a' = b, b' = a%b = a - a / b * b而言,我们求得d, y使得a' d+b' y=gcd(a', b')
         ===>
@@ -156,9 +156,9 @@ class Base:
         因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
         """
 
-        def _exgcd(a, b):
+        def _extended_gcd(a, b):
             if b:
-                d, y, common_divisor = _exgcd(b, a % b)
+                d, y, common_divisor = _extended_gcd(b, a % b)
                 d, y = y, d - (a // b) * y
             else:
                 '''
@@ -168,13 +168,13 @@ class Base:
                 d, y, common_divisor = 1, 0, a
             return d, y, common_divisor
 
-        d, y, common_divisor = _exgcd(a, b)
+        d, y, common_divisor = _extended_gcd(a, b)
         while d < 0:  # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
             d += b
         return d, common_divisor
 
     @staticmethod
-    def exgcd_iter(a, b):
+    def extended_gcd_iter(a, b):
         """
         由ad + by = g; bd1 + a%by1 = g可以得到
         d   0  1    d1   0  1    0  1          0  1    1
@@ -193,7 +193,7 @@ class Base:
         return d, a
 
     @staticmethod
-    def exgcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
+    def extended_gcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
         """
         a=q0*b+r1
         b=q1*r1+r2
@@ -239,10 +239,10 @@ class RSA(Base):
         phi = (P - 1) * (Q - 1)
         self.module = P * Q  # 公钥
         self.e = random.randrange(3, phi, 2)  # 公钥,跟phi互质的任意数,这里必须是奇数
-        self.d, common_divisor = self.exgcd(self.e, phi)  # 私钥
+        self.d, common_divisor = self.extended_gcd(self.e, phi)  # 私钥
         while common_divisor != 1:
             self.e += 2
-            self.d, common_divisor = self.exgcd(self.e, phi)
+            self.d, common_divisor = self.extended_gcd(self.e, phi)
 
     @staticmethod
     def generate_prime():
@@ -282,19 +282,20 @@ class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,�
         self.x = random.randrange(1, self.q)  # 私钥
         self.y = pow(self.g, self.x, self.p)  # 公钥
 
-    def sha(self, message):
+    @staticmethod
+    def sha(message):
         return int(hashlib.sha256(message.encode('utf8')).hexdigest(), 16)
 
     def sign(self, message):
         k = random.randrange(1, self.q)
         r = pow(self.g, k, self.p) % self.q
-        Hm = self.sha(message)
-        s = (Hm + self.x * r) * self.exgcditer(k, self.q)[0]
+        Hm = DSA.sha(message)
+        s = (Hm + self.x * r) * self.extended_gcd_iter(k, self.q)[0]
         return r, s
 
     def check(self, message, r, s):
-        w = self.exgcditer(s, self.q)[0]
-        Hm = self.sha(message)
+        w = self.extended_gcd_iter(s, self.q)[0]
+        Hm = DSA.sha(message)
         u1 = Hm * w % self.q
         u2 = r * w % self.q
         v = pow(self.g, u1, self.p) * pow(self.y, u2, self.p) % self.p % self.q
