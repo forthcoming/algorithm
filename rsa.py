@@ -98,8 +98,8 @@ RSA在通信过程中作用：
 
 class Base:
     @staticmethod
-    def sha(message):
-        return int(hashlib.sha256(message.encode('utf8')).hexdigest(), 16)
+    def sha(text):
+        return int(hashlib.sha256(text.encode('utf8')).hexdigest(), 16)
 
     @staticmethod
     def power(a, b, r):  # a**b%r or pow(a,b,r)
