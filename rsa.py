@@ -123,9 +123,9 @@ class Base:
             if idx:
                 print(factor, idx)
             factor += 1
-            
+
     @staticmethod
-    def is_probable_prime(n, trials=10):  # Miller-Rabin检测,error_rate=.25**trials
+    def miller_rabin(n, trials=10):  # error_rate=.25**trials
         if n == 2:  # 2是素数
             return True
         if n == 1 or n & 1 == 0:  # 这里不用加括号,与c运算符优先级有区别
@@ -149,7 +149,7 @@ class Base:
     @staticmethod
     def generate_prime():
         prime = random.randrange((1 << 199) + 1, 1 << 300, 2)
-        while not Base.is_probable_prime(prime):
+        while not Base.miller_rabin(prime):
             prime += 2
         return prime
 
@@ -258,12 +258,12 @@ class RSA(Base):
 class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,也不能进行密钥交换,只用于签名,它比RSA要快很多
     def __init__(self):
         self.q = random.randrange((1 << 159) + 1, 1 << 160, 2)  # 公钥,160bit位奇数里面挑选
-        while not self.is_probable_prime(self.q):
+        while not self.miller_rabin(self.q):
             self.q += 2
 
         factor = 1 << 300
         self.p = factor * self.q + 1  # 公钥
-        while not self.is_probable_prime(self.p):
+        while not self.miller_rabin(self.p):
             factor += 1
             self.p = factor * self.q + 1
 
