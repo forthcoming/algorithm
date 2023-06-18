@@ -695,7 +695,10 @@ def evaluation(suffix):  # 计算后缀表达式
 if __name__ == "__main__":
     '''
     项目project_set = {0, 1, 2, 3, 4, 5, 6, 7, 8}
-    冲突集合conflict_set = { (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
+    冲突集合conflict_set = {
+    (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), 
+    (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
+    }
     '''
     c_set = [
         0b000100010,
@@ -713,4 +716,4 @@ if __name__ == "__main__":
     shortest_path()
     print(ball_game())
     print(encode_string('qddddftddjhh'))
-    n_queens_recur(4)
+    n_queens_bit(4)
