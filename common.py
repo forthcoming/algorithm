@@ -15,11 +15,9 @@ NP-Hard问题指所有NP问题都能约化到它,但它不一定是NP问题,目�
 NPC问题也是NP-Hard问题如旅行商问题(Traveling Salesman Problem)、背包问题(Knapsack Problem)、图着色问题(Graph Coloring Problem)等
 """
 
-import os
 import random
 from itertools import permutations
 from collections import deque
-
 import numpy as np
 
 
@@ -527,21 +525,18 @@ def ball_game():
         0b00111,  # A
     ]  # 也可以用邻接表实现
     length = len(matrix)
+    method = 0
     while queue:
         member, level = queue.popleft()
         if level >= 5:
-            break
+            if member == member_a:
+                method += 1
         else:
             level += 1
             row = matrix[member]
             for idx in range(length):
                 if row >> idx & 1:
                     queue.append((idx, level))
-    method = 0
-    while queue:
-        member, _ = queue.pop()
-        if member == member_a:
-            method += 1
     return method
 
 
