@@ -124,7 +124,7 @@ class Base:
             s += 1
             d >>= 1
         for _ in range(trials):
-            a = random.randrange(2, n-1)  # 范围[2,n-2]
+            a = random.randrange(2, n - 1)  # 范围[2,n-2]
             if Base.power(a, d, n) != 1:  # (a^d)%n
                 for _s in range(s):
                     if Base.power(a, 2 ** _s * d, n) == n - 1:  # (a^((2^_s)*d))%n
