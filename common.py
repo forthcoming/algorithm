@@ -621,24 +621,24 @@ def hamming_weight_64(number):
 
 
 # 划分最大无冲突子集问题
-def division(R):
-    length = len(R)
-    A = deque(range(length))
+def division(conflict_set):
+    length = len(conflict_set)
+    project_set = deque(range(length))
     pre = length
     group_index = 0
     result = [0] * length
-    while A:
-        index = A.popleft()
+    while project_set:
+        index = project_set.popleft()
         if index <= pre:  # 这里必须要有等号,否则当只剩最后一个元素时会陷入死循环
             group_index += 1
             clash = 0
             # clash=set()  # 对应的R=[{1,5},{0,4,5,7,8},{5,6},{4,8},{1,3,6,8},{0,1,2,6},{2,4,5},{1},{1,3,4}]
         if clash >> index & 1:
             # if index in clash:
-            A.append(index)
+            project_set.append(index)
         else:
             result[index] = group_index
-            clash |= R[index]
+            clash |= conflict_set[index]
         pre = index
     return result
 
@@ -689,10 +689,10 @@ def evaluation(suffix):  # 计算后缀表达式
 
 if __name__ == "__main__":
     '''
-    项目A = {0, 1, 2, 3, 4, 5, 6, 7, 8}
-    冲突集合R = { (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
+    项目project_set = {0, 1, 2, 3, 4, 5, 6, 7, 8}
+    冲突集合conflict_set = { (1, 4), (4, 8), (1, 8), (1, 7), (8, 3), (1, 0), (0, 5), (1, 5), (3, 4), (5, 6), (5, 2), (6, 2), (6, 4)
     '''
-    R = [
+    c_set = [
         0b000100010,
         0b110110001,
         0b001100000,
@@ -703,7 +703,7 @@ if __name__ == "__main__":
         0b000000010,
         0b000011010,
     ]
-    print(division(R))
+    print(division(c_set))
     print(top_k([2, 1, 5, 6, 3, 2, 8, 1, 9, 10, 5, 2, 7], 6))
     shortest_path()
     print(ball_game())
