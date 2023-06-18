@@ -540,23 +540,48 @@ def ball_game():
     return method
 
 
+def print_n_queens(rows):
+    tmp = [0] * len(rows)
+    for k in rows:
+        tmp[k] = 1
+        print(tmp)
+        tmp[k] = 0
+    print()
+
+
 def n_queens(number=8):  # 八皇后问题,低效
-    for order in permutations(range(number)):
+    for rows in permutations(range(number)):
         for column in range(1, number):  # 第一行不用检测
-            row = order[column]
+            row = rows[column]
             for _column in range(column):
-                if column - _column == abs(row - order[_column]):
+                if column - _column == abs(row - rows[_column]):
                     break
             else:  # 目的是为了跳出2层for循环 ，也可以设置一个bool类型来区分
                 continue
             break
         else:
-            tmp = [0] * number
-            for k in order:
-                tmp[k] = 1
-                print(tmp)
-                tmp[k] = 0
-            print()
+            print_n_queens(rows)
+
+
+def n_queens_recur(number=8):
+    rows = [0] * number
+
+    # stack = []    # 回溯法
+    def _solve(level):
+        if level < number:
+            for i in range(number):
+                for j in range(level):
+                    if i == rows[j] or level - j == abs(i - rows[j]):  # 注意这里需要对列方向和斜方向做判断
+                        break
+                else:
+                    # stack.append(i)
+                    rows[level] = i
+                    _solve(level + 1)
+                    # stack.pop()
+        else:
+            print_n_queens(rows)
+
+    _solve(0)
 
 
 # 程序一行一行地寻找可以放皇后的地方,过程带三个参数row、ld和rd,分别表示在纵列和两个对角线方向的限制条件下这一行的哪些地方不能放
@@ -574,32 +599,6 @@ def n_queens_bit(number=8, stack=[], row=0, ld=0, rd=0):  # 效率最高
             stack.append(pos)
             n_queens_bit(number, stack, row | pos, (ld | pos) << 1, (rd | pos) >> 1)  # 神来之笔
             stack.pop()
-
-
-def n_queens_recur(number=8):
-    _ = [0] * number
-
-    # stack = []    # 回溯法
-    def _solve(level):
-        if level < number:
-            for i in range(number):
-                for j in range(level):
-                    if i == _[j] or level - j == abs(i - _[j]):  # 注意这里需要对列方向和斜方向做判断
-                        break
-                else:
-                    # stack.append(i)
-                    _[level] = i
-                    _solve(level + 1)
-                    # stack.pop()
-        else:
-            tmp = [0] * number
-            for k in _:
-                tmp[k] = 1
-                print(tmp)
-                tmp[k] = 0
-            print()
-
-    _solve(0)
 
 
 def hamming_weight_64(number):
@@ -709,4 +708,4 @@ if __name__ == "__main__":
     shortest_path()
     print(ball_game())
     print(encode_string('qddddftddjhh'))
-    n_queens(4)
+    n_queens_recur(4)
