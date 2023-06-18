@@ -102,27 +102,14 @@ class Base:
         return int(hashlib.sha256(text.encode('utf8')).hexdigest(), 16)
 
     @staticmethod
-    def power(a, b, r):  # a**b%r or pow(a,b,r)
-        res = 1
+    def power(a: int, b: int, m: int):  # a**b%m or pow(a,b,m)
+        assert b >= 0
+        result = 1
         while b:
             if b & 1:
-                res = res * a % r  # 防止数字过大导致越界
+                result = result * a % m  # 防止数字过大导致越界
             b >>= 1  # 隐式减去了1
-            a = a * a % r  # 防止a增大
-        return res
-
-    @staticmethod
-    def power_v1(x, y):  # y可以是任意整数
-        # 分治法降低power时间复杂度到logn,效率 x**y = pow > power_v1
-        result = 1
-        if y < 0:
-            x = 1 / x
-            y = -y
-        while y:
-            if y & 1:
-                result *= x
-            x *= x
-            y >>= 1
+            a = a * a % m  # 防止a增大
         return result
 
     @staticmethod
