@@ -113,6 +113,18 @@ class Base:
         return result
 
     @staticmethod
+    def factorization(n):  # 因式分解
+        factor = 2
+        while n != 1:
+            idx = 0
+            while not n % factor:
+                idx += 1
+                n /= factor
+            if idx:
+                print(factor, idx)
+            factor += 1
+            
+    @staticmethod
     def is_probable_prime(n, trials=10):  # Miller-Rabin检测,error_rate=.25**trials
         if n == 2:  # 2是素数
             return True
@@ -211,18 +223,6 @@ class Base:
         while d < 0:
             d += _b
         return d, a
-
-    @staticmethod
-    def factorization(n):  # 因式分解
-        factor = 2
-        while n != 1:
-            idx = 0
-            while not n % factor:
-                idx += 1
-                n /= factor
-            if idx:
-                print(factor, idx)
-            factor += 1
 
 
 class RSA(Base):
