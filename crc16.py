@@ -1,7 +1,7 @@
-'''
+"""
 We have 16384 hash slots. The hash slot of a given key is obtained as the least significant 14 bits of the crc16 of the key.
 redis-cluster对key使用crc16算法算出一个结果,然后把结果对16384取模,得到对应的slot
-'''
+"""
 crc16tab = [
     0x0000, 0x1021, 0x2042, 0x3063, 0x4084, 0x50a5, 0x60c6, 0x70e7,
     0x8108, 0x9129, 0xa14a, 0xb16b, 0xc18c, 0xd1ad, 0xe1ce, 0xf1ef,
@@ -37,11 +37,13 @@ crc16tab = [
     0x6e17, 0x7e36, 0x4e55, 0x5e74, 0x2e93, 0x3eb2, 0x0ed1, 0x1ef0
 ]
 
+
 def crc16(data):
     crc = 0
     for byte in data:
         crc = ((crc << 8) & 0xff00) ^ crc16tab[((crc >> 8) & 0xff) ^ byte]  # &0xff00为了防止数字越界
     return crc & 0xffff
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     print(crc16(b'avatar'))

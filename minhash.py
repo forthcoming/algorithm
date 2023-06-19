@@ -1,9 +1,10 @@
 import itertools
 
+
 def get_minhash(shingles, n_hashes):
     signature = []
     for i in range(n_hashes):
-        salt=str(i)
+        salt = str(i)
         minhash = float('inf')
         for shingle in shingles:
             candidate = hash(shingle + salt)
@@ -12,21 +13,23 @@ def get_minhash(shingles, n_hashes):
         signature.append(minhash)
     return signature
 
+
 def get_band_hashes(signature, band_size):
     band_hashes = []
     for i in range(len(signature)):
-        if i % band_size == 0:                        
+        if i % band_size == 0:
             if i > 0:
                 band_hashes.append(band_hash)
             band_hash = 0
-        band_hash += hash(signature[i])  
+        band_hash += hash(signature[i])
     return band_hashes
+
 
 def get_similar_docs(docs, n_hashes=400, band_size=7, shingle_size=3, collectIndexes=True):
     hash_bands = {}
     docNum = 0
     for doc in docs:
-        shingles = {doc[i:i+shingle_size] for i in range(len(doc)-shingle_size+1)}
+        shingles = {doc[i:i + shingle_size] for i in range(len(doc) - shingle_size + 1)}
         signature = get_minhash(shingles, n_hashes)
         band_hashes = get_band_hashes(signature, band_size)
         docMember = docNum if collectIndexes else doc
@@ -44,8 +47,9 @@ def get_similar_docs(docs, n_hashes=400, band_size=7, shingle_size=3, collectInd
         for hash_num in hash_bands[i]:
             if len(hash_bands[i][hash_num]) > 1:
                 for pair in itertools.combinations(hash_bands[i][hash_num], r=2):
-                    similar_docs.add(pair) 
+                    similar_docs.add(pair)
     return similar_docs
+
 
 if __name__ == '__main__':
     docs = [
