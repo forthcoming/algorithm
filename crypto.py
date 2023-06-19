@@ -151,17 +151,17 @@ class Base:
         因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
         """
 
-        def _extended_gcd(a, b):
-            if b:
-                d, y, common_divisor = _extended_gcd(b, a % b)
-                d, y = y, d - (a // b) * y
+        def _extended_gcd(_a, _b):
+            if _b:
+                _d, _y, _common_divisor = _extended_gcd(_b, _a % _b)
+                _d, _y = _y, _d - (_a // _b) * _y
             else:
                 '''
                 当b=0时gcd(a,b) = a ; ad + 0y = a
                 所以d=1, y可以是任意数,但一般选0,这样会使所求的模反元素d最小, common_divisor=a
                 '''
-                d, y, common_divisor = 1, 0, a
-            return d, y, common_divisor
+                _d, _y, _common_divisor = 1, 0, _a
+            return _d, _y, _common_divisor
 
         d, y, common_divisor = _extended_gcd(a, b)
         while d < 0:  # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
@@ -170,46 +170,60 @@ class Base:
 
     @staticmethod
     def extended_gcd_iter(a, b):
-        """
-        由ad + by = g; bd1 + a%by1 = g可以得到
-        d   0  1    d1   0  1    0  1          0  1    1
-          =       *    =       *       * ... *       *
-        y   1 -k1   y1   1 -k1   1 -k2         1 -dn   0
-        其中kn = a//b, a,b是每次迭代中的a,b,思考为啥最后一项是[1,0]
-        """
+        x = 0
+        y = 1
+        lx = 1
+        ly = 0
         _b = b
-        M = np.eye(2, dtype=np.int64)  # 初始化单位矩阵
-        while b:
-            M = M @ np.array([[0, 1], [1, -(a // b)]])  # 注意-(a//b)要加括号
+        while b != 0:
+            q = a // b
             a, b = b, a % b
-        d = M[0][0]
-        if d < 0:
-            d += _b
-        return d, a
+            x, lx = lx - q * x, x
+            y, ly = ly - q * y, y
+        if lx < 0:
+            lx += _b
+        return lx, a
 
-    @staticmethod
-    def extended_gcd_mat(a, b):  # 矩阵版(numpy缺点是处理大整数溢出)
-        """
-        a=q0*b+r1
-        b=q1*r1+r2
-        r1=q2*r2+r3
-        ......
-        rn-1=qn*rn+0
-        a    q0 1   q1 1          qn 1   rn        rn
-          =       *      ...... *      *     = M *
-        b    1  0   1  0          1  0   0          0
-        此处的rn即为最大公约数
-        """
-        _b = b
-        M = np.eye(2, dtype=np.int64)
-        while b:
-            M = M @ np.array([[a // b, 1], [1, 0]])  # 注意不能用*
-            a, b = b, a % b
-        D = M[0][0] * M[1][1] - M[1][0] * M[0][1]  # 计算行列式(值是1或者-1,取决于循环的次数)
-        d = M[1][1] // D  # M的逆矩阵M' = M* / D, M[1][1]对应M*[0][0]
-        while d < 0:
-            d += _b
-        return d, a
+        # 矩阵迭代版缺点是处理大整数溢出
+        # """
+        # a=q0*b+r1
+        # b=q1*r1+r2
+        # r1=q2*r2+r3
+        # ......
+        # rn-1=qn*rn+0
+        # a    q0 1   q1 1          qn 1   rn        rn
+        #   =       *      ...... *      *     = M *
+        # b    1  0   1  0          1  0   0          0
+        # 此处的rn即为最大公约数
+        # """
+        # _b = b
+        # matrix = np.eye(2, dtype=np.int64)
+        # while b:
+        #     matrix = matrix @ np.array([[a // b, 1], [1, 0]])  # 注意不能用*
+        #     a, b = b, a % b
+        # D = matrix[0][0] * matrix[1][1] - matrix[1][0] * matrix[0][1]  # 计算行列式(值是1或者-1,取决于循环的次数)
+        # d = matrix[1][1] // D  # matrix的逆矩阵matrix' = matrix* / D, matrix[1][1]对应matrix*[0][0]
+        # while d < 0:
+        #     d += _b
+        # return d, a
+
+        # 矩阵迭代版缺点是处理大整数溢出
+        # """
+        # 由ad + by = g; bd1 + a%by1 = g可以得到
+        # d   0  1    d1   0  1    0  1          0  1    1
+        #   =       *    =       *       * ... *       *
+        # y   1 -k1   y1   1 -k1   1 -k2         1 -dn   0
+        # 其中kn = a//b, a,b是每次迭代中的a,b,思考为啥最后一项是[1,0]
+        # """
+        # _b = b
+        # matrix = np.eye(2, dtype=np.int64)  # 初始化单位矩阵
+        # while b:
+        #     matrix = matrix @ np.array([[0, 1], [1, -(a // b)]])  # 注意-(a//b)要加括号
+        #     a, b = b, a % b
+        # d = matrix[0][0]
+        # if d < 0:
+        #     d += _b
+        # return d, a
 
 
 class RSA(Base):
@@ -259,14 +273,14 @@ class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,�
         self.x = random.randrange(1, self.q)  # 私钥
         self.y = pow(self.g, self.x, self.p)  # 公钥
 
-    def sign(self, message):
+    def sign(self, message):  # (x,g p,q)
         k = random.randrange(1, self.q)
         r = pow(self.g, k, self.p) % self.q
         Hm = DSA.sha(message)
         s = (Hm + self.x * r) * self.extended_gcd_iter(k, self.q)[0]
         return r, s
 
-    def check(self, message, r, s):
+    def check(self, message, r, s):  # (_r,_s,y,g,p,q)
         w = self.extended_gcd_iter(s, self.q)[0]
         Hm = DSA.sha(message)
         u1 = Hm * w % self.q
