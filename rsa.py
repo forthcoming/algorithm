@@ -249,10 +249,11 @@ class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,�
             self.q += 2
 
         factor = 1 << 300
-        self.p = factor * self.q + 1  # 公钥
-        while not self.miller_rabin(self.p):
+        while True:
+            self.p = factor * self.q + 1  # 公钥
+            if self.miller_rabin(self.p):
+                break
             factor += 1
-            self.p = factor * self.q + 1
 
         self.g = pow(random.randrange(2, self.p - 1), factor, self.p)  # 公钥
         self.x = random.randrange(1, self.q)  # 私钥
