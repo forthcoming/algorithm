@@ -232,10 +232,10 @@ class RSA(Base):
             self.e += 2
             self.d, common_divisor = self.extended_gcd(self.e, phi)
 
-    def encryption(self, message):
-        message = int(binascii.hexlify(bytes(message, encoding='utf8')), 16)
-        assert (0 <= message < self.module)
-        return self.power(message, self.e, self.module)
+    def encryption(self, text):
+        text = int(binascii.hexlify(bytes(text, encoding='utf8')), 16)
+        assert (0 <= text < self.module)
+        return self.power(text, self.e, self.module)
 
     def decryption(self, cipher):
         cipher = self.power(cipher, self.d, self.module)
@@ -264,16 +264,16 @@ class DSA(Base):
         self.x = random.randrange(1, self.q)  # 私钥
         self.y = self.power(self.g, self.x, self.p)  # 公钥
 
-    def sign(self, message):  # (x,g p,q)
+    def sign(self, text):  # (x,g p,q)
         k = random.randrange(1, self.q)
         r = self.power(self.g, k, self.p) % self.q
-        hm = DSA.sha(message)
+        hm = DSA.sha(text)
         s = (hm + self.x * r) * self.extended_gcd_iter(k, self.q)[0]
         return r, s
 
-    def check(self, message, r, s):  # (_r,_s,y,g,p,q)
+    def check(self, text, r, s):  # (_r,_s,y,g,p,q)
         w = self.extended_gcd_iter(s, self.q)[0]
-        hm = DSA.sha(message)
+        hm = DSA.sha(text)
         u1 = hm * w % self.q
         u2 = r * w % self.q
         v = self.power(self.g, u1, self.p) * self.power(self.y, u2, self.p) % self.p % self.q
@@ -287,5 +287,5 @@ if __name__ == "__main__":
 
     dsa = DSA()
     message = 'avatar'
-    r, s = dsa.sign(message)
-    print(dsa.check(message, r, s), r, s)  # True,代表身份和信息均正确
+    _r, _s = dsa.sign(message)
+    print(dsa.check(message, _r, _s), _r, _s)  # True,代表身份和信息均正确
