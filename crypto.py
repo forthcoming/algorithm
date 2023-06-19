@@ -269,23 +269,23 @@ class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,�
                 break
             factor += 1
 
-        self.g = pow(random.randrange(2, self.p - 1), factor, self.p)  # 公钥
+        self.g = self.power(random.randrange(2, self.p - 1), factor, self.p)  # 公钥
         self.x = random.randrange(1, self.q)  # 私钥
-        self.y = pow(self.g, self.x, self.p)  # 公钥
+        self.y = self.power(self.g, self.x, self.p)  # 公钥
 
     def sign(self, message):  # (x,g p,q)
         k = random.randrange(1, self.q)
-        r = pow(self.g, k, self.p) % self.q
-        Hm = DSA.sha(message)
-        s = (Hm + self.x * r) * self.extended_gcd_iter(k, self.q)[0]
+        r = self.power(self.g, k, self.p) % self.q
+        hm = DSA.sha(message)
+        s = (hm + self.x * r) * self.extended_gcd_iter(k, self.q)[0]
         return r, s
 
     def check(self, message, r, s):  # (_r,_s,y,g,p,q)
         w = self.extended_gcd_iter(s, self.q)[0]
-        Hm = DSA.sha(message)
-        u1 = Hm * w % self.q
+        hm = DSA.sha(message)
+        u1 = hm * w % self.q
         u2 = r * w % self.q
-        v = pow(self.g, u1, self.p) * pow(self.y, u2, self.p) % self.p % self.q
+        v = self.power(self.g, u1, self.p) * self.power(self.y, u2, self.p) % self.p % self.q
         return v == r
 
 
