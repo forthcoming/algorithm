@@ -138,29 +138,29 @@ class Base:
         return prime
 
     @staticmethod
-    def extended_gcd(a, b):  # 只有当a,b互质时算出的d才有实际意义
+    def extended_gcd(a, b):  # 只有当a,b互质时算出的x才有实际意义
         """
-        对于a' = b, b' = a%b = a - a / b * b而言,我们求得d, y使得a' d+b' y=gcd(a', b')
+        对于a'= b, b'= a%b= a - a // b * b而言,可得a'x'+b'y'=gcd(a', b')
         ===>
-        bd + (a - a/b *b)y = gcd(a' , b') = gcd(a, b) , 注意到这里的/是C语言中的除法
+        bx' + (a - a//b *b)y' = gcd(a' , b') = gcd(a, b)
         ===>
-        ay + b(d- a/b *y) = gcd(a, b)
+        ay' + b(x'- a//b *y') = gcd(a, b)
         因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
         """
 
         def _extended_gcd(_a, _b):
             if _b:
-                _d, _y, _common_divisor = _extended_gcd(_b, _a % _b)
-                _d, _y = _y, _d - (_a // _b) * _y
+                _x, _y, _common_divisor = _extended_gcd(_b, _a % _b)
+                _x, _y = _y, _x - (_a // _b) * _y
             else:
-                # 当b=0时gcd(a,b) = ad + 0y = ad, y可以是任意数,一般选0, 所以d=1时最大公约数最小,common_divisor=a
-                _d, _y, _common_divisor = 1, 0, _a
-            return _d, _y, _common_divisor
+                # 当b=0时gcd(a,b) = ax + 0y = ad, y可以是任意数,一般选0, 所以x=1时最大公约数最小,common_divisor=a
+                _x, _y, _common_divisor = 1, 0, _a
+            return _x, _y, _common_divisor
 
-        d, y, common_divisor = _extended_gcd(a, b)
-        while d < 0:  # 如果d是a的模反元素(ad%b=1),则d+kb也是a的模反元素,RSA算法要求d是正数
-            d += b
-        return d, common_divisor
+        x, y, common_divisor = _extended_gcd(a, b)
+        while x < 0:  # RSA算法要求d是正数
+            x += b
+        return x, common_divisor
 
     @staticmethod
     def extended_gcd_iter(a, b):
@@ -172,7 +172,7 @@ class Base:
             x, prev_x = prev_x - q * x, x
             y, prev_y = prev_y - q * y, y
             a, b = b, a % b
-        if prev_x < 0:
+        while prev_x < 0:
             prev_x += _b
         return prev_x, a
 
