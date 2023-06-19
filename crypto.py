@@ -153,10 +153,7 @@ class Base:
                 _d, _y, _common_divisor = _extended_gcd(_b, _a % _b)
                 _d, _y = _y, _d - (_a // _b) * _y
             else:
-                '''
-                当b=0时gcd(a,b) = a ; ad + 0y = a
-                所以d=1, y可以是任意数,但一般选0,这样会使所求的模反元素d最小, common_divisor=a
-                '''
+                # 当b=0时gcd(a,b) = ad + 0y = ad, y可以是任意数,一般选0, 所以d=1时最大公约数最小,common_divisor=a
                 _d, _y, _common_divisor = 1, 0, _a
             return _d, _y, _common_divisor
 
