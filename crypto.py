@@ -167,19 +167,17 @@ class Base:
 
     @staticmethod
     def extended_gcd_iter(a, b):
-        x = 0
-        y = 1
-        lx = 1
-        ly = 0
+        prev_x, x = 1, 0
+        prev_y, y = 0, 1
         _b = b
-        while b != 0:
+        while b:
             q = a // b
+            x, prev_x = prev_x - q * x, x
+            y, prev_y = prev_y - q * y, y
             a, b = b, a % b
-            x, lx = lx - q * x, x
-            y, ly = ly - q * y, y
-        if lx < 0:
-            lx += _b
-        return lx, a
+        if prev_x < 0:
+            prev_x += _b
+        return prev_x, a
 
         # 矩阵迭代版缺点是处理大整数溢出
         # """
