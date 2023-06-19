@@ -44,17 +44,13 @@ RSA步骤:
 
 说明:
 公钥和私钥完全对等,所以也可以用私钥加密,公钥解密来做签名
-
-RSA安全性:
-n,e已知,要想知道d必须知道φ(n),就必须对n做因式分解,但大整数分解质因数很困难
-c = m^e%n,但由密文c推导明文m很难
+n,e已知,要想知道明文m需要知道d,要想知道d必须知道φ(n),就必须对n做因式分解,但大整数分解质因数很困难,因此安全性得到保证
+DSA和RSA都是非对成加密,不同之处在于DSA不能用作加密和解密,也不能进行密钥交换,只用于签名,它比RSA要快很多
 
 RSA加密解密证明:
 即证明m = c^d%n,又因为m^e%n = c,转化为证m = m^(ed)%n
 又因为ed = hφ(n)+1,转化为证m = m^(hφ(n)+1)%n   ToBeDone...
-'''
 
-'''
 Base64编码
 它是一种基于用64个可打印字符来表示二进制数据的表示方法
 Base64一般用于在HTTP协议下传输二进制数据,由于HTTP协议是文本协议,所以在HTTP协议下传输二进制数据需要将二进制数据转换为字符数据,然而直接转换是不行的,因为网络传输只能传输可打印字符
@@ -230,12 +226,12 @@ class Base:
 class RSA(Base):
     def __init__(self):
         # P,Q在初始化后应当被销毁,防止外泄
-        P = self.generate_prime()
-        Q = self.generate_prime()
-        while P == Q:
-            Q = self.generate_prime()
-        phi = (P - 1) * (Q - 1)
-        self.module = P * Q  # 公钥
+        p = self.generate_prime()
+        q = self.generate_prime()
+        while p == q:
+            q = self.generate_prime()
+        phi = (p - 1) * (q - 1)
+        self.module = p * q  # 公钥
         self.e = random.randrange(3, phi, 2)  # 公钥,跟phi互质的任意数,这里必须是奇数
         self.d, common_divisor = self.extended_gcd(self.e, phi)  # 私钥
         while common_divisor != 1:
@@ -257,7 +253,7 @@ class RSA(Base):
         return ''.join(res[::-1])
 
 
-class DSA(Base):  # DSA和RSA不同之处在于它不能用作加密和解密,也不能进行密钥交换,只用于签名,它比RSA要快很多
+class DSA(Base):
     def __init__(self):
         self.q = random.randrange((1 << 159) + 1, 1 << 160, 2)  # 公钥,160bit位奇数里面挑选
         while not self.miller_rabin(self.q):
@@ -298,4 +294,4 @@ if __name__ == "__main__":
     dsa = DSA()
     message = 'avatar'
     r, s = dsa.sign(message)
-    print(dsa.check(message, r, s))  # True
+    print(dsa.check(message, r, s), r, s)  # True,代表身份和信息均正确
