@@ -287,5 +287,5 @@ if __name__ == "__main__":
 
     dsa = DSA()
     message = 'avatar'
-    _r, _s = dsa.sign(message)
-    print(dsa.check(message, _r, _s), _r, _s)  # True,代表身份和信息均正确
+    message_r, message_s = dsa.sign(message)
+    print(dsa.check(message, message_r, message_s))  # True,代表身份和信息均正确
