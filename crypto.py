@@ -140,12 +140,11 @@ class Base:
     @staticmethod
     def extended_gcd(a, b):  # 只有当a,b互质时算出的x才有实际意义
         """
-        对于a'= b, b'= a%b= a - a // b * b而言,可得a'x'+b'y'=gcd(a', b')
+        a'x'+b'y'=gcd(a', b'); a'= b; b'= a%b= a - a // b * b
         ===>
-        bx' + (a - a//b *b)y' = gcd(a' , b') = gcd(a, b)
+        bx' + (a - a//b *b)y' = gcd(a' , b')
         ===>
-        ay' + b(x'- a//b *y') = gcd(a, b)
-        因此对于a和b而言,他们的相对应的p,q分别是y和(d-a/b*y)
+        ay' + b(x'- a//b *y') = gcd(a', b') = gcd(a, b) = ax + by,建立x,y与x',y'之间的映射关系
         """
 
         def _extended_gcd(_a, _b):
@@ -213,7 +212,7 @@ class Base:
         #     matrix = matrix @ np.array([[0, 1], [1, -(a // b)]])  # 注意-(a//b)要加括号
         #     a, b = b, a % b
         # d = matrix[0][0]
-        # if d < 0:
+        # while d < 0:
         #     d += _b
         # return d, a
 
