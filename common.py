@@ -383,10 +383,10 @@ def push_pop(push, out):  # 判断入栈出栈序列是否合法
 
 def sqrt(t, precision=20):
     """
-    Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
+    # Newton法求f(x)=x**4+x-10=0在[1,2]内的一个实根
     x=1  # x也可以是2
     for i in range(10):
-    x=(3*x**4+10)/(4*x**3+1)
+        x=(3*x**4+10)/(4*x**3+1)
     """
     assert t > 0 and type(precision) == int and precision > 0
     border = t  # border也可以是2t等
