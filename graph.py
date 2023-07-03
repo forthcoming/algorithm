@@ -9,6 +9,9 @@ G(V,E)满足2*E=所有顶点的度之和
 
 from collections import deque
 
+import matplotlib.pyplot as plt
+import networkx
+
 UDG = 1  # 无向图
 DG = 0  # 有向图
 
@@ -34,8 +37,14 @@ class Graph:  # 邻接表存储
         self.__kind = kind
         self.__vertices = {}
         self.__edge_num = 0
+        self.G = networkx.Graph()
+
+    def show(self):
+        networkx.draw(self.G, with_labels=True)
+        plt.show()
 
     def add(self, come, to, weight=0):
+        self.G.add_edge(come, to, weight=weight)
         self.__edge_num += 1
         if come in self.__vertices:
             self.__vertices[come] = Edge(to, weight, self.__vertices[come])
@@ -49,6 +58,7 @@ class Graph:  # 邻接表存储
                 self.__vertices[to] = Edge(come, weight)
 
     def delete(self, come, to):
+        self.G.remove_edge(come, to)
         if (come in self.__vertices) and (to in self.__vertices):
             edge = self.__vertices[come]
             if edge:
@@ -359,6 +369,7 @@ if __name__ == '__main__':
         graph.add(*edge)
     graph.BFS()
     graph.find_path('A', 'F')
+    graph.show()
 
 '''
 多源最短路算法时间复杂度是O(V^3),适用于邻接矩阵表示的稠密图,稀疏图则可以迭代调用Dijkstra函数V次即可
