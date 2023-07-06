@@ -33,7 +33,7 @@ class Hamming:
         def _find(root, _signature, _dis, depth):
             if _dis >= 0:
                 if depth == self.__depth:
-                    result.append(root)
+                    result.append(root.data)
                     return
                 bit = _signature & 1
                 _signature >>= 1
@@ -69,4 +69,4 @@ if __name__ == '__main__':
     """
     for index, each in enumerate(signatures):
         lsh.insert(each, index)
-    (lsh.find(0b1001, 2))
+    print(lsh.find(0b1001, 2))
