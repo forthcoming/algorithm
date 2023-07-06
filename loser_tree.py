@@ -22,6 +22,8 @@ class LoserTree:
             if self.key(self.leaves[index], self.leaves[self.node[parent]]):
                 # 说明leaves[index]是败者,所以对它的父节点进行赋值,交换后index变成了优胜者
                 self.node[parent], index = index, self.node[parent]
+                if index == self.count:  # 更高效,可以不判断
+                    break
             parent >>= 1
         self.node[0] = index  # 循环结束后index一定是最后的优胜者
 
