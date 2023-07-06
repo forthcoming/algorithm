@@ -13,7 +13,7 @@ class Hamming:
         self.__root = Node(-1)
         self.__depth = depth  # signature's binary digits and binary_tree's depth(not including root node)
 
-    def insert(self, signature, _id):
+    def insert(self, signature, index):
         root = self.__root
         for _ in range(self.__depth):  # the nodes generated from low to high
             if signature & 1:  # left-child:1,right-child:0
@@ -25,28 +25,28 @@ class Hamming:
                     root.right = Node()
                 root = root.right
             signature >>= 1
-        root.data = _id
+        root.data = index
 
-    def find(self, signature, dis):
+    def find(self, signature, max_tolerance):
         result = []
 
-        def _find(root, _dis, depth):
-            if _dis >= 0:
+        def _find(root, _max_tolerance, depth):
+            if _max_tolerance >= 0:
                 if depth == self.__depth:
                     result.append(root.data)
                     return
                 if signature >> depth & 1:
                     if root.left:
-                        _find(root.left, _dis, depth + 1)
+                        _find(root.left, _max_tolerance, depth + 1)
                     if root.right:
-                        _find(root.right, _dis - 1, depth + 1)
+                        _find(root.right, _max_tolerance - 1, depth + 1)
                 else:
                     if root.left:
-                        _find(root.left, _dis - 1, depth + 1)
+                        _find(root.left, _max_tolerance - 1, depth + 1)
                     if root.right:
-                        _find(root.right, _dis, depth + 1)
+                        _find(root.right, _max_tolerance, depth + 1)
 
-        _find(self.__root, dis, 0)
+        _find(self.__root, max_tolerance, 0)
         return result
 
 
@@ -65,6 +65,6 @@ if __name__ == '__main__':
            0   0  1  1 
 
     """
-    for index, each in enumerate(signatures):
-        lsh.insert(each, index)
+    for i, each in enumerate(signatures):
+        lsh.insert(each, i)
     print(lsh.find(0b1001, 2))  # 最多只能有2位不同
