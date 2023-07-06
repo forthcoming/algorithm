@@ -30,25 +30,23 @@ class Hamming:
     def find(self, signature, dis):
         result = []
 
-        def _find(root, _signature, _dis, depth):
+        def _find(root, _dis, depth):
             if _dis >= 0:
                 if depth == self.__depth:
                     result.append(root.data)
                     return
-                bit = _signature & 1
-                _signature >>= 1
-                if bit:
+                if signature >> depth & 1:
                     if root.left:
-                        _find(root.left, _signature, _dis, depth + 1)
+                        _find(root.left, _dis, depth + 1)
                     if root.right:
-                        _find(root.right, _signature, _dis - 1, depth + 1)
+                        _find(root.right, _dis - 1, depth + 1)
                 else:
                     if root.left:
-                        _find(root.left, _signature, _dis - 1, depth + 1)
+                        _find(root.left, _dis - 1, depth + 1)
                     if root.right:
-                        _find(root.right, _signature, _dis, depth + 1)
+                        _find(root.right, _dis, depth + 1)
 
-        _find(self.__root, signature, dis, 0)
+        _find(self.__root, dis, 0)
         return result
 
 
@@ -69,4 +67,4 @@ if __name__ == '__main__':
     """
     for index, each in enumerate(signatures):
         lsh.insert(each, index)
-    print(lsh.find(0b1001, 2))
+    print(lsh.find(0b1001, 2))  # 最多只能有2位不同
