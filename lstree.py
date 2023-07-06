@@ -4,6 +4,9 @@ class Node:
         self.left = left
         self.right = right
 
+    def __str__(self):
+        return f'data:{self.data}'
+
 
 class Hamming:
     def __init__(self, depth=64):
@@ -30,7 +33,6 @@ class Hamming:
         def _find(root, _signature, _dis, depth):
             if _dis >= 0:
                 if depth == self.__depth:
-                    print(root.data)
                     result.append(root)
                     return
                 bit = _signature & 1
@@ -67,4 +69,4 @@ if __name__ == '__main__':
     """
     for index, each in enumerate(signatures):
         lsh.insert(each, index)
-    lsh.find(0b1001, 2)
+    (lsh.find(0b1001, 2))
