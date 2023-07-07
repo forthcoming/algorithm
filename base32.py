@@ -115,5 +115,6 @@ def decode_base32(message):
 
 if __name__ == "__main__":
     info = b"abcde"
-    print(decode_base32(encode_base32_v2(info)))
-    print(base64.b32decode(base64.b32encode(info)))
+    r1 = encode_base32_v2(info)
+    r2 = base64.b32encode(info)
+    assert (r1 == r2) and (decode_base32(r1) == info == base64.b32decode(r2))
