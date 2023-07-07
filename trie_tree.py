@@ -31,7 +31,7 @@ class TrieTree:  # 孩子-兄弟链表存储
                 return False
         return root.flag
 
-    def insert(self, word):
+    def _insert(self, word):
         if self.search(word):
             return False
         siblings = self._hot.left
@@ -49,6 +49,10 @@ class TrieTree:  # 孩子-兄弟链表存储
             node.flag = True
         return True
 
+    def insert(self, words):
+        for word in words[::-1]:  # 也可以不逆序
+            self._insert(word)
+
     def delete(self, word):  # 简单将单词的标志位置为False(严格点说需要将没用的树枝都删掉)
         if self.search(word):
             siblings = self._hot.left
@@ -63,17 +67,17 @@ class TrieTree:  # 孩子-兄弟链表存储
     def show(self):
         stack = []
 
-        def _traverse(root):
+        def _show(root):  # 这里只能按照每棵树根节点下的最左孩子(从左到右第一个孩子)这种森林子结构遍历
             while root:
                 stack.append(root.data)
                 if root.left:
-                    _traverse(root.left)
+                    _show(root.left)
                 if root.flag:
                     print(''.join(stack))
                 stack.pop()
                 root = root.sibling
 
-        _traverse(self.__root.left)
+        _show(self.__root.left)
 
 
 if __name__ == '__main__':
@@ -99,8 +103,7 @@ if __name__ == '__main__':
                                                                                           k
     '''
     trie = TrieTree()
-    for word in ['in', 'init', 'ink', 'jack', 'jar', 'john', 'just', 'june', 'junk']:
-        trie.insert(word)
+    trie.insert(['in', 'init', 'ink', 'jack', 'jar', 'john', 'just', 'june', 'junk'])
     print(trie.delete('john'))
     print(trie.delete('ink'))
     print(trie.search("ini"))
