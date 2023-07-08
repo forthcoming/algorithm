@@ -174,8 +174,8 @@ def get_pos(natural_number, pos, radix):
 
 
 # 桶排序(跟基数排序类似,radix越大,空间复杂度越大,时间复杂度越小,但大到一定限度后时间复杂度会增加,适用于自然数)
-def bucket_sort(arr, radix: int = 10):
-    bucket = [[] for _ in range(1 << radix)]  # 不能用 [[]]*(1 << radix)
+def bucket_sort(arr: list[int], radix: int = 10):
+    bucket: list[list[int]] = [[] for _ in range(1 << radix)]  # 不能用 [[]]*(1 << radix)
     bit = 0
     while True:
         for element in arr:
@@ -183,17 +183,16 @@ def bucket_sort(arr, radix: int = 10):
             bucket[index].append(element)  # 很关键,原理是将自然数看成二进制数,然后再按2**radix个位数划分
         if len(bucket[0]) == len(arr):
             break
-        del arr[:]
+        bit += 1
+
+        arr = []
         # for each in bucket[::-1]:   # 逆序
         for each in bucket:
             arr += each  # 部分each为[]
             each[:] = []  # 清空桶数据
-        bit += 1
-        '''
-        下面2种arr赋值方法效率很低
-        arr[:]=reduce(lambda x,y:x+y,bucket)
-        arr[:]=sum(bucket,[])
-        '''
+
+        # arr[:] = reduce(lambda x, y: x + y, bucket)
+        # arr[:] = sum(bucket, [])
 
 
 # 基数排序(时间复杂度为O(d*n),特别适合待排记录数n很大而关键字位数d很小的自然数)
@@ -319,9 +318,13 @@ class MergeSort:
 
 
 if __name__ == "__main__":
-    array = list(range(11))
+    array = [*range(11)]
     random.shuffle(array)
     print(array)  # [0, 8, 4, 5, 7, 6, 3, 2, 1, 9]
     res = MergeSort(array)
     res.iter_sort()
     print(array, res.inversion_number)  # [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] 23
+
+    random.shuffle(array)
+    quick_sort(array, 0, len(array) - 1)
+    print(array)
