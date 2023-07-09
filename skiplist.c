@@ -98,8 +98,12 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {  // 在跳表�
     for (i = zsl->level-1; i >= 0; i--) {
         /* store rank that is crossed to reach the insert position */
         rank[i] = i == (zsl->level-1) ? 0 : rank[i+1];
-        // 右节点不为空 and (右节点score小于给定score or (右节点score等于给定score and 右节点member小于给定member))
-        while (x->level[i].forward && (x->level[i].forward->score < score || (x->level[i].forward->score == score && sdscmp(x->level[i].forward->ele,ele) < 0)))
+        // 右节点不为空 and (右节点score小于给定score or (右节点score等于给定score and 右节点ele小于给定ele))
+        while (x->level[i].forward &&
+                (x->level[i].forward->score < score ||
+                  (x->level[i].forward->score == score && sdscmp(x->level[i].forward->ele,ele) < 0)
+                )
+              )
         {
             rank[i] += x->level[i].span;   // 记录跨越了多少个元素
             x = x->level[i].forward;
