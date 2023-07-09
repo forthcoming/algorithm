@@ -1,35 +1,17 @@
-/*-----------------------------------------------------------------------------
- * Sorted set API
- *----------------------------------------------------------------------------*/
-
-/* ZSETs are ordered sets using two data structures to hold the same elements
- * in order to get O(log(N)) INSERT and REMOVE operations into a sorted
- * data structure.
- *
- * The elements are added to a hash table mapping Redis objects to scores.
- * At the same time the elements are added to a skip list mapping scores
- * to Redis objects (so objects are sorted by scores in this "view").
- *
- * Note that the SDS string representing the element is the same in both
- * the hash table and skiplist in order to save memory. What we do in order
- * to manage the shared SDS string more easily is to free the SDS string
- * only in zslFreeNode(). The dictionary has no value free method set.
- * So we should always remove an element from the dictionary, and later from
- * the skiplist.
- *
- * This skiplist implementation is almost a C translation of the original
- * algorithm described by William Pugh in "Skip Lists: A Probabilistic
- * Alternative to Balanced Trees", modified in three ways:
- * a) this implementation allows for repeated scores.
- * b) the comparison is not just by key (our 'score') but by satellite data.
- * c) there is a back pointer, so it's a doubly linked list with the back
- * pointers being only at "level 1". This allows to traverse the list
- * from tail to head, useful for ZREVRANGE. */
+/*
+ZSETs是使用两个数据结构来保存相同元素的有序集合
+这些元素被添加到将Redis对象映射到分数的哈希表中,同时将元素添加到映射分数到Redis对象的跳跃表中
+为了节省内存,代表元素的SDS串在哈希表和跳跃列表中是相同的,只需要在zslFreeNode中释放SDS字符串,
+这个跳表实现几乎是原版的C翻译(William Pugh在“Skip Lists: 平衡树的概率替代方案”中描述),修改了三处
+a) 此实现允许相同的分数
+b) 不仅仅通过分数进行比较,还通过satellite data进行比较
+c) 是一个仅在level1带有后向指针的双向链表,这对ZREVRANGE从尾到头遍历列表很有用
+*/
 
 #include <math.h>
 
-#define ZSKIPLIST_MAXLEVEL 32   /* Should be enough for 2^64 elements */
-#define ZSKIPLIST_P 0.25        /* Skiplist P = 1/4 */
+#define ZSKIPLIST_MAXLEVEL 32   // Should be enough for 4^32 elements
+#define ZSKIPLIST_P 0.25        // Skiplist P = 1/4
 
 
 // 原始链表中存储的有可能是很大的对象,而索引结点只需要存储关键值和几个指针,并不需要存储对象
@@ -39,14 +21,18 @@ typedef struct zskiplistNode {
     struct zskiplistNode *backward;    // 指向当前节点的前一个节点,与前进指针不同的是每个节点只有一个后退指针,因此每次只能后退一个节点
     struct zskiplistLevel {
         struct zskiplistNode *forward; // 前进指针用于访问位于表尾方向的其他节点
-        unsigned long span;            // 跨度则记录了前进指针所指向节点和当前节点的距离(跨度越大、距离越远)
-    } level[];                         // 柔性数组,只起占位符作用,在sizeof(struct zskiplistNode)的时候不占空间;如果想要分配一个struct zskiplistNode大小的空间,应该分配的大小为sizeof(struct zskiplistNode) + sizeof(struct zskiplistLevel) *count),其中count为柔性数组中的元素的数量
+        unsigned long span;            // 跨度记录了前进指针所指向节点和当前节点的距离(跨度越大、距离越远)
+    } level[];
+    /*
+    柔性数组,只起占位符作用,在sizeof(zskiplistNode)的时候不占空间.如果想要分配一个zskiplistNode大小的空间
+    应该分配的大小为sizeof(zskiplistNode) + sizeof(zskiplistLevel) *count),其中count为柔性数组元素数量
+    */
 } zskiplistNode;
 
 typedef struct zskiplist {
     struct zskiplistNode *header, *tail; // 跳跃表的头结点和尾节点,尾节点的存在主要是为了能够快速定位出当前跳跃表的最后一个节点,实现反向遍历
     unsigned long length;                // 跳跃表的长度(不包含头结点)
-    int level;                           // 目前跳跃表内,层数最大的那个节点的层数(不包含头结点)
+    int level;                           // 跳跃表内层数最大的那个节点的层数(不包含头结点)
 } zskiplist;
 
 typedef struct zset {
@@ -55,16 +41,14 @@ typedef struct zset {
 } zset;
 
 
-/* Create a skiplist node with the specified number of levels. The SDS string 'ele' is referenced by the node after the call. */
-zskiplistNode *zslCreateNode(int level, double score, sds ele) {
+zskiplistNode *zslCreateNode(int level, double score, sds ele) {  // 创建具有指定level的跳跃表节点
     zskiplistNode *zn = zmalloc(sizeof(*zn)+level*sizeof(struct zskiplistLevel));
     zn->score = score; 
     zn->ele = ele;      
     return zn;
 }
 
-/* Create a new skiplist. */
-zskiplist *zslCreate(void) {
+zskiplist *zslCreate(void) {  // Create a new skiplist
     int j;
     zskiplist *zsl;
 
