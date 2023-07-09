@@ -1,9 +1,10 @@
-# 堆
 import math
 
 
 class Heap:
     # 所有父节点优先级高于子节点,由数组构成的完全二叉树
+    # 堆是变长的数据结构,败者树是定长数据结构
+    # 堆节点记录的是元素值,败者树节点记录的是叶子结点对应元素的下标
     def __init__(self, arr, key=lambda x, y: x > y):  # 默认构建小顶堆
         self.__heap = list(arr)
         self.length = len(arr)
@@ -11,7 +12,11 @@ class Heap:
         self.build_heap()  # 构建过程时间复杂度是O(n)
 
     def is_leaf(self, pos):
-        return (self.length >> 1) - 1 < pos < self.length  # 叶子结点无左孩子
+        """
+        由于叶子结点无左孩子可得: self.length <= 2*pos + 1 即 self.length/2 - 0.5 <= pos
+        又因为self.length,pos都是整数,所以化简得: (self.length >> 1) - 1 < pos
+        """
+        return (self.length >> 1) - 1 < pos < self.length
 
     def left_child(self, pos):  # 不存在则返回-1
         l_child_pos = (pos << 1) + 1
@@ -34,9 +39,10 @@ class Heap:
             return -1
 
     def traverse(self):
-        print(self.__heap[:self.length])
+        print(self.__heap[:self.length])  # 应为会有pop操作导致__heap变小
 
     def __shift_up(self, end):
+        # 与败者树adjust有点像,注意区别
         root = self.__heap[end]
         senior = self.parent(end)
         while senior != -1 and self.key(self.__heap[senior], root):
@@ -45,35 +51,35 @@ class Heap:
             senior = self.parent(end)
         self.__heap[end] = root
 
-    def __shift_down(self, start):
+    def __shift_down(self, parent):
         end = self.length - 1
-        root = self.__heap[start]
-        left = self.left_child(start)
+        root = self.__heap[parent]
+        left = self.left_child(parent)
         while left != -1:
             # 如果有右孩子且右孩子优先级比左孩子高
             if left < end and self.key(self.__heap[left], self.__heap[left + 1]):
                 left += 1
             if self.key(root, self.__heap[left]):
-                self.__heap[start] = self.__heap[left]
-                start = left
-                left = self.left_child(start)
+                self.__heap[parent] = self.__heap[left]
+                parent = left
+                left = self.left_child(parent)
             else:
                 break
-        self.__heap[start] = root  # 不能放在else下面,应为有可能没有左孩子进不去while循环
+        self.__heap[parent] = root  # 不能放在else下面,应为有可能没有左孩子进不去while循环
 
-    def __shift_down_sort(self, start, end):
-        root = self.__heap[start]
-        left = self.left_child(start)
+    def __shift_down_sort(self, parent, end):
+        root = self.__heap[parent]
+        left = self.left_child(parent)
         while left != -1 and left <= end:  # 注意这里要判断left<=end
             if left < end and self.key(self.__heap[left], self.__heap[left + 1]):
                 left += 1
             if self.key(root, self.__heap[left]):
-                self.__heap[start] = self.__heap[left]
-                start = left
-                left = self.left_child(start)
+                self.__heap[parent] = self.__heap[left]
+                parent = left
+                left = self.left_child(parent)
             else:
                 break
-        self.__heap[start] = root
+        self.__heap[parent] = root
 
     def build_heap(self):  # 建堆的时间复杂度是O(n),重要!
         # for end in range(0, self.length):  # 自上而下构建堆
@@ -132,7 +138,7 @@ class Heap:
 
 
 if __name__ == '__main__':
-    heap = Heap([3, 54, 64, 34, 24, 2, 24, 33, 45], key=lambda x, y: x < y)
+    heap = Heap([3, 54, 64, 34, 24, 2, 24, 33, 45], key=lambda x, y: x > y)
     heap.push(4)
     heap.push(21)
     heap.traverse()
