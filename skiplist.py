@@ -26,7 +26,7 @@ class Node:
 
 class SkipList:
     def __init__(self, p: float = .25, max_level: int = 32):
-        self.head = Node(0, "root")
+        self.head = Node(0, "root")  # 头节点的score和element没有实际意义
         self.level = 0
         self.p = p
         self.max_level = max_level
