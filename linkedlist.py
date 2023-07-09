@@ -1,5 +1,5 @@
-from random import randrange
 from functools import reduce
+from random import randrange
 
 
 # 带头节点的单链表
@@ -88,19 +88,19 @@ class LinkedList:
         # self.__head.right = _reverse_k(self.__head.right)
 
         start = self.__head
-        cur = end = start.right
+        cur = start.right
         while cur:
             times = count
             head = None
+            end = cur
             while cur and times:
-                tmp = cur.right
-                cur.right = head
-                head = cur
-                cur = tmp
+                tmp = cur
+                cur = cur.right
+                tmp.right = head
+                head = tmp
                 times -= 1
             start.right = head
             start = end
-            end = cur
 
     def init(self, node):  # 当且仅当链表为空时才有效
         if not self.__length:
@@ -129,7 +129,7 @@ class LinkedList:
                 la = la.right
             elif lb.data < lc.data:
                 lb = lb.right
-            elif la.data == lb.data == lc.data: # 此时la.data,lb.data一定大于等于lc.data
+            elif la.data == lb.data == lc.data:  # 此时la.data,lb.data一定大于等于lc.data
                 pre.right = lc.right
                 lc = lc.right
                 root.__length -= 1
