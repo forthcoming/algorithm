@@ -87,6 +87,7 @@ class LinkedList:
         #
         # self.__head.right = _reverse_k(self.__head.right)
 
+        assert isinstance(count, int) and count > 0
         start = self.__head
         cur = start.right
         while cur:
