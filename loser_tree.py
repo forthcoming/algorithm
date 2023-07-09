@@ -17,7 +17,7 @@ class LoserTree:
         当需要寻找仅次于根节点元素时,根节点对应的叶子结点(这里指L3)先被更新,L3的兄弟边一定跟其父节点值相同,因此上浮过程只需要跟父节点比较,且递归关系仍然成立
         因此L3更新后,只需要跟父节点比较,节点重新填充,留下的节点就是父节点的父边,依次递归
         """
-        parent = (self.count + index) >> 1
+        parent = (self.count + index) >> 1  # 注意推倒方法
         while parent > 0:
             if self.key(self.leaves[index], self.leaves[self.node[parent]]):
                 # 说明leaves[index]是败者,所以对它的父节点进行赋值,交换后index变成了优胜者
@@ -52,5 +52,5 @@ if __name__ == "__main__":
               /\    /\    /\
              L1 L2 L3 L4 L5 L6           
     '''
-    loser_tree = LoserTree([2, 4, 1, 0, 3, 7, 6])  # 外排序中每个归并段都是有序集合,这里相当于7个集合元素为1的归并段
+    loser_tree = LoserTree([2, 4, 1, 0, 3, 7, 6])  # 外排序中每个归并段都是有序集合,这里相当于7个容量为1的集合的归并段
     loser_tree.sort()
