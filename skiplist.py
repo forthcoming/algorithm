@@ -5,12 +5,12 @@ KT = TypeVar("KT")
 VT = TypeVar("VT")
 
 '''
-Based on "Skip Lists: A Probabilistic Alternative to Balanced Trees" by William Pugh https://epaperpress.com/sortsearch/download/skiplist.pdf
-
-where an element in layer i appears in layer i+1 with some fixed probability p(two commonly used values for p are 1/2 or 1/4).
+参考 https://epaperpress.com/sortsearch/download/skiplist.pdf by William Pugh,第i层中的元素以固定概率p出现在第i+1层中
 On average, each element appears in 1/(1-p) lists,The skip list contains log(1/p,n)(i.e. logarithm base 1/p of n) lists.
-The expected number of steps in each linked list is at most 1/p, which can be seen by tracing the search path backwards from the target until reaching an element that appears in the next higher list or reaching the beginning of the current list. 
-Therefore, the total expected cost of a search is 1/p*log(1/p,n) which is O(logn), when p is a constant. By choosing different values of p, it is possible to trade search costs against storage costs.
+The expected number of steps in each linked list is at most 1/p, which can be seen by tracing the search path backwards 
+from the target until reaching an element that appears in the next higher list or reaching the beginning of the current list. 
+Therefore, the total expected cost of a search is 1/p*log(1/p,n) which is O(logn), when p is a constant. 
+By choosing different values of p, it is possible to trade search costs against storage costs.
 '''
 
 
@@ -21,35 +21,23 @@ class Node(Generic[KT, VT]):
         self.forward: List[Node[KT, VT]] = []
 
     def __repr__(self) -> str:
-        """
-        :return: Visual representation of Node
-        >>> node = Node("Key", 2)
-        >>> repr(node)
-        'Node(Key: 2)'
-        """
-
         return f"Node({self.key}: {self.value})"
 
     @property
     def level(self) -> int:
         """
-        :return: Number of forward references
         >>> node = Node("Key", 2)
         >>> node.level
         0
         >>> node.forward.append(Node("Key2", 4))
         >>> node.level
         1
-        >>> node.forward.append(Node("Key3", 6))
-        >>> node.level
-        2
         """
-
         return len(self.forward)
 
 
 class SkipList(Generic[KT, VT]):
-    def __init__(self, p: float = 0.5, max_level: int = 16):
+    def __init__(self, p: float = .25, max_level: int = 32):
         self.head = Node("root", None)
         self.level = 0
         self.p = p
@@ -241,7 +229,7 @@ class SkipList(Generic[KT, VT]):
         return None
 
 
-def main():
+if __name__ == "__main__":
     skip_list = SkipList()
     skip_list.insert(2, "2")
     skip_list.insert(4, "4")
@@ -249,10 +237,6 @@ def main():
     skip_list.insert(4, "5")
     skip_list.insert(8, "4")
     skip_list.insert(9, "4")
-    skip_list.delete(4)
-
+    print(skip_list.find(4))  # 5
     print(skip_list)
-
-
-if __name__ == "__main__":
-    main()
+    skip_list.delete(4)
