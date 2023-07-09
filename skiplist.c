@@ -55,46 +55,31 @@ zskiplist *zslCreate(void) {  // Create a new skiplist
     zsl = zmalloc(sizeof(*zsl));
     zsl->level = 1;
     zsl->length = 0;
-    zsl->header = zslCreateNode(ZSKIPLIST_MAXLEVEL,0,NULL);
+    zsl->tail = NULL;
+
+    zsl->header = zslCreateNode(ZSKIPLIST_MAXLEVEL,0,NULL);  // 初始化头节点
     for (j = 0; j < ZSKIPLIST_MAXLEVEL; j++) {
         zsl->header->level[j].forward = NULL;
         zsl->header->level[j].span = 0;
     }
     zsl->header->backward = NULL;  
-    zsl->tail = NULL;
     return zsl;
 }
 
-/* Finds an element by its rank. The rank argument needs to be 1-based. */
-zskiplistNode* zslGetElementByRank(zskiplist *zsl, unsigned long rank) {
-    zskiplistNode *x;
-    unsigned long traversed = 0;
-    x = zsl->header;
-    for (int i = zsl->level-1; i >= 0; i--) {
-        while (x->level[i].forward && (traversed + x->level[i].span) <= rank)
-        {
-            traversed += x->level[i].span;
-            x = x->level[i].forward;
-        }
-        if (traversed == rank) {
-            return x;
-        }
-    }
-    return NULL;
+int zslRandomLevel(void) {  // 返回要创建的新节点的随机级别,范围[1, ZSKIPLIST_MAXLEVEL]
+    int level = 1;
+    while ((random()&0xFFFF) < (ZSKIPLIST_P * 0xFFFF))
+        level += 1;
+    return (level<ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;
 }
 
-/* Free the specified skiplist node. The referenced SDS string representation
- * of the element is freed too, unless node->ele is set to NULL before calling
- * this function. */
-void zslFreeNode(zskiplistNode *node) {
+void zslFreeNode(zskiplistNode *node) {  // Free the specified skiplist node
     sdsfree(node->ele);
     zfree(node);
 }
 
-/* Free a whole skiplist. */
-void zslFree(zskiplist *zsl) {
+void zslFree(zskiplist *zsl) {  // Free a whole skiplist
     zskiplistNode *node = zsl->header->level[0].forward, *next;
-
     zfree(zsl->header);
     while(node) {
         next = node->level[0].forward;
@@ -104,21 +89,7 @@ void zslFree(zskiplist *zsl) {
     zfree(zsl);
 }
 
-/* Returns a random level for the new skiplist node we are going to create.
- * The return value of this function is between 1 and ZSKIPLIST_MAXLEVEL
- * (both inclusive), with a powerlaw-alike distribution where higher
- * levels are less likely to be returned. */
-int zslRandomLevel(void) {
-    int level = 1;
-    while ((random()&0xFFFF) < (ZSKIPLIST_P * 0xFFFF))
-        level += 1;
-    return (level<ZSKIPLIST_MAXLEVEL) ? level : ZSKIPLIST_MAXLEVEL;
-}
-
-/* Insert a new node in the skiplist. Assumes the element does not already
- * exist (up to the caller to enforce that). The skiplist takes ownership
- * of the passed SDS string 'ele'. */
-zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {
+zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {  // 在跳表中插入一个新节点(假设该元素尚不存在)
     zskiplistNode *update[ZSKIPLIST_MAXLEVEL], *x;     // 记录寻找元素过程中每层能到达的最右节点
     unsigned int rank[ZSKIPLIST_MAXLEVEL];             // 记录寻找元素过程中每层所跨越的节点数
     int i, level;
@@ -170,6 +141,24 @@ zskiplistNode *zslInsert(zskiplist *zsl, double score, sds ele) {
         zsl->tail = x;
     zsl->length++;
     return x;
+}
+
+/* Finds an element by its rank. The rank argument needs to be 1-based. */
+zskiplistNode* zslGetElementByRank(zskiplist *zsl, unsigned long rank) {
+    zskiplistNode *x;
+    unsigned long traversed = 0;
+    x = zsl->header;
+    for (int i = zsl->level-1; i >= 0; i--) {
+        while (x->level[i].forward && (traversed + x->level[i].span) <= rank)
+        {
+            traversed += x->level[i].span;
+            x = x->level[i].forward;
+        }
+        if (traversed == rank) {
+            return x;
+        }
+    }
+    return NULL;
 }
 
 /* Internal function used by zslDelete, zslDeleteRangeByScore and
