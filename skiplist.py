@@ -2,22 +2,22 @@ from random import random
 
 '''
 参考 https://epaperpress.com/sortsearch/download/skiplist.pdf by William Pugh,第i层中的元素以固定概率p出现在第i+1层中
-On average, each element appears in 1/(1-p) lists,The skip list contains log(1/p,n)(i.e. logarithm base 1/p of n) lists.
+On average, each member appears in 1/(1-p) lists,The skip list contains log(1/p,n)(i.e. logarithm base 1/p of n) lists.
 The expected number of steps in each linked list is at most 1/p, which can be seen by tracing the search path backwards 
-from the target until reaching an element that appears in the next higher list or reaching the beginning of the current list. 
+from the target until reaching an member that appears in the next higher list or reaching the beginning of the current list. 
 Therefore, the total expected cost of a search is 1/p*log(1/p,n) which is O(logn), when p is a constant. 
 By choosing different values of p, it is possible to trade search costs against storage costs.
 '''
 
 
 class Node:
-    def __init__(self, score: float | int, element: str):
+    def __init__(self, score: float | int, member: str):
         self.score = score
-        self.element = element
+        self.member = member
         self.forward: list[Node] = []
 
     def __repr__(self) -> str:
-        return f"Node({self.score}: {self.element})"
+        return f"Node({self.score}: {self.member})"
 
     @property
     def level(self) -> int:
@@ -26,7 +26,7 @@ class Node:
 
 class SkipList:
     def __init__(self, p: float = .25, max_level: int = 32):
-        self.head = Node(0, "root")  # 头节点的score和element没有实际意义
+        self.head = Node(0, "root")  # 头节点的score和member没有实际意义
         self.level = 0
         self.p = p
         self.max_level = max_level
@@ -43,7 +43,7 @@ class SkipList:
         lines = []
 
         forwards = node.forward.copy()
-        lines.append(f"[{node.element}]".ljust(label_size, "-") + "* " * len(forwards))
+        lines.append(f"[{node.member}]".ljust(label_size, "-") + "* " * len(forwards))
         lines.append(" " * label_size + "| " * len(forwards))
 
         while len(node.forward) != 0:
@@ -113,10 +113,10 @@ class SkipList:
                     else:
                         update_node.forward = update_node.forward[:i]
 
-    def insert(self, score, element):
+    def insert(self, score, member):
         node, update_vector = self._locate_node(score)
         if node is not None:
-            node.element = element
+            node.member = member
         else:
             level = self.random_level()
 
@@ -126,7 +126,7 @@ class SkipList:
                     update_vector.append(self.head)
                 self.level = level
 
-            new_node = Node(score, element)
+            new_node = Node(score, member)
 
             for i, update_node in enumerate(update_vector[:level]):
                 # Change references to pass through new node.
@@ -141,7 +141,7 @@ class SkipList:
     def find(self, score):
         node, _ = self._locate_node(score)
         if node is not None:
-            return node.element
+            return node.member
 
 
 if __name__ == "__main__":

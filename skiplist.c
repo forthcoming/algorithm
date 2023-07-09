@@ -22,7 +22,7 @@ typedef struct zskiplistNode {
     struct zskiplistNode *backward;    // 指向当前节点的前一个节点
     struct zskiplistLevel {
         struct zskiplistNode *forward; // 前进指针用于访问位于表尾方向的其他节点
-        unsigned long span;            // 跨度记录了前进指针所指向节点和当前节点的距离(相邻两节点跨度为1)
+        unsigned long span;            // 跨度记录了前进指针所指向节点和当前节点的距离(相邻两节点跨度为1),涉及排名的命令如zrank等需要用到
     } level[];                         // level[i]表示节点第i层
     /*
     柔性数组,只起占位符作用,在sizeof(zskiplistNode)的时候不占空间.如果想要分配一个zskiplistNode大小的空间
