@@ -38,7 +38,7 @@ def rabin_karp(text, pattern, radix=31):  # radix 31 131 1313 13131 131313 etc.
 
 def build_next(pattern):
     """
-    next[j]代表p[0,j-1]子串最大长度的相同前缀后缀(不含子串本身,应为子串至少要移动一步),s[j]匹配失败时下一步匹配中模式串应该跳到next[j]位置
+    next[j]代表p[0,j-1]子串最大长度的相同前缀后缀(不含p[0,j-1]本身),也代表s[j]匹配失败时下一步模式串p的指针跳转位置
     人工计算步骤:
     1. 计算p[0,0], p[0,1]... p[0,n]子串的最大长度的相同前缀后缀0, max(1), max(2)... max(n)
     2. next[0]=-1, next[1]=0, next[2]=max(1)...next[n]=max(n-1)
@@ -91,7 +91,7 @@ def sunday(text, pattern, pos_t=0):
             pos_t += 1
             pos_p += 1
         else:
-            pos_t += length_p - pos_p  # 匹配失败时pos_t是text中参加匹配的最末位字符的下一位字符下标,应为这个字符一定会被比较
+            pos_t += length_p - pos_p  # 匹配失败时pos_t是text中参与匹配pattern[-1]字符的下一个字符下标,应为这个字符一定会被比较
             if pos_t >= length_t:
                 return -1
             else:
@@ -163,6 +163,7 @@ class AcAutomaton:
 if __name__ == "__main__":
     print(rabin_karp("bbc abcdab abcdabcdabde", "abcdabd"))
     print(kmp("bbc abcdab abcdabcdabde", "abcdabd"))
+    print(sunday("bbc abcdab abcdabcdabde", "abcdabd"))
     """
                 #
              /  |  \
