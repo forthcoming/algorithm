@@ -13,27 +13,24 @@ def full_permutation(arr, left, end):
         print(arr)
 
 
-'''
-相邻两个位置ai < ai+1,ai称作该升序的首位
-步骤:二找、一交换、一翻转
-prev_permutation只需要将Ⅰ逆序并将Ⅱ,Ⅲ处<变为>即可
-python中通过from itertools import permutations调用全排列
-'''
-
-
 def next_permutation(s):  # 不去重
+    """
+    相邻两个位置ai < ai+1,ai称作该升序的首位
+    步骤:二找、一交换、一翻转
+    prev_permutation只需要将Ⅰ逆序并将Ⅱ,Ⅲ处<变为>即可
+    python中通过from itertools import permutations调用全排列
+    """
     length = len(s)
     arr = list(range(length))  # Ⅰ
     while True:
         print([s[pos] for pos in arr])
-        for idx in range(length - 1, 0, -1):
-            change_idx = idx - 1
-            if arr[change_idx] < arr[idx]:  # Ⅱ
+        for change_idx in range(length - 2, -1, -1):
+            if arr[change_idx] < arr[change_idx+1]:  # Ⅱ
                 for i in range(length - 1, change_idx, -1):
                     if arr[i] > arr[change_idx]:  # Ⅲ
                         arr[i], arr[change_idx] = arr[change_idx], arr[i]
                         break
-                arr[idx:] = arr[:change_idx:-1]
+                arr[change_idx+1:] = arr[:change_idx:-1]
                 break
         else:
             break
@@ -44,14 +41,13 @@ def prev_permutation(s):
     arr = list(range(length - 1, -1, -1))
     while True:
         print([s[pos] for pos in arr])
-        for idx in range(length - 1, 0, -1):
-            change_idx = idx - 1
-            if arr[change_idx] > arr[idx]:
+        for change_idx in range(length - 2, -1, -1):
+            if arr[change_idx] > arr[change_idx+1]:
                 for i in range(length - 1, change_idx, -1):
                     if arr[i] < arr[change_idx]:
                         arr[i], arr[change_idx] = arr[change_idx], arr[i]
                         break
-                arr[idx:] = arr[:change_idx:-1]
+                arr[change_idx+1:] = arr[:change_idx:-1]
                 break
         else:
             break
