@@ -27,13 +27,13 @@ def next_permutation(s):  # 不去重
     while True:
         print([s[pos] for pos in arr])
         for idx in range(length - 1, 0, -1):
-            if arr[idx - 1] < arr[idx]:  # Ⅱ
-                change_idx = idx - 1
+            change_idx = idx - 1
+            if arr[change_idx] < arr[idx]:  # Ⅱ
                 for i in range(length - 1, change_idx, -1):
                     if arr[i] > arr[change_idx]:  # Ⅲ
                         arr[i], arr[change_idx] = arr[change_idx], arr[i]
                         break
-                arr[idx:] = arr[:idx - 1:-1]
+                arr[idx:] = arr[:change_idx:-1]
                 break
         else:
             break
@@ -45,13 +45,13 @@ def prev_permutation(s):
     while True:
         print([s[pos] for pos in arr])
         for idx in range(length - 1, 0, -1):
-            if arr[idx - 1] > arr[idx]:
-                change_idx = idx - 1
+            change_idx = idx - 1
+            if arr[change_idx] > arr[idx]:
                 for i in range(length - 1, change_idx, -1):
                     if arr[i] < arr[change_idx]:
                         arr[i], arr[change_idx] = arr[change_idx], arr[i]
                         break
-                arr[idx:] = arr[:idx - 1:-1]
+                arr[idx:] = arr[:change_idx:-1]
                 break
         else:
             break
@@ -89,3 +89,7 @@ def permutation(s):  # 去重
                 break
         left[i + 1:] = left[:i:-1]
         print(left)
+
+
+if __name__ == "__main__":
+    next_permutation("abcd")

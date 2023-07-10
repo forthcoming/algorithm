@@ -1,6 +1,7 @@
 import copy
 import math
 import random
+
 import redis
 
 
@@ -22,7 +23,7 @@ class BloomFilter:
         self.n = capacity
         self.p = error_rate
         # log2(*args, **kwargs) return the base 2 lo logarithm of x
-        self.m = math.ceil(-capacity * math.log2(math.e) * math.log2( error_rate))
+        self.m = math.ceil(-capacity * math.log2(math.e) * math.log2(error_rate))
         self.k = math.ceil(-math.log(error_rate, 2))  # log(x, [base=math.e])
         self.rds.delete(self.name)
         self.hash_functions = self.generate_hash_functions()

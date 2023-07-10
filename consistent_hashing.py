@@ -12,7 +12,7 @@ class ConsistentHashing:  # can be used when the number of server nodes can incr
 
     @staticmethod
     def _hash(value):
-        k = md5(bytes(value, 'utf8')).digest()
+        k = md5(value.encode()).digest()
         return unpack("<I", k[:4])[0]  # unsigned int
 
     def add_node(self, node):
@@ -44,7 +44,7 @@ class ConsistentHashing:  # can be used when the number of server nodes can incr
 
 if __name__ == '__main__':
     ring = ConsistentHashing(2)
-    for node in range(4):
+    for node in range(4):  # 环顺序: 0 -> 1 -> 2 -> 3 -> 0
         ring.add_node(node)
     ring.add_items(map(str, range(100)))
     print(ring.ring)
