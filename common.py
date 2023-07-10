@@ -14,6 +14,7 @@ P问题指可以在多项式时间内解决的问题集合; NP问题指可以在
 NP-Hard问题指所有NP问题都能约化到它,但它不一定是NP问题,目前同样没有多项式的算法,由于NP-Hard放宽了限定条件，它将有可能比所有的NPC问题的时间复杂度更高从而更难以解决
 NPC问题也是NP-Hard问题如旅行商问题(Traveling Salesman Problem)、背包问题(Knapsack Problem)、图着色问题(Graph Coloring Problem)等
 """
+import random
 from collections import deque
 from itertools import permutations
 
