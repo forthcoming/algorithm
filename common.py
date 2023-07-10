@@ -475,10 +475,10 @@ def top_k(arr, k):  # 选择数组中第k个数,构建一个大顶堆; 构建一
         cmp = _cmp(little=True)
     heap = Heap(arr[:k], key=cmp)
     for idx in range(k, length):
-        if cmp(arr[idx], heap.heap[0]):
+        if cmp(arr[idx], heap.top()):
             heap.pop()
             heap.push(arr[idx])
-    return heap.heap[0]
+    return heap.top()
 
     # length = len(arr)
     # assert 1 <= k <= length

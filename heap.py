@@ -33,9 +33,9 @@ class Heap:
         else:
             return -1
 
-    @property
-    def heap(self):
-        return self.__heap
+    def top(self):
+        if self.length > 0:
+            return self.__heap[0]
 
     def parent(self, pos):
         if 0 < pos < self.length:
