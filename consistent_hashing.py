@@ -36,7 +36,7 @@ class ConsistentHashing:  # can be used when the number of server nodes can incr
             for item in items:
                 hash_value = ConsistentHashing._hash(item)
                 pos = bisect_left(self.ring, hash_value) % self.node_num  # 注意这里跟bisect_right的区别
-                self.storage[self.ring[pos]].append(item)
+                self.storage[self.ring[pos]].append(item) # 根据pos位置沿环顺时针行走,数据存放到第一台遇到的服务器
 
     def remove_node(self, node):
         pass
