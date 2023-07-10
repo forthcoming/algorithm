@@ -2,7 +2,7 @@
 refer: https://github.com/redis/redis/blob/unstable/src/t_zset.c
 ZSETs是使用两个数据结构来保存相同元素的有序集合
 这些元素被添加到将Redis对象映射到分数的哈希表中,同时将元素添加到映射分数到Redis对象的跳跃表中
-为了节省内存,代表元素的SDS串在哈希表和跳跃列表中是相同的,只需要在zslFreeNode中释放SDS字符串,
+为了节省内存,代表元素的SDS串在哈希表和跳跃列表中是相同的,只需要在zslFreeNode中释放SDS字符串
 这个跳表实现几乎是原版的C翻译(William Pugh在“Skip Lists: 平衡树的概率替代方案”中描述),修改了三处
 a) 此实现允许相同的分数
 b) 不仅仅通过分数进行比较,还通过satellite data进行比较

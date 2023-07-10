@@ -101,18 +101,27 @@ class Forest:
         #         self.root_first_traverse(root.sibling)
 
     def find_parent(self, element):  # 层序遍历方式
-        queue = deque([self.__root])
+        queue = deque([(None, self.__root)])
         while queue:
-            node = queue.popleft()
-            while node:
-                child = node.left
-                while child:
-                    if child.data == element:
-                        return node
-                    child = child.sibling
-                if node.left:
-                    queue.append(node.left)
-                node = node.sibling
+            parent, root = queue.popleft()
+            while root:
+                if root.data == element:
+                    return parent
+                queue.append((root, root.left))
+                root = root.sibling
+
+        # queue = deque([self.__root])
+        # while queue:
+        #     root = queue.popleft()
+        #     while root:
+        #         child = root.left
+        #         while child:
+        #             if child.data == element:
+        #                 return root
+        #             child = child.sibling
+        #         if root.left:
+        #             queue.append(root.left)
+        #         root = root.sibling
 
     def max_depth(self, root):
         if root:
@@ -153,5 +162,6 @@ if __name__ == '__main__':
     forest.level_traverse()
     print(forest.max_depth(forest.root))
     forest.root_last_traverse()
-    print(forest.find_parent(4))
+    print()
+    print(forest.find_parent(0))
     forest.find_path()
