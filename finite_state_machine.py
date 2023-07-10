@@ -48,7 +48,7 @@ class DFA:
 if __name__ == "__main__":
     dfa = DFA()
     """
-    判断二进制串能否被3整除的状态转移表
+    判断二进制串能否被3整除的状态转移表(大端模式)
         字母0    1
     状态        
      零     零   一
@@ -66,5 +66,4 @@ if __name__ == "__main__":
     dfa.add_transition("二", "0", "一")
     dfa.add_transition("二", "1", "二")
     result = dfa.process("01111110")  # 126,或者用正则语言/^1((10*1)|(01*0))*10*$/判断
-
     print(result)

@@ -163,5 +163,5 @@ if __name__ == '__main__':
     print(forest.max_depth(forest.root))
     forest.root_last_traverse()
     print()
-    print(forest.find_parent(0))
+    print(forest.find_parent(9))
     forest.find_path()
