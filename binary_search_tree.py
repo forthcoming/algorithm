@@ -15,14 +15,16 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
     def __init__(self, root: Node | None = None, key=lambda x, y: x < y):  # 默认升序
         self.__root = root
         self.key = key
+        self._hot = None  # 指向待查节点父节点
+        self._pointer = None  # 指向待查节点
 
     @property
     def root(self):
         return self.__root
 
     def find(self, element):  # 时间复杂度是O(logn)
-        self._hot = None  # 指向待查节点父节点
-        self._pointer = self.__root  # 指向待查节点
+        self._hot = None
+        self._pointer = self.__root
         while self._pointer:
             if self._pointer.data == element:  # 注意顺序,应为self.key规则可能包含=
                 return True
@@ -397,6 +399,7 @@ if __name__ == '__main__':
     tree = BST()
     for num in [49, 38, 65, 76, 13, 27, 52]:  # 时间复杂度介于O(nlogn)和O(n^2),后者出现在序列已经有序的情况下
         tree.add(num)
+    tree.breath_first_search()
     print(tree.find_common_parent_stack(38, 52))
     tree.find_path()
     tree.find_path_stack()
