@@ -11,16 +11,15 @@ import numpy as np
 (a * b) % p = (a % p * b % p) % p   
 a ^ b % p = ((a % p)^b) % p
 
-欧拉函数:
-比n小但与n互质的正整数个数φ(n)称为n的欧拉函数
-对任一质数p,有φ(n)＝p-1,对于两个不同的质数p和q则φ(pq)=(p-1)(q-1)=φ(p)*φ(q)
-
 辗转相除法: 
 对整数a,b进行辗转相除,可得它们的最大公约数gcd(a,b),然后收集辗转相除法中产生的式子,倒回去可以得到ax+by=gcd(a,b),其中x,y也是整数
-如果gcd(a, b) = 1,則稱a和b互质(除了1以外没有其他公因子),a和b是否互质和它们是否质数无关,最小公倍数(a,b)=a*b/gcd(a,b)
+如果gcd(a, b) = 1,則稱a和b互质,a和b是否互质和它们是否质数无关,最小公倍数(a,b)=a*b/gcd(a,b)
 
-欧拉定理: 
-如果两个正整数a和n互质,n的欧拉函数φ(n),则a^φ(n) % n = 1, 比如3和7互质,而7的欧拉函数φ(7)等于6,所以3的6次方729减去1,可以被7整除(728/7=104)
+欧拉函数:
+比n小但与n互质的正整数个数φ(n)称为n的欧拉函数
+对任一质数p,有φ(n)＝p-1,对于两个不同的质数p和q则φ(pq)=φ(p)*φ(q)=(p-1)(q-1)
+
+欧拉定理: 如果两个正整数a和b互质,b的欧拉函数φ(b),则a^φ(b) % b = 1
 
 模反元素(前提是互质):
 欧拉定理可以用来证明模反元素必然存在,a^(φ(b)-1)就是a对模数b的模反元素,比如3和11互质,则3**(φ(11)-1)=3**9=19683是3对11的模反元素
@@ -228,18 +227,18 @@ class RSA(Base):
         self.module = p * q  # 公钥
         self.e = random.randrange(3, phi, 2)  # 公钥,跟phi互质的任意数,这里必须是奇数
         self.d, common_divisor = self.extended_gcd(self.e, phi)  # 私钥
-        while common_divisor != 1:
+        while common_divisor != 1:  # 保证self.e和phi互质
             self.e += 2
             self.d, common_divisor = self.extended_gcd(self.e, phi)
 
     def encryption(self, text):
-        text = int(binascii.hexlify(bytes(text, encoding='utf8')), 16)
+        text = int(binascii.hexlify(text.encode()), 16)
         assert (0 <= text < self.module)
         return self.power(text, self.e, self.module)
 
     def decryption(self, cipher):
         cipher = self.power(cipher, self.d, self.module)
-        # return binascii.unhexlify(bytes(hex(cipher),encoding='utf8')[2:])
+        # return binascii.unhexlify(hex(cipher).encode()[2:])
         res = []
         while cipher:
             res.append(chr(cipher & 255))
@@ -288,4 +287,4 @@ if __name__ == "__main__":
     dsa = DSA()
     message = 'avatar'
     message_r, message_s = dsa.sign(message)
-    print(dsa.check(message, message_r, message_s))  # True,代表身份和信息均正确
+    assert dsa.check(message, message_r, message_s)  # 代表身份和信息均正确

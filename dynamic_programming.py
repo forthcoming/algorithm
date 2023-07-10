@@ -114,6 +114,7 @@ def longest_common_subseq(string_x, string_y):  # 最长公共子序列,O(m*n)
                 ((a>=b) && (a>=c) && (a<=b)) || ((a>=b) && (a>=c) && (a<=c)) =>
                 ((a==b) && (a>=c)) || ((a==c) && (a>=b)) =>
                 a=max(b,c)
+                说明:x[i] != y[j]意味着a不能同时大于b和c
                 """
                 dp[i + 1][j + 1] = max(dp[i + 1][j], dp[i][j + 1])
     result = []
