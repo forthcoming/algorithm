@@ -33,6 +33,10 @@ class Heap:
         else:
             return -1
 
+    @property
+    def heap(self):
+        return self.__heap
+
     def parent(self, pos):
         if 0 < pos < self.length:
             return (pos - 1) >> 1

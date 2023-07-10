@@ -14,11 +14,10 @@ P问题指可以在多项式时间内解决的问题集合; NP问题指可以在
 NP-Hard问题指所有NP问题都能约化到它,但它不一定是NP问题,目前同样没有多项式的算法,由于NP-Hard放宽了限定条件，它将有可能比所有的NPC问题的时间复杂度更高从而更难以解决
 NPC问题也是NP-Hard问题如旅行商问题(Traveling Salesman Problem)、背包问题(Knapsack Problem)、图着色问题(Graph Coloring Problem)等
 """
-
-import random
-from itertools import permutations
 from collections import deque
-import numpy as np
+from itertools import permutations
+
+from heap import Heap
 
 
 def factorization(n):  # 因式分解
@@ -458,9 +457,43 @@ def python(n):  # 蛇形填数
     #     print(i)
 
 
+def _cmp(little=True):
+    if little:  # 小顶堆
+        return lambda x, y: x >= y
+    else:
+        return lambda x, y: x < y
+
+
 def top_k(arr, k):  # 选择数组中第k个数,构建一个大顶堆; 构建一个大小为k的小顶堆; 快排变形
     length = len(arr)
-    index = length - k
+    assert 1 <= k <= length
+    if k <= (length >> 1):
+        cmp = _cmp(little=False)
+    else:  # 尽可能使堆较小
+        k = length - k + 1
+        cmp = _cmp(little=True)
+    heap = Heap(arr[:k], key=cmp)
+    for idx in range(k, length):
+        if cmp(arr[idx], heap.heap[0]):
+            heap.pop()
+            heap.push(arr[idx])
+    return heap.heap[0]
+
+    # length = len(arr)
+    # assert 1 <= k <= length
+    # k = length - k + 1  # 问题转换为小顶堆
+    # heap_arr = arr[:k]
+    # heapq.heapify(heap_arr)
+    # for idx in range(k, length):
+    #     if arr[idx] > heap_arr[0]:
+    #         heappop(heap_arr)
+    #         heappush(heap_arr, arr[idx])
+    # return heap_arr[0]
+
+
+def top_k_quicksort(arr, k):  # 选择数组中第k个数
+    length = len(arr)
+    index = k - 1
 
     def _top_k(left, right):
         if left > right:
