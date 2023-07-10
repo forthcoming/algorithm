@@ -1,5 +1,4 @@
-# 去重全排列
-def full_permutation(arr, left, end):
+def full_permutation(arr, left, end):  # 去重全排列
     if left < end:
         for idx in range(left, end + 1):
             for j in range(left, idx):  # 去重
@@ -25,12 +24,12 @@ def next_permutation(s):  # 不去重
     while True:
         print([s[pos] for pos in arr])
         for change_idx in range(length - 2, -1, -1):
-            if arr[change_idx] < arr[change_idx+1]:  # Ⅱ
+            if arr[change_idx] < arr[change_idx + 1]:  # Ⅱ
                 for i in range(length - 1, change_idx, -1):
                     if arr[i] > arr[change_idx]:  # Ⅲ
                         arr[i], arr[change_idx] = arr[change_idx], arr[i]
                         break
-                arr[change_idx+1:] = arr[:change_idx:-1]
+                arr[change_idx + 1:] = arr[:change_idx:-1]
                 break
         else:
             break
@@ -42,12 +41,12 @@ def prev_permutation(s):
     while True:
         print([s[pos] for pos in arr])
         for change_idx in range(length - 2, -1, -1):
-            if arr[change_idx] > arr[change_idx+1]:
+            if arr[change_idx] > arr[change_idx + 1]:
                 for i in range(length - 1, change_idx, -1):
                     if arr[i] < arr[change_idx]:
                         arr[i], arr[change_idx] = arr[change_idx], arr[i]
                         break
-                arr[change_idx+1:] = arr[:change_idx:-1]
+                arr[change_idx + 1:] = arr[:change_idx:-1]
                 break
         else:
             break

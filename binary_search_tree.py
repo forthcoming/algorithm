@@ -12,7 +12,7 @@ class Node:
 
 
 class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2的个数+1
-    def __init__(self, root: Node = None, key=lambda x, y: x < y):  # 默认升序
+    def __init__(self, root: Node | None = None, key=lambda x, y: x < y):  # 默认升序
         self.__root = root
         self.key = key
 
