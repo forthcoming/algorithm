@@ -698,7 +698,6 @@ def division(conflict_set):
 
 def transform(exp):  # 中缀表达式转后缀表达式
     operators = {'#': -1, '(': 0, '+': 1, '-': 1, ')': 2, '*': 2, '/': 2, '%': 2}
-    precede = lambda a, b: operators[a] >= operators[b]
     stack = ['#']
     suffix = []
     for each in exp:
@@ -713,7 +712,7 @@ def transform(exp):  # 中缀表达式转后缀表达式
                     suffix.append(ch)
                     ch = stack.pop()
             else:
-                while precede(stack[-1], each):
+                while operators[stack[-1]] >= operators[each]:
                     suffix.append(stack.pop())
                 stack.append(each)
     while stack:
