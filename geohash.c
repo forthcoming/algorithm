@@ -172,11 +172,11 @@ static void geohash_move_x(GeoHashBits *hash, int8_t d) {  // 更改经度
     if (d == 0)
         return;
     uint64_t x;
-    uint64_t y = hash->bits & 0x5555555555555555ULL; // 0b0101010101010101010101010101010101010101010101010101010101010101
+    uint64_t y = hash->bits & 0x5555555555555555ULL;
     if (d > 0)
         x = (hash->bits | 0x5555555555555555ULL) + 1; // 使经度位二进制数加1(参考geohashEncode中的计算模型),超出长度step则x=0,相当于从180走到了-180
     else
-        x = (hash->bits & 0xaaaaaaaaaaaaaaaaULL) - 1;// 0b1010101010101010101010101010101010101010101010101010101010101010
+        x = (hash->bits & 0xaaaaaaaaaaaaaaaaULL) - 1;
     x &= (0xaaaaaaaaaaaaaaaaULL >> (64 - hash->step * 2));
     hash->bits = (x | y);
 }
@@ -238,4 +238,64 @@ int main(){
     GeoHashBits hash={ .bits=1234567,.step=20};
     GeoHashNeighbors neighbors;
     geohashNeighbors(&hash,&neighbors);
+}
+
+/* GEOHASH key ele1 ele2 ... eleN
+ * Returns an array with an 11 characters geohash representation of the position of the specified elements.
+ */
+void geohashCommand(client *c) {
+    char *geoalphabet= "0123456789bcdefghjkmnpqrstuvwxyz";
+    int j;
+
+    /* Look up the requested zset */
+    robj *zobj = lookupKeyRead(c->db, c->argv[1]);
+    if (checkType(c, zobj, OBJ_ZSET)) return;
+
+    /* Geohash elements one after the other, using a null bulk reply for missing elements. */
+    addReplyArrayLen(c,c->argc-2);
+    for (j = 2; j < c->argc; j++) {
+        double score;
+        if (!zobj || zsetScore(zobj, c->argv[j]->ptr, &score) == C_ERR) {
+            addReplyNull(c);
+        } else {
+            /* The internal format we use for geocoding is a bit different
+             * than the standard, since we use as initial latitude range
+             * -85,85, while the normal geohashing algorithm uses -90,90.
+             * So we have to decode our position and re-encode using the
+             * standard ranges in order to output a valid geohash string. */
+
+            /* Decode... */
+            double xy[2];
+            if (!decodeGeohash(score,xy)) {
+                addReplyNull(c);
+                continue;
+            }
+
+            /* Re-encode */
+            GeoHashRange r[2];
+            GeoHashBits hash;
+            r[0].min = -180;
+            r[0].max = 180;
+            r[1].min = -90;
+            r[1].max = 90;
+            geohashEncode(&r[0],&r[1],xy[0],xy[1],26,&hash);
+
+            char buf[12];
+            int i;
+            for (i = 0; i < 11; i++) {
+                int idx;
+                if (i == 10) {
+                    /* We have just 52 bits, but the API used to output
+                     * an 11 bytes geohash. For compatibility we assume
+                     * zero. */
+                    idx = 0;
+                } else {
+                    idx = (hash.bits >> (52-((i+1)*5))) & 0x1f;
+                }
+                buf[i] = geoalphabet[idx];
+            }
+            buf[11] = '\0';
+            addReplyBulkCBuffer(c,buf,11);
+        }
+    }
 }

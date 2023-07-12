@@ -3,14 +3,15 @@ import math
 
 class GeoHash:
     earth_radius_in_meters = 6372797.560856  # Earth's quatratic mean radius for WGS-84
-    base32_str = "0123456789bcdefghjkmnpqrstuvwxyz"
-    mapping = {letter: index for index, letter in enumerate(base32_str)}
+    geo_alphabet = "0123456789bcdefghjkmnpqrstuvwxyz"
+    mapping = {letter: index for index, letter in enumerate(geo_alphabet)}
     max_lon = 180
-    max_lat = 85.05112878
+    max_lat = 90
 
     def __init__(self, step=26):
         assert 0 < step <= 32
         self.step = step
+        self.geo_length = math.ceil(step * .4)  # step * 2 / 5
 
     def encode(self, longitude, latitude):
         """
@@ -31,6 +32,17 @@ class GeoHash:
         lon_offset *= scale
         lat_offset *= scale
         return GeoHash.interleave64(int(lon_offset), int(lat_offset))
+
+    def geohash_command(self, interleave64):  # hash值与redis保持一致
+        buf = ""
+        double_step = self.step << 1
+        for i in range(self.geo_length):
+            if i == 10:
+                idx = 0
+            else:
+                idx = (interleave64 >> (double_step - ((i + 1) * 5))) & 0b11111
+            buf = f"{buf}{GeoHash.geo_alphabet[idx]}"
+        return buf
 
     def decode(self, geohash):
         lon_offset, lat_offset = GeoHash.de_interleave64(geohash)
@@ -75,7 +87,7 @@ class GeoHash:
         v = math.sin((lon2 - lon1) / 2)
         u = math.sin((lat2 - lat1) / 2)  # 三角函数参数是弧度而非角度
         a = u * u + math.cos(lat1) * math.cos(lat2) * v * v
-        return round(2 * GeoHash.earth_radius_in_meters * math.asin(a ** .5), 5)
+        return round(2 * GeoHash.earth_radius_in_meters * math.asin(a ** .5), 4)
 
     @staticmethod
     def interleave64(x, y):
@@ -160,7 +172,7 @@ class GeoHash:
         y &= 0b0101010101010101010101010101010101010101010101010101010101010101 >> (64 - self.step * 2)
         return x | y
 
-    def neighbors(self, interleaved):
+    def neighbors(self, interleaved):  # 以某个点为中心范围查询时用到
         east = self.move_x(interleaved, True)
         west = self.move_x(interleaved, False)
         south = self.move_y(interleaved, False)
@@ -180,10 +192,9 @@ class GeoHash:
         lon_interval = (-GeoHash.max_lon, GeoHash.max_lon)
         lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
         geohash = 0
-        _geohash = []
+        _geohash = ""
         even = True
-        geo_length = math.ceil(self.step * .4)  # self.step * 2 / 5
-        for i in range(geo_length):
+        for i in range(self.geo_length):
             for j in [16, 8, 4, 2, 1]:
                 if even:
                     mid = (lon_interval[0] + lon_interval[1]) / 2  # 偶数位放经度
@@ -200,9 +211,9 @@ class GeoHash:
                     else:
                         lat_interval = (lat_interval[0], mid)
                 even = not even
-            _geohash.append(GeoHash.base32_str[geohash])
+            _geohash = f"{_geohash}{GeoHash.geo_alphabet[geohash]}"
             geohash = 0
-        return ''.join(_geohash)  # 字符串越长,表示的范围越精确,字符串相似表示距离相近,可以利用字符串的前缀匹配来查询附近信息
+        return _geohash  # 字符串越长,表示的范围越精确,字符串相似表示距离相近,可以利用字符串的前缀匹配来查询附近信息
 
     @staticmethod
     def decode_lower_version(geohash):
@@ -227,11 +238,11 @@ class GeoHash:
 
 
 if __name__ == "__main__":
-    lon, lat = 112, 85
+    lon, lat = 13.361389, 38.115556
     geo = GeoHash()
     encoded = geo.encode(lon, lat)
     decoded = geo.decode(encoded)
-    print(encoded, decoded)
+    print(geo.geohash_command(encoded), decoded, encoded)
     for neighbor in geo.neighbors(encoded):
         print(GeoHash.distance(*geo.decode(encoded), *geo.decode(neighbor)))
 
