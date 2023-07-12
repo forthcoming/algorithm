@@ -3,12 +3,12 @@ import math
 
 class GeoHash:
     earth_radius_in_meters = 6372797.560856  # Earth's quatratic mean radius for WGS-84
-    base32 = "0123456789bcdefghjkmnpqrstuvwxyz"
-    mapping = {letter: index for index, letter in enumerate(base32)}
+    base32_str = "0123456789bcdefghjkmnpqrstuvwxyz"
+    mapping = {letter: index for index, letter in enumerate(base32_str)}
     max_lon = 180
     max_lat = 85.05112878
 
-    def __init__(self, step=30):
+    def __init__(self, step=26):
         assert 0 < step <= 32
         self.step = step
 
@@ -175,14 +175,14 @@ class GeoHash:
         south_west = self.move_y(south_west, False)
         return [east, west, south, north, north_west, north_east, south_east, south_west]
 
-    @staticmethod
-    def encode_lower_version(longitude, latitude, geo_length=11):
+    def encode_lower_version(self, longitude, latitude):
         assert longitude <= abs(GeoHash.max_lon) and latitude <= abs(GeoHash.max_lat)
         lon_interval = (-GeoHash.max_lon, GeoHash.max_lon)
         lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
         geohash = 0
         _geohash = []
         even = True
+        geo_length = math.ceil(self.step * .4)  # self.step * 2 / 5
         for i in range(geo_length):
             for j in [16, 8, 4, 2, 1]:
                 if even:
@@ -200,13 +200,14 @@ class GeoHash:
                     else:
                         lat_interval = (lat_interval[0], mid)
                 even = not even
-            _geohash.append(GeoHash.base32[geohash])
+            _geohash.append(GeoHash.base32_str[geohash])
             geohash = 0
         return ''.join(_geohash)  # 字符串越长,表示的范围越精确,字符串相似表示距离相近,可以利用字符串的前缀匹配来查询附近信息
 
     @staticmethod
     def decode_lower_version(geohash):
-        lon_interval, lat_interval = (-180.0, 180.0), (-90.0, 90.0)
+        lon_interval = (-GeoHash.max_lon, GeoHash.max_lon)
+        lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
         even = True
         for letter in geohash:
             index = GeoHash.mapping[letter]
