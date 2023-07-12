@@ -194,17 +194,19 @@ class GeoHash:
             index = GeoHash.mapping[letter]
             for mask in [16, 8, 4, 2, 1]:
                 if even:
+                    mid = (lon_interval[0] + lon_interval[1]) / 2
                     if index & mask:
-                        lon_interval = ((lon_interval[0] + lon_interval[1]) / 2, lon_interval[1])
+                        lon_interval = (mid, lon_interval[1])
                     else:
-                        lon_interval = (lon_interval[0], (lon_interval[0] + lon_interval[1]) / 2)
+                        lon_interval = (lon_interval[0], mid)
                 else:
+                    mid = (lat_interval[0] + lat_interval[1]) / 2
                     if index & mask:
-                        lat_interval = ((lat_interval[0] + lat_interval[1]) / 2, lat_interval[1])
+                        lat_interval = (mid, lat_interval[1])
                     else:
-                        lat_interval = (lat_interval[0], (lat_interval[0] + lat_interval[1]) / 2)
+                        lat_interval = (lat_interval[0], mid)
                 even = not even
-        return (lon_interval[0] + lon_interval[1]) / 2, (lat_interval[0] + lat_interval[1]) / 2
+        return sum(lon_interval) / 2, sum(lat_interval) / 2
 
     @staticmethod
     def distance(lon1, lat1, lon2, lat2):
