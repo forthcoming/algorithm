@@ -163,11 +163,11 @@ class GeoHash:
         lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
         geohash = 0
         _geohash = ""
-        even = True
+        odd = True
         for i in range(self.geo_length):
             for j in [16, 8, 4, 2, 1]:
-                if even:
-                    mid = (lon_interval[0] + lon_interval[1]) / 2  # 偶数位放经度
+                if odd:
+                    mid = (lon_interval[0] + lon_interval[1]) / 2  # 奇数位放经度
                     if longitude > mid:
                         geohash |= j
                         lon_interval = (mid, lon_interval[1])
@@ -180,7 +180,7 @@ class GeoHash:
                         lat_interval = (mid, lat_interval[1])
                     else:
                         lat_interval = (lat_interval[0], mid)
-                even = not even
+                odd = not odd
             _geohash = f"{_geohash}{GeoHash.geo_alphabet[geohash]}"
             geohash = 0
         return _geohash  # 字符串越长,表示的范围越精确,字符串相似表示距离相近,可以利用字符串的前缀匹配来查询附近信息
@@ -189,11 +189,11 @@ class GeoHash:
     def decode_lower_version(geohash):
         lon_interval = (-GeoHash.max_lon, GeoHash.max_lon)
         lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
-        even = True
+        odd = True
         for letter in geohash:
             index = GeoHash.mapping[letter]
             for mask in [16, 8, 4, 2, 1]:
-                if even:
+                if odd:
                     if index & mask:
                         lon_interval = ((lon_interval[0] + lon_interval[1]) / 2, lon_interval[1])
                     else:
@@ -203,7 +203,7 @@ class GeoHash:
                         lat_interval = ((lat_interval[0] + lat_interval[1]) / 2, lat_interval[1])
                     else:
                         lat_interval = (lat_interval[0], (lat_interval[0] + lat_interval[1]) / 2)
-                even = not even
+                odd = not odd
         return (lon_interval[0] + lon_interval[1]) / 2, (lat_interval[0] + lat_interval[1]) / 2
 
     @staticmethod
