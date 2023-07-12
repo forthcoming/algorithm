@@ -5,8 +5,7 @@ class GeoHash:
     earth_radius_in_meters = 6372797.560856  # Earth's quatratic mean radius for WGS-84
     geo_alphabet = "0123456789bcdefghjkmnpqrstuvwxyz"
     mapping = {letter: index for index, letter in enumerate(geo_alphabet)}
-    max_lon = 180
-    max_lat = 90
+    max_lon, max_lat = 180, 90
 
     def __init__(self, step=26):
         assert 0 < step <= 32
