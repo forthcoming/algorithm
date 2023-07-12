@@ -2,90 +2,184 @@ import math
 
 
 class GeoHash:
-    _earth_radius = 6372797.560856
+    earth_radius_in_meters = 6372797.560856  # Earth's quatratic mean radius for WGS-84
     base32 = "0123456789bcdefghjkmnpqrstuvwxyz"
     mapping = {letter: index for index, letter in enumerate(base32)}
+    max_lon = 180
+    max_lat = 85.05112878
 
     def __init__(self, step=30):
         assert 0 < step <= 32
-        self.scale = 1 << step
+        self.step = step
 
     def encode(self, longitude, latitude):
-        assert -180 <= longitude <= 180 and -90 <= latitude <= 90
-        lon_offset = longitude / 360 + .5
-        lat_offset = latitude / 180 + .5
-        lon_offset *= self.scale
-        lat_offset *= self.scale
-        return GeoHash.interleave64(int(lat_offset), int(lon_offset))
+        """
+        假设longitude=100
+        1. longitude ∈ (0,180)         左边占总体0.5                                           = b0.1
+        2. longitude ∈ (90,180)        左边占总体1*0.5+1*0.5^2                                 = b0.11
+        3. longitude ∈ (90,135)        左边占总体1*0.5+1*0.5^2+0*0.5^3                         = b0.110
+        4. longitude ∈ (90,112.5)      左边占总体1*0.5+1*0.5^2+0*0.5^3+0*0.5^4                 = b0.1100
+        5. longitude ∈ (90,101.25)     左边占总体1*0.5+1*0.5^2+0*0.5^3+0*0.5^4+0*0.5^5         = b0.11000
+        6. longitude ∈ (95.625,101.25) 左边占总体1*0.5+1*0.5^2+0*0.5^3+0*0.5^4+0*0.5^5+1*0.5^6 = b0.110001
+        ......
+        从上面可以看出最左边占总体比例long_offset的小数部分正好等于geohash中对精度的编码
+        """
+        assert longitude <= abs(GeoHash.max_lon) and latitude <= abs(GeoHash.max_lat)
+        lon_offset = longitude / GeoHash.max_lon / 2 + .5
+        lat_offset = latitude / GeoHash.max_lat / 2 + .5
+        scale = 1 << self.step
+        lon_offset *= scale
+        lat_offset *= scale
+        return GeoHash.interleave64(int(lon_offset), int(lat_offset))
 
     def decode(self, geohash):
         lon_offset, lat_offset = GeoHash.de_interleave64(geohash)
-        longitude = 360 * lon_offset / self.scale - 180
-        latitude = 180 * lat_offset / self.scale - 90
+        scale = 1 << self.step
+        longitude_min = 2 * GeoHash.max_lon * lon_offset / scale - GeoHash.max_lon
+        longitude_max = 2 * GeoHash.max_lon * (lon_offset + 1) / scale - GeoHash.max_lon
+        latitude_min = 2 * GeoHash.max_lat * lat_offset / scale - GeoHash.max_lat
+        latitude_max = 2 * GeoHash.max_lat * (lat_offset + 1) / scale - GeoHash.max_lat
+        longitude = (longitude_min + longitude_max) / 2
+        if longitude > GeoHash.max_lon:
+            longitude = GeoHash.max_lon
+        if longitude < -GeoHash.max_lon:
+            longitude = -GeoHash.max_lon
+        latitude = (latitude_min + latitude_max) / 2
+        if latitude > GeoHash.max_lat:
+            latitude = GeoHash.max_lat
+        if latitude < -GeoHash.max_lat:
+            latitude = -GeoHash.max_lat
         return longitude, latitude
 
     @staticmethod
     def distance(lon1, lat1, lon2, lat2):
+        """
+        计算地球两点间弧长距离,using Great-circle distance Haversine formula
+        整体思想是把经纬度(球坐标系)转换成空间直角坐标系,利用三角函数计算两点间的弧度,从而计算出弧长
+        a=(lo1,la1) and b=(lo2,la2)
+        A=r(SIN(90-la1)COS(180-lo1),SIN(90-la1)SIN(180-lo1),COS(90-la1))
+         =r(-COSla1COSlo1,COSla1SINlo1,SINla1)
+        B=r(-COSla2COSlo2,COSla2SINlo2,SINla2)
+        COS<aob=COSla1COSlo1*COSla2COSlo2+COSla1SINlo1*COSla2SINlo2+SINla1*SINla2
+               =COSla1*COSla2*COS(lo2-lo1)+SINla1*SINla2
+               =COSla1*COSla2*(1-2v^2)+SINla1*SINla2
+               =COS(la2-la1)-2v^2*COSla1COSla2
+               =1-2u^2-2v^2*COSla1COSla2
+        <aob=2*asin(sqrt(u^2 + v^2*COSla1COSla2))  # 弧度
+        """
         percent = math.pi / 180
         lon1 *= percent
-        lat1 *= percent
         lon2 *= percent
+        lat1 *= percent
         lat2 *= percent
-        u = math.sin((lat2 - lat1) / 2)
         v = math.sin((lon2 - lon1) / 2)
-        return round(2 * GeoHash._earth_radius * math.asin((u * u + math.cos(lat1) * math.cos(lat2) * v * v) ** .5))
+        u = math.sin((lat2 - lat1) / 2)  # 三角函数参数是弧度而非角度
+        a = u * u + math.cos(lat1) * math.cos(lat2) * v * v
+        return round(2 * GeoHash.earth_radius_in_meters * math.asin(a ** .5), 5)
 
     @staticmethod
     def interleave64(x, y):
-        B = [0x5555555555555555, 0x3333333333333333, 0x0F0F0F0F0F0F0F0F, 0x00FF00FF00FF00FF, 0x0000FFFF0000FFFF]
-        S = [1, 2, 4, 8, 16]
+        """
+        refer: https://graphics.stanford.edu/~seander/bithacks.html#InterleaveBMN
+        0x5555555555555555 = 0b0101010101010101010101010101010101010101010101010101010101010101
+        0x3333333333333333 = 0b0011001100110011001100110011001100110011001100110011001100110011
+        0x0F0F0F0F0F0F0F0F = 0b0000111100001111000011110000111100001111000011110000111100001111
+        0x00FF00FF00FF00FF = 0b0000000011111111000000001111111100000000111111110000000011111111
+        0x0000FFFF0000FFFF = 0b0000000000000000111111111111111100000000000000001111111111111111
+        x和y初值必须小于2**32(uint32_t类型), 后面新的x,y是64位(uint64_t类型)
+        if x=x1,x2,...x32 and y=y1,y2,...y32
+            then x=0,x1,0,x2,...0,x32 and y=0,y1,0,y2,...0,y32
+            return x1,y1,x2,y2,...x32,y32
+        """
+        b = [0x5555555555555555, 0x3333333333333333, 0x0F0F0F0F0F0F0F0F, 0x00FF00FF00FF00FF, 0x0000FFFF0000FFFF]
+        s = [1, 2, 4, 8, 16]
 
-        x = (x | (x << S[4])) & B[4]
-        y = (y | (y << S[4])) & B[4]
+        x = (x | (x << s[4])) & b[4]
+        y = (y | (y << s[4])) & b[4]
 
-        x = (x | (x << S[3])) & B[3]
-        y = (y | (y << S[3])) & B[3]
+        x = (x | (x << s[3])) & b[3]
+        y = (y | (y << s[3])) & b[3]
 
-        x = (x | (x << S[2])) & B[2]
-        y = (y | (y << S[2])) & B[2]
+        x = (x | (x << s[2])) & b[2]
+        y = (y | (y << s[2])) & b[2]
 
-        x = (x | (x << S[1])) & B[1]
-        y = (y | (y << S[1])) & B[1]
+        x = (x | (x << s[1])) & b[1]
+        y = (y | (y << s[1])) & b[1]
 
-        x = (x | (x << S[0])) & B[0]
-        y = (y | (y << S[0])) & B[0]
+        x = (x | (x << s[0])) & b[0]
+        y = (y | (y << s[0])) & b[0]
 
-        return x | (y << 1)
+        return y | (x << 1)
 
     @staticmethod
     def de_interleave64(interleaved):
-        B = [0x3333333333333333, 0x0F0F0F0F0F0F0F0F, 0x00FF00FF00FF00FF, 0x0000FFFF0000FFFF, 0x00000000FFFFFFFF]
-        S = [1, 2, 4, 8, 16]
+        b = [0x3333333333333333, 0x0F0F0F0F0F0F0F0F, 0x00FF00FF00FF00FF, 0x0000FFFF0000FFFF, 0x00000000FFFFFFFF]
+        s = [1, 2, 4, 8, 16]
 
-        x = interleaved & 0x5555555555555555
-        y = (interleaved >> 1) & 0x5555555555555555
+        x = (interleaved >> 1) & 0x5555555555555555
+        y = interleaved & 0x5555555555555555
 
-        x = (x | (x >> S[0])) & B[0]
-        y = (y | (y >> S[0])) & B[0]
+        x = (x | (x >> s[0])) & b[0]
+        y = (y | (y >> s[0])) & b[0]
 
-        x = (x | (x >> S[1])) & B[1]
-        y = (y | (y >> S[1])) & B[1]
+        x = (x | (x >> s[1])) & b[1]
+        y = (y | (y >> s[1])) & b[1]
 
-        x = (x | (x >> S[2])) & B[2]
-        y = (y | (y >> S[2])) & B[2]
+        x = (x | (x >> s[2])) & b[2]
+        y = (y | (y >> s[2])) & b[2]
 
-        x = (x | (x >> S[3])) & B[3]
-        y = (y | (y >> S[3])) & B[3]
+        x = (x | (x >> s[3])) & b[3]
+        y = (y | (y >> s[3])) & b[3]
 
-        x = (x | (x >> S[4])) & B[4]
-        y = (y | (y >> S[4])) & B[4]
+        x = (x | (x >> s[4])) & b[4]
+        y = (y | (y >> s[4])) & b[4]
 
-        return y, x
+        return x, y
+
+    def move_x(self, interleaved, positive_direction=True):  # 更改经度
+        x = interleaved & 0b1010101010101010101010101010101010101010101010101010101010101010
+        y = interleaved & 0b0101010101010101010101010101010101010101010101010101010101010101
+        zz = 0b0101010101010101010101010101010101010101010101010101010101010101 >> (64 - self.step * 2)
+        if positive_direction:  # 使经度位二进制数加1(参考geohashEncode中的计算模型),超出长度step则x=0,相当于从180走到了-180
+            x += zz + 1
+        else:
+            x |= zz
+            x -= zz + 1
+        x &= 0b1010101010101010101010101010101010101010101010101010101010101010 >> (64 - self.step * 2)
+        return x | y
+
+    def move_y(self, interleaved, positive_direction=True):
+        x = interleaved & 0b1010101010101010101010101010101010101010101010101010101010101010
+        y = interleaved & 0b0101010101010101010101010101010101010101010101010101010101010101
+        zz = 0b1010101010101010101010101010101010101010101010101010101010101010 >> (64 - self.step * 2)
+        if positive_direction:
+            y += zz + 1
+        else:
+            y |= zz
+            y -= zz + 1
+        y &= 0b0101010101010101010101010101010101010101010101010101010101010101 >> (64 - self.step * 2)
+        return x | y
+
+    def neighbors(self, interleaved):
+        east = self.move_x(interleaved, True)
+        west = self.move_x(interleaved, False)
+        south = self.move_y(interleaved, False)
+        north = self.move_y(interleaved, True)
+        north_west = self.move_x(interleaved, False)
+        north_west = self.move_y(north_west, True)
+        north_east = self.move_x(interleaved, True)
+        north_east = self.move_y(north_east, True)
+        south_east = self.move_x(interleaved, True)
+        south_east = self.move_y(south_east, False)
+        south_west = self.move_x(interleaved, False)
+        south_west = self.move_y(south_west, False)
+        return [east, west, south, north, north_west, north_east, south_east, south_west]
 
     @staticmethod
     def encode_lower_version(longitude, latitude, geo_length=11):
-        assert -180 <= longitude <= 180 and -85.05112878 <= latitude <= 85.05112878
-        lon_interval, lat_interval = (-180.0, 180.0), (-85.05112878, 85.05112878)  # 与redis保持一致
+        assert longitude <= abs(GeoHash.max_lon) and latitude <= abs(GeoHash.max_lat)
+        lon_interval = (-GeoHash.max_lon, GeoHash.max_lon)
+        lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
         geohash = 0
         _geohash = []
         even = True
@@ -132,12 +226,14 @@ class GeoHash:
 
 
 if __name__ == "__main__":
-    longitude, latitude = 123, 76
+    lon, lat = 112, 85
     geo = GeoHash()
-    encoded = geo.encode(longitude, latitude)
+    encoded = geo.encode(lon, lat)
     decoded = geo.decode(encoded)
     print(encoded, decoded)
+    for neighbor in geo.neighbors(encoded):
+        print(GeoHash.distance(*geo.decode(encoded), *geo.decode(neighbor)))
 
-    encoded = geo.encode_lower_version(longitude, latitude)
+    encoded = geo.encode_lower_version(lon, lat)
     decoded = geo.decode_lower_version(encoded)
     print(encoded, decoded)
