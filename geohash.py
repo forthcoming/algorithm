@@ -91,7 +91,7 @@ class GeoHash:
         x = (x | (x << s[0])) & b[0]
         y = (y | (y << s[0])) & b[0]
 
-        return y | (x << 1)
+        return (x << 1) | y
 
     @staticmethod
     def de_interleave64(interleaved):
@@ -163,11 +163,11 @@ class GeoHash:
         lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
         geohash = 0
         _geohash = ""
-        odd = True
+        even = True
         for i in range(self.geo_length):
             for j in [16, 8, 4, 2, 1]:
-                if odd:
-                    mid = (lon_interval[0] + lon_interval[1]) / 2  # 奇数位放经度
+                if even:
+                    mid = (lon_interval[0] + lon_interval[1]) / 2  # 偶数位放经度
                     if longitude > mid:
                         geohash |= j
                         lon_interval = (mid, lon_interval[1])
@@ -180,7 +180,7 @@ class GeoHash:
                         lat_interval = (mid, lat_interval[1])
                     else:
                         lat_interval = (lat_interval[0], mid)
-                odd = not odd
+                even = not even
             _geohash = f"{_geohash}{GeoHash.geo_alphabet[geohash]}"
             geohash = 0
         return _geohash  # 字符串越长,表示的范围越精确,字符串相似表示距离相近,可以利用字符串的前缀匹配来查询附近信息
@@ -189,11 +189,11 @@ class GeoHash:
     def decode_lower_version(geohash):
         lon_interval = (-GeoHash.max_lon, GeoHash.max_lon)
         lat_interval = (-GeoHash.max_lat, GeoHash.max_lat)
-        odd = True
+        even = True
         for letter in geohash:
             index = GeoHash.mapping[letter]
             for mask in [16, 8, 4, 2, 1]:
-                if odd:
+                if even:
                     if index & mask:
                         lon_interval = ((lon_interval[0] + lon_interval[1]) / 2, lon_interval[1])
                     else:
@@ -203,7 +203,7 @@ class GeoHash:
                         lat_interval = ((lat_interval[0] + lat_interval[1]) / 2, lat_interval[1])
                     else:
                         lat_interval = (lat_interval[0], (lat_interval[0] + lat_interval[1]) / 2)
-                odd = not odd
+                even = not even
         return (lon_interval[0] + lon_interval[1]) / 2, (lat_interval[0] + lat_interval[1]) / 2
 
     @staticmethod
