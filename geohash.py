@@ -31,21 +31,18 @@ class GeoHash:
         scale = 1 << self.step
         lon_offset *= scale
         lat_offset *= scale
-        return GeoHash.interleave64(int(lon_offset), int(lat_offset))
+        interleave = GeoHash.interleave64(int(lon_offset), int(lat_offset))
+        # geohash = ""
+        # double_step = self.step << 1
+        # for i in range(self.geo_length - 1):
+        #     idx = (interleave >> (double_step - ((i + 1) * 5))) & 0b11111
+        #     geohash = f"{geohash}{GeoHash.geo_alphabet[idx]}"
+        # geohash = f"{geohash}{GeoHash.geo_alphabet[0]}"
+        # return geohash  # hash值与redis保持一致
+        return interleave
 
-    def geohash_command(self, interleave64):  # hash值与redis保持一致
-        buf = ""
-        double_step = self.step << 1
-        for i in range(self.geo_length):
-            if i == 10:
-                idx = 0
-            else:
-                idx = (interleave64 >> (double_step - ((i + 1) * 5))) & 0b11111
-            buf = f"{buf}{GeoHash.geo_alphabet[idx]}"
-        return buf
-
-    def decode(self, geohash):
-        lon_offset, lat_offset = GeoHash.de_interleave64(geohash)
+    def decode(self, interleave):
+        lon_offset, lat_offset = GeoHash.de_interleave64(interleave)
         scale = 1 << self.step
         longitude_min = 2 * GeoHash.max_lon * lon_offset / scale - GeoHash.max_lon
         longitude_max = 2 * GeoHash.max_lon * (lon_offset + 1) / scale - GeoHash.max_lon
@@ -62,32 +59,6 @@ class GeoHash:
         if latitude < -GeoHash.max_lat:
             latitude = -GeoHash.max_lat
         return longitude, latitude
-
-    @staticmethod
-    def distance(lon1, lat1, lon2, lat2):
-        """
-        计算地球两点间弧长距离,using Great-circle distance Haversine formula
-        整体思想是把经纬度(球坐标系)转换成空间直角坐标系,利用三角函数计算两点间的弧度,从而计算出弧长
-        a=(lo1,la1) and b=(lo2,la2)
-        A=r(SIN(90-la1)COS(180-lo1),SIN(90-la1)SIN(180-lo1),COS(90-la1))
-         =r(-COSla1COSlo1,COSla1SINlo1,SINla1)
-        B=r(-COSla2COSlo2,COSla2SINlo2,SINla2)
-        COS<aob=COSla1COSlo1*COSla2COSlo2+COSla1SINlo1*COSla2SINlo2+SINla1*SINla2
-               =COSla1*COSla2*COS(lo2-lo1)+SINla1*SINla2
-               =COSla1*COSla2*(1-2v^2)+SINla1*SINla2
-               =COS(la2-la1)-2v^2*COSla1COSla2
-               =1-2u^2-2v^2*COSla1COSla2
-        <aob=2*asin(sqrt(u^2 + v^2*COSla1COSla2))  # 弧度
-        """
-        percent = math.pi / 180
-        lon1 *= percent
-        lon2 *= percent
-        lat1 *= percent
-        lat2 *= percent
-        v = math.sin((lon2 - lon1) / 2)
-        u = math.sin((lat2 - lat1) / 2)  # 三角函数参数是弧度而非角度
-        a = u * u + math.cos(lat1) * math.cos(lat2) * v * v
-        return round(2 * GeoHash.earth_radius_in_meters * math.asin(a ** .5), 4)
 
     @staticmethod
     def interleave64(x, y):
@@ -236,15 +207,41 @@ class GeoHash:
                 even = not even
         return (lon_interval[0] + lon_interval[1]) / 2, (lat_interval[0] + lat_interval[1]) / 2
 
+    @staticmethod
+    def distance(lon1, lat1, lon2, lat2):
+        """
+        计算地球两点间弧长距离,using Great-circle distance Haversine formula
+        整体思想是把经纬度(球坐标系)转换成空间直角坐标系,利用三角函数计算两点间的弧度,从而计算出弧长
+        a=(lo1,la1) and b=(lo2,la2)
+        A=r(SIN(90-la1)COS(180-lo1),SIN(90-la1)SIN(180-lo1),COS(90-la1))
+         =r(-COSla1COSlo1,COSla1SINlo1,SINla1)
+        B=r(-COSla2COSlo2,COSla2SINlo2,SINla2)
+        COS<aob=COSla1COSlo1*COSla2COSlo2+COSla1SINlo1*COSla2SINlo2+SINla1*SINla2
+               =COSla1*COSla2*COS(lo2-lo1)+SINla1*SINla2
+               =COSla1*COSla2*(1-2v^2)+SINla1*SINla2
+               =COS(la2-la1)-2v^2*COSla1COSla2
+               =1-2u^2-2v^2*COSla1COSla2
+        <aob=2*asin(sqrt(u^2 + v^2*COSla1COSla2))  # 弧度
+        """
+        percent = math.pi / 180
+        lon1 *= percent
+        lon2 *= percent
+        lat1 *= percent
+        lat2 *= percent
+        v = math.sin((lon2 - lon1) / 2)
+        u = math.sin((lat2 - lat1) / 2)  # 三角函数参数是弧度而非角度
+        a = u * u + math.cos(lat1) * math.cos(lat2) * v * v
+        return round(2 * GeoHash.earth_radius_in_meters * math.asin(a ** .5), 4)
+
 
 if __name__ == "__main__":
     lon, lat = 13.361389, 38.115556
     geo = GeoHash()
     encoded = geo.encode(lon, lat)
     decoded = geo.decode(encoded)
-    print(geo.geohash_command(encoded), decoded, encoded)
-    for neighbor in geo.neighbors(encoded):
-        print(GeoHash.distance(*geo.decode(encoded), *geo.decode(neighbor)))
+    print(encoded, decoded)
+    for neighbor in geo.neighbors(geo.encode(lon, lat)):
+        print(GeoHash.distance(lon, lat, *geo.decode(neighbor)))
 
     encoded = geo.encode_lower_version(lon, lat)
     decoded = geo.decode_lower_version(encoded)
