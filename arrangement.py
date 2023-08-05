@@ -20,7 +20,7 @@ def next_permutation(s):  # 不去重
     python中通过from itertools import permutations调用全排列
     """
     length = len(s)
-    arr = list(range(length))  # Ⅰ
+    arr = [*range(length)]  # Ⅰ
     while True:
         print([s[pos] for pos in arr])
         for change_idx in range(length - 2, -1, -1):
@@ -37,7 +37,7 @@ def next_permutation(s):  # 不去重
 
 def prev_permutation(s):
     length = len(s)
-    arr = list(range(length - 1, -1, -1))
+    arr = [*range(length - 1, -1, -1)]
     while True:
         print([s[pos] for pos in arr])
         for change_idx in range(length - 2, -1, -1):

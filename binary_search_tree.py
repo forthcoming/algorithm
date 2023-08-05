@@ -11,7 +11,7 @@ class Node:
         return str(self.data)
 
 
-class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2的个数+1
+class BinarySearchTree:  # 用于动态查找·删除·增加序列,度为0的个数=度为2的个数+1
     def __init__(self, root: Node | None = None, key=lambda x, y: x < y):  # 默认升序
         self.__root = root
         self.key = key
@@ -65,7 +65,6 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
                     first.right = second.right
                 else:
                     first.left = second.right
-
             else:
                 if self._pointer.left:  # 右子树空
                     son = self._pointer.left
@@ -353,7 +352,7 @@ class BST:  # 用于动态查找·删除·增加序列,度为0的个数=度为2�
         while root or stack:
             if root:
                 if root.data == child:  # 找到了child,则查看child的所有父节点中哪个也属于sibling父节点即可
-                    return BST.check(path, sibling)
+                    return self.__class__.check(path, sibling)
                 path.append(root)
                 if root.right:
                     stack.append(root)
@@ -396,7 +395,7 @@ if __name__ == '__main__':
                \  
                27 
     '''
-    tree = BST()
+    tree = BinarySearchTree()
     for num in [49, 38, 65, 76, 13, 27, 52]:  # 时间复杂度介于O(nlogn)和O(n^2),后者出现在序列已经有序的情况下
         tree.add(num)
     tree.breath_first_search()
