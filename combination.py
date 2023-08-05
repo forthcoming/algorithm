@@ -1,19 +1,19 @@
 # 背包问题(要求背包刚好装满,组合问题)
-def knapsack(T, weight):  # T:背包容量 weight:物品的体积集合 knapsack(10,(1,8,4,3,5,2))
+def knapsack(capacity, weight):  # capacity:背包容量 weight:物品的体积集合
     stack = []
     index = 0
     length = len(weight)
     while True:
-        while T and index < length:
-            if T >= weight[index]:
+        while capacity and index < length:
+            if capacity >= weight[index]:
                 stack.append(index)
-                T -= weight[index]
+                capacity -= weight[index]
             index += 1
-        if not T:
+        if not capacity:
             print([weight[idx] for idx in stack])
         if stack:
             index = stack.pop()
-            T += weight[index]
+            capacity += weight[index]
             index += 1
         else:
             break
@@ -81,3 +81,7 @@ def bit_part_combination(li, m):
 def combination3(li):
     for i in range(1, len(li) + 1):
         bit_part_combination(li, i)
+
+
+if __name__ == "__main__":
+    knapsack(10, (1, 8, 4, 3, 5, 2))
