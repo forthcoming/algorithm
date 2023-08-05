@@ -41,28 +41,40 @@ def combination(arr):
         print([arr[j] for j in range(length) if i >> j & 1])
 
 
-def part_combination(arr, m, left, right, stack=[]):  # arr在[left,right]范围内,C(m,n+1)= C(m,n)+C(m-1,n)
-    if 0 < m <= right - left + 1:
-        stack.append(arr[left])
-        part_combination(arr, m - 1, left + 1, right)
-        stack.pop()
-        part_combination(arr, m, left + 1, right)
-    elif m == 0:
-        print(stack)
+def part_combination(arr, m):  # arr在[left,right]范围内,C(m,n+1)= C(m,n)+C(m-1,n)
+    def _part_combination(_m, _left, _right):
+        if 0 < _m <= _right - _left + 1:
+            stack.append(arr[_left])
+            _part_combination(_m - 1, _left + 1, _right)
+            stack.pop()
+            _part_combination(_m, _left + 1, _right)
+        elif _m == 0:
+            print(stack)
+
+    stack = []
+    left = 0
+    right = len(arr) - 1
+    _part_combination(m, left, right)
 
 
-def part_combination1(arr, m, left, right, stack=[]):  # 与part_combination相比就是把C(m-1,n)展开了
-    if m == 0:  # 注意这里的判断条件
-        print(stack)
-    else:
-        for idx in range(left, right - m + 2):
-            for j in range(left, idx):  # 去重,前提是li中相同元素连在一起(why)
-                if arr[idx] == arr[j]:
-                    break
-            else:
-                stack.append(arr[idx])
-                part_combination1(arr, m - 1, idx + 1, right)
-                stack.pop()
+def part_combination_v1(arr, m):  # 与part_combination相比就是把C(m-1,n)展开了
+    def _part_combination(_m, _left, _right):
+        if _m == 0:  # 注意这里的判断条件
+            print(stack)
+        else:
+            for idx in range(_left, _right - _m + 2):
+                for j in range(_left, idx):  # 去重,前提是li中相同元素连在一起(why)
+                    if arr[idx] == arr[j]:
+                        break
+                else:
+                    stack.append(arr[idx])
+                    _part_combination(_m - 1, idx + 1, _right)
+                    stack.pop()
+
+    stack = []
+    left = 0
+    right = len(arr) - 1
+    _part_combination(m, left, right)
 
 
 # 利用位运算进行部分组合,思想参考next_permutation
@@ -77,11 +89,12 @@ def bit_part_combination(arr, m):
         minimum = (minimum ^ t) // b >> 2 | t
 
 
-def combination3(arr):
+def combination_bit(arr):
     for i in range(1, len(arr) + 1):
         bit_part_combination(arr, i)
 
 
 if __name__ == "__main__":
     # knapsack(10, (1, 8, 4, 3, 5, 2))
-    combination_knapsack((1, 8, 4))
+    # combination_knapsack((1, 8, 4))
+    part_combination_v1([0, 1, 2, 3], 3)
