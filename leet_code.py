@@ -107,6 +107,21 @@ def leet_code_6(sheep_num, wolf_num, capacity):  # 羊,狼,农夫过河
     return min_count
 
 
+def leet_code_7(matrix, threshold, width):  # 探索地块建立
+    x, y = len(matrix), len(matrix[0])
+    p = [[0] * (y + 1) for _ in range(x + 1)]  # p[i][j]代表matrix[0][0]与matrix[i-1][j-1]区域的元素和,二维前缀和
+    for i in range(x):
+        for j in range(y):
+            p[i + 1][j + 1] = p[i][j + 1] + p[i + 1][j] - p[i][j] + matrix[i][j]  # 容斥原理
+
+    count = 0
+    for i in range(width, x + 1):
+        for j in range(width, y + 1):
+            if p[i][j] - p[i - width][j] - p[i][j - width] + p[i - width][j - width] >= threshold:
+                count += 1
+    return count
+
+
 if __name__ == "__main__":
     print(leet_code_1([(3, 9, 2), (4, 7, 3)]))
     print(leet_code_2(3, [3, 2, 2, 1]))
@@ -114,3 +129,4 @@ if __name__ == "__main__":
     print(leet_code_4(10, 20))
     leet_code_5('78', 'ux')
     print(leet_code_6(5, 4, 1))
+    print(leet_code_7([[1, 3, 4, 5, 8], [2, 3, 6, 7, 1]], 6, 2))
