@@ -162,7 +162,7 @@ def leet_code_10(passwords):  # 最长的密码
                 end -= 1
 
 
-def leet_code_11(prices: list[int]) -> int:  # 买卖股票的最佳时机
+def leet_code_11(prices: list[int]) -> int:  # 买卖股票的最佳时机I
     # https://leetcode.cn/problems/best-time-to-buy-and-sell-stock
     min_price = prices[0]
     max_profit = 0
@@ -170,6 +170,26 @@ def leet_code_11(prices: list[int]) -> int:  # 买卖股票的最佳时机
         max_profit = max(price - min_price, max_profit)
         min_price = min(price, min_price)
     return max_profit
+
+
+def leet_code_12(prices: list[int]) -> int:  # 买卖股票的最佳时机II
+    # https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/
+    length = len(prices)
+    # 定义状态dp[i][0]表示第i天交易完后手里没有股票的最大利润,dp[i][1]表示第i天交易完后手里持有一支股票的最大利润(i从0开始)
+    dp = [[0, 0] for _ in range(length)]
+    dp[0] = [0, -prices[0]]
+    for i in range(1, length):
+        dp[i][0] = max(dp[i - 1][0], dp[i - 1][1] + prices[i])
+        dp[i][1] = max(dp[i - 1][1], dp[i - 1][0] - prices[i])
+    return dp[-1][0]
+
+    # length = len(prices)  # 贪心算法
+    # max_profit = 0
+    # for i in range(1, length)):
+    #     tmp = prices[i] - prices[i - 1]
+    #     if tmp > 0:
+    #         max_profit += tmp
+    # return max_profit
 
 
 if __name__ == "__main__":
@@ -185,3 +205,4 @@ if __name__ == "__main__":
     print(leet_code_9([[1, 4], [2, 5], [3, 6]], 1, 6))
     print(leet_code_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']))
     print(leet_code_11([7, 1, 5, 3, 6, 4]))
+    print(leet_code_12([7, 1, 5, 3, 6, 4]))
