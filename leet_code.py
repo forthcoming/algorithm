@@ -122,6 +122,56 @@ def leet_code_7(matrix, threshold, width):  # 探索地块建立
     return count
 
 
+def leet_code_8(logs):  # 日志首次上报最多积分
+    max_score = 0
+    minus_score = 0
+    left_score = 0
+    for current_score in logs:
+        if minus_score + current_score <= 100:
+            left_score += current_score - minus_score
+            max_score = max(max_score, left_score)
+            minus_score += current_score
+        else:
+            break
+    return max_score
+
+
+def leet_code_9(clips: list[list[int]], left, right):  # 区间交叠问题
+    # https://leetcode.cn/problems/video-stitching/
+    dp = [0] + [-1] * (right - left)
+    for i in range(1, 1 + right - left):  # dp[i]代表将区间[left,left+i]覆盖所需的最少子区间数量
+        for aj, bj in clips:
+            if aj < left + i <= bj:
+                if dp[i] == -1:
+                    dp[i] = dp[aj - left] + 1
+                else:
+                    dp[i] = min(dp[i], dp[aj - left] + 1)
+    return dp[-1]
+
+
+def leet_code_10(passwords):  # 最长的密码
+    passwords.sort(key=lambda x: (len(x), x))  # 先根据长度排序,再根据字典排序
+    passwords_set = set(passwords)
+    while passwords:
+        password = passwords.pop()
+        end = len(password) - 1
+        while password[:end] in passwords_set:
+            if end == 1:
+                return password
+            else:
+                end -= 1
+
+
+def leet_code_11(prices: list[int]) -> int:  # 买卖股票的最佳时机
+    # https://leetcode.cn/problems/best-time-to-buy-and-sell-stock
+    min_price = prices[0]
+    max_profit = 0
+    for price in prices[1:]:
+        max_profit = max(price - min_price, max_profit)
+        min_price = min(price, min_price)
+    return max_profit
+
+
 if __name__ == "__main__":
     print(leet_code_1([(3, 9, 2), (4, 7, 3)]))
     print(leet_code_2(3, [3, 2, 2, 1]))
@@ -130,3 +180,8 @@ if __name__ == "__main__":
     leet_code_5('78', 'ux')
     print(leet_code_6(5, 4, 1))
     print(leet_code_7([[1, 3, 4, 5, 8], [2, 3, 6, 7, 1]], 6, 2))
+    print(leet_code_8([3, 7, 40, 10, 60]))
+    print(leet_code_9([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 0, 10))
+    print(leet_code_9([[1, 4], [2, 5], [3, 6]], 1, 6))
+    print(leet_code_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']))
+    print(leet_code_11([7, 1, 5, 3, 6, 4]))
