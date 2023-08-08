@@ -192,6 +192,65 @@ def leet_code_12(prices: list[int]) -> int:  # 买卖股票的最佳时机II
     # return max_profit
 
 
+def leet_code_13(messages, total_money):  # 最多获得的短信条数
+    dp = [0] * (total_money + 1)  # dp[i]代表i元时最多可发送的短信条数
+    for i in range(1, total_money + 1):
+        for money, message in enumerate(messages, 1):
+            if money <= i:
+                dp[i] = max(dp[i], dp[i - money] + message)
+            else:  # 提前结束循化,可以不处理
+                break
+    return dp[-1]
+
+
+def leet_code_14(boxes, width):  # 箱子之字型摆放
+    arr = []
+    reverse = False
+    idx = 0
+    length = len(boxes)
+    while idx < length:
+        if reverse:
+            arr.append(boxes[idx + width - 1:idx - 1:-1])
+        else:
+            arr.append(boxes[idx:idx + width])
+        reverse = not reverse
+        idx += width
+    left = idx - length
+    if left > 0:
+        if reverse:
+            arr[-1] += "*" * left  # 填充空白位置
+        else:
+            arr[-1] = "*" * left + arr[-1]
+
+    for step in range(width):
+        tmp = ''.join(each[step] for each in arr)
+        print(tmp.strip('*'))
+
+
+def leet_code_15(n, k):  # 对称美学
+    # 将R对应成比特位1,B对应成比特位0,适用于长度比较小的情况
+    bit_value = 0b1
+    for i in range(n - 1):
+        offset = 1 << i
+        mask = (1 << (offset << 1)) - 1
+        bit_value = ~bit_value << offset & mask | bit_value  # 由位运算性质,从左至右依次执行
+    bit_length = 1 << (n - 1)
+    return bit_value >> (bit_length - k - 1) & 1
+
+
+def leet_code_16(n, k):  # 对称美学
+    def _find(_n, _k, xor):
+        if _n == 1:
+            return "blue" if xor else "red"
+        mid = 1 << (_n - 2)
+        if _k < mid:
+            return _find(_n - 1, _k, not xor)
+        else:
+            return _find(_n - 1, _k - mid, xor)
+
+    return _find(n, k, False)
+
+
 if __name__ == "__main__":
     print(leet_code_1([(3, 9, 2), (4, 7, 3)]))
     print(leet_code_2(3, [3, 2, 2, 1]))
@@ -206,3 +265,7 @@ if __name__ == "__main__":
     print(leet_code_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']))
     print(leet_code_11([7, 1, 5, 3, 6, 4]))
     print(leet_code_12([7, 1, 5, 3, 6, 4]))
+    print(leet_code_13([10, 20, 30, 40, 60, 60, 70, 80, 90, 150], 15))
+    leet_code_14('abcdefg', 3)
+    print(leet_code_15(1, 0))
+    print(leet_code_16(64, 73709551616))
