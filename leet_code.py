@@ -1,3 +1,6 @@
+from collections import deque
+
+
 def leet_code_1(tasks: list[tuple[int, int, int]]):  # 最大化控制资源成本
     # tuple[int, int, int]代表[开始时间, 结束时间, 占用资源数]
     max_resource = 0
@@ -251,6 +254,66 @@ def leet_code_16(n, k):  # 对称美学
     return _find(n, k, False)
 
 
+def leet_code_17(sites):  # 快递业务站
+    count = 0
+    cover = set()
+    length = len(sites)
+    for i in range(length):
+        if len(cover) == length:  # 提前退出循环提高效率
+            break
+        if i not in cover:
+            count += 1
+        site = sites[i]
+        for j in range(length):
+            if site[j] == 1:
+                cover.add(j)
+    return count
+
+
+def leet_code_18(nodes):  # 寻找路径
+    length = len(nodes)
+    min_leaf = float("inf")
+    result = None
+    path = []
+
+    def _find_path(parent_pos):
+        path.append(nodes[parent_pos])
+        left_pos = (parent_pos << 1) + 1
+        right_pos = (parent_pos << 1) + 2
+        left_exist = left_pos < length and nodes[left_pos] != -1  # 存在左节点
+        right_exist = right_pos < length and nodes[right_pos] != -1  # 存在右节点
+        if left_exist:
+            _find_path(left_pos)
+        if right_exist:
+            _find_path(right_pos)
+        if not left_exist and not right_exist:  # 叶子结点
+            nonlocal result, min_leaf
+            if nodes[parent_pos] < min_leaf:
+                result = path[:]
+                min_leaf = nodes[parent_pos]
+        path.pop()
+
+    if nodes and nodes[0] != -1:
+        _find_path(0)
+    return result
+
+
+def leet_code_19(nodes):  # 寻找路径(先找到最小叶子结点,再回溯)
+    length = len(nodes)
+    min_pos = -1
+    for pos, node in enumerate(nodes):
+        left_pos = (pos << 1) + 1
+        right_pos = (pos << 1) + 2
+        if (left_pos >= length or nodes[left_pos] == -1) and (right_pos >= length or nodes[right_pos] == -1):
+            if node != -1 and (min_pos == -1 or node < nodes[min_pos]):
+                min_pos = pos
+    path = deque()
+    while min_pos >= 0:
+        path.appendleft(nodes[min_pos])
+        min_pos = (min_pos - 1) >> 1
+    return path
+
+
 if __name__ == "__main__":
     print(leet_code_1([(3, 9, 2), (4, 7, 3)]))
     print(leet_code_2(3, [3, 2, 2, 1]))
@@ -269,3 +332,13 @@ if __name__ == "__main__":
     leet_code_14('abcdefg', 3)
     print(leet_code_15(1, 0))
     print(leet_code_16(64, 73709551616))
+    sites = [
+        [1, 0, 0, 0, 0],
+        [0, 1, 0, 0, 0],
+        [0, 0, 1, 1, 0],
+        [0, 0, 1, 1, 1],
+        [0, 0, 0, 1, 1],
+    ]
+    print(leet_code_17(sites))
+    print(leet_code_18([5, 9, 8, -1, -1, 7, -1, -1, -1, -1, -1, 6]))
+    print(leet_code_19([3, 5, 7, -1, -1, 2, 4]))
