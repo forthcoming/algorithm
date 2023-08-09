@@ -56,6 +56,7 @@ def leet_code_4(left, right):  # 不含101的数
 
 
 def leet_code_5(num_str, block_str):  # 过滤组合字符串
+    result = []
     mapping = {
         '0': 'abc',
         '1': 'def',
@@ -79,9 +80,10 @@ def leet_code_5(num_str, block_str):  # 过滤组合字符串
         else:
             wanted_str = ''.join(stack)
             if wanted_str != block_str:
-                print(wanted_str)
+                result.append(wanted_str)
 
     _bfs(0)
+    return result
 
 
 def leet_code_6(sheep_num, wolf_num, capacity):  # 羊,狼,农夫过河
@@ -271,17 +273,15 @@ def leet_code_16(n, k):  # 对称美学
     return _find(n, k, False)
 
 
-def leet_code_17(sites):  # 快递业务站
+def leet_code_17(sites):  # 快递业务站(也可以并查集,初始状态每个站点作为一个跟节点)
     count = 0
     cover = set()
     length = len(sites)
     for i in range(length):
-        if len(cover) == length:  # 提前退出循环提高效率
-            break
         if i not in cover:
             count += 1
         site = sites[i]
-        for j in range(length):
+        for j in range(i, length):  # 对称矩阵,减少遍历次数
             if site[j] == 1:
                 cover.add(j)
     return count
@@ -351,38 +351,52 @@ def leet_code_20(tasks):  # 任务调度
     return success
 
 
+def leet_code_21(numbers):  # 分奖金(也可以暴力搜索)
+    result = [0] * len(numbers)
+    stack = []  # 单调栈
+    for idx, number in enumerate(numbers):
+        while stack and numbers[stack[-1]] < number:
+            little_idx = stack.pop()
+            result[little_idx] = (number - numbers[little_idx]) * (idx - little_idx)
+        stack.append(idx)
+    for idx in stack:  # 不要忘了
+        result[idx] = numbers[idx]
+    return result
+
+
 if __name__ == "__main__":
-    print(leet_code_1([(3, 9, 2), (4, 7, 3)]))
-    print(leet_code_2(3, [3, 2, 2, 1]))
-    print(leet_code_3(4, [[1, 2], [2, 4], [3, 4], [1, 3]]))
-    print(leet_code_4(10, 20))
-    leet_code_5('78', 'ux')
-    print(leet_code_6(5, 4, 1))
-    print(leet_code_7([[1, 3, 4, 5, 8], [2, 3, 6, 7, 1]], 6, 2))
-    print(leet_code_8([3, 7, 40, 10, 60]))
-    print(leet_code_9([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 0, 10))
-    print(leet_code_9([[1, 4], [2, 5], [3, 6]], 1, 6))
-    print(leet_code_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']))
-    print(leet_code_11([7, 1, 5, 3, 6, 4]))
-    print(leet_code_12([7, 1, 5, 3, 6, 4]))
-    print(leet_code_13([10, 20, 30, 40, 60, 60, 70, 80, 90, 150], 15))
-    print(leet_code_14('abcdefg', 3))
-    print(leet_code_15(1, 0))
-    print(leet_code_16(64, 73709551616))
-    print(leet_code_17([
+    assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
+    assert leet_code_2(3, [3, 2, 2, 1]) == 3
+    assert leet_code_3(4, [[1, 2], [2, 4], [3, 4], [1, 3]]) == 7
+    assert leet_code_4(10, 20) == 7
+    assert leet_code_5('78', 'ux') == ['uw', 'vw', 'vx']
+    assert leet_code_6(5, 4, 1) == 0
+    assert leet_code_7([[1, 3, 4, 5, 8], [2, 3, 6, 7, 1]], 6, 2) == 4
+    assert leet_code_8([3, 7, 40, 10, 60]) == 37
+    assert leet_code_9([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 0, 10) == 3
+    assert leet_code_9([[1, 4], [2, 5], [3, 6]], 1, 6) == 2
+    assert leet_code_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']) == 'bwwln'
+    assert leet_code_11([7, 1, 5, 3, 6, 4]) == 5
+    assert leet_code_12([7, 1, 5, 3, 6, 4]) == 7
+    assert leet_code_13([10, 20, 30, 40, 60, 60, 70, 80, 90, 150], 15) == 210
+    assert leet_code_14('abcdefg', 3) == ['afg', 'be', 'cd']
+    assert leet_code_15(1, 0) == 1
+    assert leet_code_16(64, 73709551616) == 'red'
+    assert leet_code_17([
         [1, 0, 0, 0, 0],
         [0, 1, 0, 0, 0],
         [0, 0, 1, 1, 0],
         [0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1],
-    ]))
-    print(leet_code_18([5, 9, 8, -1, -1, 7, -1, -1, -1, -1, -1, 6]))
-    print(leet_code_19([3, 5, 7, -1, -1, 2, 4]))
-    print(leet_code_20([
+    ]) == 3
+    assert leet_code_18([5, 9, 8, -1, -1, 7, -1, -1, -1, -1, -1, 6]) == [5, 8, 7, 6]
+    assert leet_code_19([3, 5, 7, -1, -1, 2, 4]) == deque([3, 7, 2])
+    assert leet_code_20([
         {'thread_id': 1, 'priority': 3, 'cost': 5, 'start_time': 1},  # 任务id,任务优先级,执行时间,到达时间
         {'thread_id': 2, 'priority': 1, 'cost': 5, 'start_time': 10},
         {'thread_id': 3, 'priority': 2, 'cost': 7, 'start_time': 12},
         {'thread_id': 4, 'priority': 3, 'cost': 2, 'start_time': 20},
         {'thread_id': 5, 'priority': 4, 'cost': 9, 'start_time': 21},
         {'thread_id': 6, 'priority': 4, 'cost': 2, 'start_time': 22},
-    ]))
+    ]) == [[1, 6], [3, 19], [5, 30], [6, 32], [4, 33], [2, 35]]
+    assert leet_code_21([2, 10, 3]) == [8, 10, 3]
