@@ -402,16 +402,15 @@ def leet_code_24(matrix):  # 查找单入口空闲区域
     def _find_zone(x, y):
         nonlocal entrance, count
         count += 1
+        matrix[x][y] = "X"  # 遍历过的点标记为"X",重要!!
         if x == 0 or x == m - 1 or y == 0 or y == n - 1:
             entrance.append((x, y))
             if len(entrance) > 1:  # 只能有一个入口
                 return
-        # 只往下往右遍历,且遍历过的点标记为"X"
+        # 只往下往右遍历,重要!!
         if x + 1 < m and matrix[x + 1][y] == "O":
-            matrix[x + 1][y] = "X"
             _find_zone(x + 1, y)
         if y + 1 < n and matrix[x][y + 1] == "O":
-            matrix[x][y + 1] = "X"
             _find_zone(x, y + 1)
 
     m = len(matrix)
