@@ -1,6 +1,7 @@
 import collections
 import heapq
 from collections import deque
+from itertools import permutations
 
 
 def leet_code_1(tasks: list[tuple[int, int, int]]):  # 最大化控制资源成本
@@ -435,6 +436,25 @@ def leet_code_24(matrix):  # 查找单入口空闲区域
         return max_count
 
 
+def leet_code_25(prices, k, budget):  # 预定酒店
+    price_rating = [(price - budget, price) for price in prices]
+    price_rating.sort(key=lambda x: (abs(x[0]), x[0]))
+    return sorted([item[1] for item in price_rating[:k]])
+
+
+def leet_code_26(matrix):  # 基站维护最短距离
+    min_distance = float("inf")
+    for item in permutations(range(1, len(matrix))):
+        from_ = 0
+        total_distance = 0
+        for to in item:
+            total_distance += matrix[from_][to]
+            from_ = to
+        total_distance += matrix[from_][0]
+        min_distance = min(min_distance, total_distance)
+    return min_distance
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -485,4 +505,10 @@ if __name__ == "__main__":
         ["X", "X", "X", "X"],
         ["X", "O", "O", "O"],
         ["X", "X", "X", "X"],
+    ]) == 3
+    assert leet_code_25([10, 9, 8, 7, 6, 5, 4, 3, 2, 1], 4, 6) == [4, 5, 6, 7]
+    assert leet_code_26([
+        [0, 2, 1],
+        [1, 0, 2],
+        [2, 1, 0],
     ]) == 3
