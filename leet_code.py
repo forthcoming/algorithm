@@ -392,10 +392,48 @@ def leet_code_23(numbers, k):  # 最差产品奖(单调队列)
         while queue and numbers[i] <= numbers[queue[-1]]:
             queue.pop()
         queue.append(i)
-        while queue[0] <= i - k:
+        if queue[0] <= i - k:
             queue.popleft()
         result.append(numbers[queue[0]])
     return result
+
+
+def leet_code_24(matrix):  # 查找单入口空闲区域
+    def _find_zone(x, y):
+        nonlocal entrance, count
+        count += 1
+        if x == 0 or x == m - 1 or y == 0 or y == n - 1:
+            entrance.append((x, y))
+            if len(entrance) > 1:  # 只能有一个入口
+                return
+        # 只往下往右遍历,且遍历过的点标记为"X"
+        if x + 1 < m and matrix[x + 1][y] == "O":
+            matrix[x + 1][y] = "X"
+            _find_zone(x + 1, y)
+        if y + 1 < n and matrix[x][y + 1] == "O":
+            matrix[x][y + 1] = "X"
+            _find_zone(x, y + 1)
+
+    m = len(matrix)
+    n = len(matrix[0])
+    entrance_x = entrance_y = max_count = same_count = -1
+    for i in range(m):
+        for j in range(n):
+            count = 0  # 连通区域大小
+            entrance = []  # 入口坐标
+            if matrix[i][j] == 'O':
+                _find_zone(i, j)
+                if len(entrance) == 1:
+                    if count > max_count:
+                        entrance_x, entrance_y = entrance[0]
+                        max_count = count
+                        same_count = 1
+                    elif count == max_count:
+                        same_count += 1
+    if same_count == 1:
+        return entrance_x, entrance_y, max_count
+    elif same_count > 1:
+        return max_count
 
 
 if __name__ == "__main__":
@@ -436,3 +474,16 @@ if __name__ == "__main__":
     assert leet_code_21([2, 10, 3]) == [8, 10, 3]
     assert leet_code_22([12, 3, 8, 6, 5], 3) == [3, 3, 5]
     assert leet_code_23([12, 3, 8, 6, 5], 3) == [3, 3, 5]
+    assert leet_code_24([
+        ["X", "X", "X", "X"],
+        ["X", "O", "O", "X"],
+        ["X", "O", "O", "X"],
+        ["X", "O", "X", "X"],
+    ]) == (3, 1, 5)
+    assert leet_code_24([
+        ["X", "X", "X", "X"],
+        ["X", "O", "O", "O"],
+        ["X", "X", "X", "X"],
+        ["X", "O", "O", "O"],
+        ["X", "X", "X", "X"],
+    ]) == 3
