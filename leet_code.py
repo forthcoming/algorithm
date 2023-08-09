@@ -1,3 +1,5 @@
+import collections
+import heapq
 from collections import deque
 
 
@@ -364,6 +366,38 @@ def leet_code_21(numbers):  # 分奖金(也可以暴力搜索)
     return result
 
 
+def leet_code_22(numbers, k):  # 最差产品奖(优先队列)
+    length = len(numbers)
+    queue = [(numbers[i], i) for i in range(k)]
+    heapq.heapify(queue)
+    result = [queue[0][0]]
+    for i in range(k, length):
+        heapq.heappush(queue, (numbers[i], i))
+        while queue[0][1] <= i - k:  # 栈顶元素最小,但需要把滑动窗口边界外的元素剔除掉
+            heapq.heappop(queue)
+        result.append(queue[0][0])
+    return result
+
+
+def leet_code_23(numbers, k):  # 最差产品奖(单调队列)
+    length = len(numbers)
+    queue = collections.deque()
+    for i in range(k):
+        while queue and numbers[i] <= numbers[queue[-1]]:
+            queue.pop()
+        queue.append(i)
+
+    result = [numbers[queue[0]]]
+    for i in range(k, length):
+        while queue and numbers[i] <= numbers[queue[-1]]:
+            queue.pop()
+        queue.append(i)
+        while queue[0] <= i - k:
+            queue.popleft()
+        result.append(numbers[queue[0]])
+    return result
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -400,3 +434,5 @@ if __name__ == "__main__":
         {'thread_id': 6, 'priority': 4, 'cost': 2, 'start_time': 22},
     ]) == [[1, 6], [3, 19], [5, 30], [6, 32], [4, 33], [2, 35]]
     assert leet_code_21([2, 10, 3]) == [8, 10, 3]
+    assert leet_code_22([12, 3, 8, 6, 5], 3) == [3, 3, 5]
+    assert leet_code_23([12, 3, 8, 6, 5], 3) == [3, 3, 5]
