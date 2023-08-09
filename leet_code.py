@@ -207,27 +207,44 @@ def leet_code_13(messages, total_money):  # 最多获得的短信条数
 
 
 def leet_code_14(boxes, width):  # 箱子之字型摆放
-    arr = []
-    reverse = False
-    idx = 0
-    length = len(boxes)
-    while idx < length:
-        if reverse:
-            arr.append(boxes[idx + width - 1:idx - 1:-1])
+    result = [""] * width
+    index = 0
+    asc = True  # True表示从上到下，False表示从下到上
+    for c in boxes:
+        if index == -1:
+            index = 0
+            asc = True
+        if index == width:
+            index = width - 1
+            asc = False
+        result[index] += c
+        if asc:
+            index += 1
         else:
-            arr.append(boxes[idx:idx + width])
-        reverse = not reverse
-        idx += width
-    left = idx - length
-    if left > 0:
-        if reverse:
-            arr[-1] += "*" * left  # 填充空白位置
-        else:
-            arr[-1] = "*" * left + arr[-1]
+            index -= 1
+    return result
 
-    for step in range(width):
-        tmp = ''.join(each[step] for each in arr)
-        print(tmp.strip('*'))
+    # arr = []
+    # reverse = False
+    # idx = 0
+    # length = len(boxes)
+    # while idx < length:
+    #     if reverse:
+    #         arr.append(boxes[idx + width - 1:idx - 1:-1])
+    #     else:
+    #         arr.append(boxes[idx:idx + width])
+    #     reverse = not reverse
+    #     idx += width
+    # left = idx - length
+    # if left > 0:
+    #     if reverse:
+    #         arr[-1] += "*" * left  # 填充空白位置
+    #     else:
+    #         arr[-1] = "*" * left + arr[-1]
+    #
+    # for step in range(width):
+    #     tmp = ''.join(each[step] for each in arr)
+    #     print(tmp.strip('*'))
 
 
 def leet_code_15(n, k):  # 对称美学
@@ -279,7 +296,7 @@ def leet_code_18(nodes):  # 寻找路径
     def _find_path(parent_pos):
         path.append(nodes[parent_pos])
         left_pos = (parent_pos << 1) + 1
-        right_pos = (parent_pos << 1) + 2
+        right_pos = left_pos + 1
         left_exist = left_pos < length and nodes[left_pos] != -1  # 存在左节点
         right_exist = right_pos < length and nodes[right_pos] != -1  # 存在右节点
         if left_exist:
@@ -303,7 +320,7 @@ def leet_code_19(nodes):  # 寻找路径(先找到最小叶子结点,再回溯)
     min_pos = -1
     for pos, node in enumerate(nodes):
         left_pos = (pos << 1) + 1
-        right_pos = (pos << 1) + 2
+        right_pos = left_pos + 1
         if (left_pos >= length or nodes[left_pos] == -1) and (right_pos >= length or nodes[right_pos] == -1):
             if node != -1 and (min_pos == -1 or node < nodes[min_pos]):
                 min_pos = pos
@@ -312,6 +329,26 @@ def leet_code_19(nodes):  # 寻找路径(先找到最小叶子结点,再回溯)
         path.appendleft(nodes[min_pos])
         min_pos = (min_pos - 1) >> 1
     return path
+
+
+def leet_code_20(tasks):  # 任务调度
+    success = []
+    while tasks:
+        start_time = tasks[0]['start_time']
+        max_priority_idx = -1
+        for idx, task in enumerate(tasks):
+            if task['start_time'] == start_time:
+                task['start_time'] += 1
+                if max_priority_idx == -1 or task['priority'] > tasks[max_priority_idx]['priority']:
+                    max_priority_idx = idx
+            else:
+                break  # 提前结束提高效率,可以不判断
+        if max_priority_idx != -1:  # 注意判断,有执行过任务
+            tasks[max_priority_idx]['cost'] -= 1
+            if tasks[max_priority_idx]['cost'] == 0:
+                success.append([tasks[max_priority_idx]['thread_id'], tasks[max_priority_idx]['start_time']])
+                tasks[max_priority_idx:] = tasks[max_priority_idx + 1:]
+    return success
 
 
 if __name__ == "__main__":
@@ -329,16 +366,23 @@ if __name__ == "__main__":
     print(leet_code_11([7, 1, 5, 3, 6, 4]))
     print(leet_code_12([7, 1, 5, 3, 6, 4]))
     print(leet_code_13([10, 20, 30, 40, 60, 60, 70, 80, 90, 150], 15))
-    leet_code_14('abcdefg', 3)
+    print(leet_code_14('abcdefg', 3))
     print(leet_code_15(1, 0))
     print(leet_code_16(64, 73709551616))
-    sites = [
+    print(leet_code_17([
         [1, 0, 0, 0, 0],
         [0, 1, 0, 0, 0],
         [0, 0, 1, 1, 0],
         [0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1],
-    ]
-    print(leet_code_17(sites))
+    ]))
     print(leet_code_18([5, 9, 8, -1, -1, 7, -1, -1, -1, -1, -1, 6]))
     print(leet_code_19([3, 5, 7, -1, -1, 2, 4]))
+    print(leet_code_20([
+        {'thread_id': 1, 'priority': 3, 'cost': 5, 'start_time': 1},  # 任务id,任务优先级,执行时间,到达时间
+        {'thread_id': 2, 'priority': 1, 'cost': 5, 'start_time': 10},
+        {'thread_id': 3, 'priority': 2, 'cost': 7, 'start_time': 12},
+        {'thread_id': 4, 'priority': 3, 'cost': 2, 'start_time': 20},
+        {'thread_id': 5, 'priority': 4, 'cost': 9, 'start_time': 21},
+        {'thread_id': 6, 'priority': 4, 'cost': 2, 'start_time': 22},
+    ]))
