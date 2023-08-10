@@ -347,11 +347,10 @@ def leet_code_20(tasks):  # 任务调度
                     max_priority_idx = idx
             else:
                 break  # 提前结束提高效率,可以不判断
-        if max_priority_idx != -1:  # 注意判断,有执行过任务
-            tasks[max_priority_idx]['cost'] -= 1
-            if tasks[max_priority_idx]['cost'] == 0:
-                success.append([tasks[max_priority_idx]['thread_id'], tasks[max_priority_idx]['start_time']])
-                tasks[max_priority_idx:] = tasks[max_priority_idx + 1:]
+        tasks[max_priority_idx]['cost'] -= 1
+        if tasks[max_priority_idx]['cost'] == 0:
+            success.append([tasks[max_priority_idx]['thread_id'], tasks[max_priority_idx]['start_time']])
+            tasks[max_priority_idx:] = tasks[max_priority_idx + 1:]
     return success
 
 
@@ -401,7 +400,7 @@ def leet_code_23(numbers, k):  # 最差产品奖(单调队列)
 
 
 def leet_code_24(matrix):  # 查找单入口空闲区域
-    def _find_zone(x, y):
+    def _find_zone(x, y):  # 也可以用队列做
         nonlocal entrance, count
         count += 1
         matrix[x][y] = "X"  # 遍历过的点标记为"X",重要!!
@@ -539,6 +538,32 @@ def leet_code_30(candidates, target):  # 硬件产品销售方案
     return result
 
 
+def leet_code_31(matrix, x, y):  # 计算网络信号
+    m, n = len(matrix), len(matrix[0])
+    queue = deque()
+    for i in range(m):  # 寻找信号源
+        for j in range(n):
+            if matrix[i][j] > 0:
+                queue.append((i, j))
+                break
+        else:
+            continue
+        break
+
+    directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    while queue:
+        i, j = queue.popleft()
+        if matrix[i][j] <= 1:
+            return 0
+        for direction_x, direction_y in directions:
+            new_i, new_j = i + direction_x, direction_y + j
+            if 0 <= new_i < m and n > new_j >= 0 == matrix[new_i][new_j]:
+                matrix[new_i][new_j] = matrix[i][j] - 1
+                if new_i == x and new_j == y:
+                    return matrix[new_i][new_j]
+                queue.append((new_i, new_j))
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -605,3 +630,11 @@ if __name__ == "__main__":
     assert leet_code_28([7, 6, 33, 2, 1, 9, 88, 4, 3, 5, 2]) == 46
     assert leet_code_29([(10, 1, 2), (-21, 3, 4), (23, 5), (14,), (35,), (66,)], 1, 1) == 23
     assert leet_code_30([5, 2, 3], 8) == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
+    assert leet_code_31([
+        [0, 0, 0, -1, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, -1, 4, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, -1],
+        [0, 0, 0, 0, 0]
+    ], 1, 4) == 2
