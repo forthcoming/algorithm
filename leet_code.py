@@ -574,15 +574,12 @@ def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以�
     rate = .1
     length = len(operators)
     operators.sort(reverse=True)  # 优先给效率高的采样员配备志愿者
-    drifts = [-2 * operator * rate for operator in operators]  # 初始化数据
     with_volunteers = [0] * length
     volunteers = min(volunteers, 4 * length)  # 初始化数据(志愿者过多会饱和)
 
     op_start, op_next = 0, 1
     for v in range(volunteers):
         if op_next >= length:
-            v_start_incr = _get_incr(op_start)
-            drifts[op_start] += v_start_incr
             with_volunteers[op_start] += 1
             if with_volunteers[op_start] == 4:
                 op_start += 1
@@ -590,18 +587,20 @@ def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以�
             v_start_incr = _get_incr(op_start)
             v_next_incr = _get_incr(op_next)
             if v_start_incr > v_next_incr:
-                drifts[op_start] += v_start_incr
                 with_volunteers[op_start] += 1
                 if with_volunteers[op_start] == 4:
                     op_start += 1
             else:
-                drifts[op_next] += v_next_incr
                 with_volunteers[op_next] += 1
                 op_next += 1
             if op_start == op_next:
                 op_next += 1
 
-    return int(sum(operators) + sum(drifts))
+    total = 0
+    for idx, with_volunteer in enumerate(with_volunteers):
+        with_volunteer -= 1 if with_volunteer else 2
+        total += (with_volunteer * rate + 1) * operators[idx]
+    return int(total)
 
 
 if __name__ == "__main__":
