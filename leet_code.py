@@ -498,6 +498,46 @@ def leet_code_28(arr):  # 二进制差异数
     # return total
 
 
+def leet_code_29(nodes, x, y):  # 查找二叉树节点
+    queue = deque([nodes[0], 1])
+    count = 0
+    flag = False
+    while True:  # 认为x,y合法
+        node_or_level = queue.popleft()
+        if isinstance(node_or_level, int):
+            if node_or_level == x:
+                flag = True
+            queue.append(node_or_level + 1)
+        else:
+            if flag:
+                count += 1
+                if count == y + 1:
+                    return node_or_level[0]
+            for child in node_or_level[1:]:
+                queue.append(nodes[child])
+
+
+def leet_code_30(candidates, target):  # 硬件产品销售方案
+    # https://leetcode.cn/problems/combination-sum/description/
+    candidates.sort()  # 非必需,用于减少递归次数
+    path = []
+    length = len(candidates)
+    result = []
+
+    def _find(begin, _target):  # 这里的begin参数保证输出结果没有重复,重要!!
+        if _target == 0:
+            result.append(path)
+        for idx in range(begin, length):
+            if candidates[idx] <= _target:
+                path.append(candidates[idx])
+                _find(idx, _target - candidates[idx])
+                path.pop()
+            else:
+                break
+
+    _find(0, target)
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -562,3 +602,5 @@ if __name__ == "__main__":
         [4, 5],
     ], 5) == 8
     assert leet_code_28([7, 6, 33, 2, 1, 9, 88, 4, 3, 5, 2]) == 46
+    assert leet_code_29([(10, 1, 2), (-21, 3, 4), (23, 5), (14,), (35,), (66,)], 1, 1) == 23
+    leet_code_30([3, 7, 6, 2], 7)
