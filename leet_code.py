@@ -151,9 +151,10 @@ def leet_code_9(clips: list[list[int]], left, right):  # 区间交叠问题
         for aj, bj in clips:
             if aj < left + i <= bj:
                 if dp[i] == -1:
-                    dp[i] = dp[aj - left] + 1
+                    dp[i] = dp[aj - left]
                 else:
-                    dp[i] = min(dp[i], dp[aj - left] + 1)
+                    dp[i] = min(dp[i], dp[aj - left])
+        dp[i] += 1
     return dp[-1]
 
 
@@ -455,6 +456,48 @@ def leet_code_26(matrix):  # 基站维护最短距离
     return min_distance
 
 
+def leet_code_27(matrix, volume):  # 最大报酬(0-1背包问题)
+    length = len(matrix)
+    dp = [[0] * (volume + 1) for _ in range(length + 1)]  # dp[i][j]代表前i件物品放入容量为j的背包能产生的最大价值
+    for i in range(1, length + 1):
+        for j in range(1, volume + 1):
+            v = matrix[i - 1][0]
+            if v > j:
+                dp[i][j] = dp[i - 1][j]
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i - 1][j - v] + matrix[i - 1][1])
+    return dp[-1][-1]
+
+
+def leet_code_28(arr):  # 二进制差异数
+    mapping = {}
+    for number in arr:
+        while True:
+            lower_bit = number & -number
+            number -= lower_bit
+            if not number:
+                if lower_bit in mapping:
+                    mapping[lower_bit] += 1
+                else:
+                    mapping[lower_bit] = 1
+                break
+    length = len(arr)
+    total = 0
+    for count in mapping.values():
+        length -= count
+        total += count * length
+    return total
+
+    # # 低效版
+    # length = len(arr)
+    # total = 0
+    # for i in range(length):
+    #     for j in range(i + 1, length):
+    #         if arr[i] ^ arr[j] > arr[i] & arr[j]:
+    #             total += 1
+    # return total
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -512,3 +555,10 @@ if __name__ == "__main__":
         [1, 0, 2],
         [2, 1, 0],
     ]) == 3
+    assert leet_code_27([
+        [1, 2],
+        [2, 4],
+        [3, 4],
+        [4, 5],
+    ], 5) == 8
+    assert leet_code_28([7, 6, 33, 2, 1, 9, 88, 4, 3, 5, 2]) == 46
