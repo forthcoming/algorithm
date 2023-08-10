@@ -556,12 +556,52 @@ def leet_code_31(matrix, x, y):  # 计算网络信号
         if matrix[i][j] <= 1:
             return 0
         for direction_x, direction_y in directions:
-            new_i, new_j = i + direction_x, direction_y + j
+            new_i, new_j = i + direction_x, j + direction_y
             if 0 <= new_i < m and n > new_j >= 0 == matrix[new_i][new_j]:
                 matrix[new_i][new_j] = matrix[i][j] - 1
                 if new_i == x and new_j == y:
                     return matrix[new_i][new_j]
                 queue.append((new_i, new_j))
+
+
+def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以大顶堆做,效率会差一丢丢)
+    def _get_incr(op_pos):
+        incr = operators[op_pos] * rate
+        if with_volunteers[op_pos] == 0:
+            incr *= 2
+        return incr
+
+    rate = .1
+    length = len(operators)
+    operators.sort(reverse=True)  # 优先给效率高的采样员配备志愿者
+    drifts = [-2 * operator * rate for operator in operators]  # 初始化数据
+    with_volunteers = [0] * length
+    volunteers = min(volunteers, 4 * length)  # 初始化数据(志愿者过多会饱和)
+
+    op_start, op_next = 0, 1
+    for v in range(volunteers):
+        if op_next >= length:
+            v_start_incr = _get_incr(op_start)
+            drifts[op_start] += v_start_incr
+            with_volunteers[op_start] += 1
+            if with_volunteers[op_start] == 4:
+                op_start += 1
+        else:
+            v_start_incr = _get_incr(op_start)
+            v_next_incr = _get_incr(op_next)
+            if v_start_incr > v_next_incr:
+                drifts[op_start] += v_start_incr
+                with_volunteers[op_start] += 1
+                if with_volunteers[op_start] == 4:
+                    op_start += 1
+            else:
+                drifts[op_next] += v_next_incr
+                with_volunteers[op_next] += 1
+                op_next += 1
+            if op_start == op_next:
+                op_next += 1
+
+    return int(sum(operators) + sum(drifts))
 
 
 if __name__ == "__main__":
@@ -638,3 +678,4 @@ if __name__ == "__main__":
         [0, 0, 0, 0, -1],
         [0, 0, 0, 0, 0]
     ], 1, 4) == 2
+    assert leet_code_32([300, 200, 400, 10], 10) == 1138
