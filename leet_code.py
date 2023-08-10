@@ -1,5 +1,6 @@
 import collections
 import heapq
+import re
 from collections import deque
 from itertools import permutations
 
@@ -603,6 +604,21 @@ def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以�
     return int(total)
 
 
+def leet_code_33(str1, str2):  # 字符串解密
+    counter = {}
+    length = len(set(str2))
+    for word in re.findall(r'[^0-9a-f]+', str1):
+        length_word = len(set(word))
+        if length_word <= length:
+            if length_word in counter:
+                counter[length_word].append(word)
+            else:
+                counter[length_word] = [word]
+    if counter:
+        max_length = sorted(counter)[-1]
+        return sorted(counter[max_length])[-1]
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -678,3 +694,5 @@ if __name__ == "__main__":
         [0, 0, 0, 0, 0]
     ], 1, 4) == 2
     assert leet_code_32([300, 200, 400, 10], 10) == 1138
+    assert leet_code_33("123admyffc79ptaagghi2222smeersst88mnrt", "ssyyfgh") == "mnrt"
+    assert leet_code_33("abcmnq", "rt") is None
