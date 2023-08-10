@@ -526,7 +526,7 @@ def leet_code_30(candidates, target):  # 硬件产品销售方案
 
     def _find(begin, _target):  # 这里的begin参数保证输出结果没有重复,重要!!
         if _target == 0:
-            result.append(path)
+            result.append(path[:])  # 注意这里要拷贝,不要直接引用
         for idx in range(begin, length):
             if candidates[idx] <= _target:
                 path.append(candidates[idx])
@@ -536,6 +536,7 @@ def leet_code_30(candidates, target):  # 硬件产品销售方案
                 break
 
     _find(0, target)
+    return result
 
 
 if __name__ == "__main__":
@@ -603,4 +604,4 @@ if __name__ == "__main__":
     ], 5) == 8
     assert leet_code_28([7, 6, 33, 2, 1, 9, 88, 4, 3, 5, 2]) == 46
     assert leet_code_29([(10, 1, 2), (-21, 3, 4), (23, 5), (14,), (35,), (66,)], 1, 1) == 23
-    leet_code_30([3, 7, 6, 2], 7)
+    assert leet_code_30([5, 2, 3], 8) == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
