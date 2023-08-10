@@ -591,10 +591,10 @@ def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以�
                 with_volunteers[op_start] += 1
                 if with_volunteers[op_start] == 4:
                     op_start += 1
+                    if op_start == op_next:
+                        op_next += 1
             else:
                 with_volunteers[op_next] += 1
-                op_next += 1
-            if op_start == op_next:
                 op_next += 1
 
     total = 0
