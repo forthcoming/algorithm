@@ -160,8 +160,6 @@ def longest_common_substring(string_x, string_y):  # 寻找2字符串中的最�
                 if dp[i + 1][j + 1] > max_length:
                     max_length = dp[i + 1][j + 1]
                     x_pos = i + 1
-            else:
-                dp[i + 1][j + 1] = 0
     return string_x[x_pos - max_length:x_pos]
 
     # x_pos = max_length = 0

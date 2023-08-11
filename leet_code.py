@@ -1,7 +1,7 @@
 import collections
 import heapq
 import re
-from collections import deque
+from collections import deque, Counter
 from itertools import permutations
 
 
@@ -132,9 +132,7 @@ def leet_code_7(matrix, threshold, width):  # 探索地块建立
 
 
 def leet_code_8(logs):  # 日志首次上报最多积分
-    max_score = 0
-    minus_score = 0
-    left_score = 0
+    max_score = minus_score = left_score = 0
     for current_score in logs:
         if minus_score + current_score <= 100:
             left_score += current_score - minus_score
@@ -619,6 +617,40 @@ def leet_code_33(str1, str2):  # 字符串解密
         return sorted(counter[max_length])[-1]
 
 
+def leet_code_34(string):  # 删除重复数字后的最大数字
+    counter = Counter(string)
+    used_counter = {char: 0 for char in counter}  # 初始化每个使用过的字符个数为0
+    stack = []
+    for char in string:
+        while stack and counter[stack[-1]] > 2 and stack[-1] < char:
+            used_counter[stack[-1]] -= 1
+            stack.pop()
+            counter[stack[-1]] -= 1
+        if used_counter[char] < 2:
+            used_counter[char] += 1
+            stack.append(char)
+    return ''.join(stack)
+
+
+def leet_code_35(heights):  # 水库蓄水问题(双指针法)
+    # https://leetcode.cn/problems/container-with-most-water/description
+    length = len(heights)
+    left, right = 0, length - 1
+    bond_left = bond_right = max_area = -1
+    while left < right:
+        height = min(heights[right], heights[left])
+        area = height * (right - left)
+        if area >= max_area:  # 注意这里是大于等于,应为蓄水量一样时要返回距离最近的边界
+            bond_left = left
+            bond_right = right
+            max_area = area
+        if heights[right] > heights[left]:
+            left += 1
+        else:
+            right -= 1
+    return bond_left, bond_right, max_area
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -696,3 +728,5 @@ if __name__ == "__main__":
     assert leet_code_32([300, 200, 400, 10], 10) == 1138
     assert leet_code_33("123admyffc79ptaagghi2222smeersst88mnrt", "ssyyfgh") == "mnrt"
     assert leet_code_33("abcmnq", "rt") is None
+    assert leet_code_34("54457950451") == '54795041'
+    assert leet_code_35([1, 8, 6, 2, 5, 4, 8, 3, 7]) == (1, 8, 49)
