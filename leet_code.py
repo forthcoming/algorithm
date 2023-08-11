@@ -1,5 +1,6 @@
 import collections
 import heapq
+import math
 import re
 from collections import deque, Counter
 from itertools import permutations
@@ -651,6 +652,68 @@ def leet_code_35(heights):  # 水库蓄水问题(双指针法)
     return bond_left, bond_right, max_area
 
 
+def leet_code_36(arr, k):  # 优雅子数组
+    result = 0
+    length = len(arr)
+    for i in range(length):  # i是子数组起点
+        count = {}
+        flag = False
+        for j in range(i, length):  # j是子数组终点
+            key = arr[j]
+            if key in count:
+                count[key] += 1
+            else:
+                count[key] = 1
+            if count[key] == k:
+                flag = True
+            if flag:
+                if count[key] <= k:
+                    result += 1
+                else:
+                    break
+    return result
+
+
+def leet_code_37(start, end, a, b):  # 数字加减游戏
+    """
+    (start-end-a*0)%b (start-end+a*0)%b
+    (start-end-a*1)%b (start-end+a*1)%b
+    ......
+    """
+    count = 0
+    add = sub = end
+    while True:
+        if (start - add) % b == 0:
+            break
+        if (start - sub) % b == 0:
+            break
+        count += 1
+        add -= a
+        sub += a
+    return count
+
+
+def leet_code_38(fields, days):  # 农场施肥
+    def _get_total(_mid):
+        _total = 0
+        for i in range(length):
+            _total += math.ceil(fields[i] / _mid)
+        return _total
+
+    length = len(fields)
+    left, right = 1, sorted(fields)[-1]
+    while left < right:
+        mid = (left + right) >> 1
+        total = _get_total(mid)
+        if total > days:
+            left = mid + 1  # 左边一定不满足条件
+        else:
+            right = mid  # 由于要求最低效率,因此这里不能减1
+    if _get_total(left) <= days:  # 此时left==right
+        return left
+    return -1
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -730,3 +793,8 @@ if __name__ == "__main__":
     assert leet_code_33("abcmnq", "rt") is None
     assert leet_code_34("54457950451") == '54795041'
     assert leet_code_35([1, 8, 6, 2, 5, 4, 8, 3, 7]) == (1, 8, 49)
+    assert leet_code_36([1, 2, 3, 1, 2, 3, 1], 2) == 9
+    assert leet_code_37(11, 33, 4, 10) == 2
+    assert leet_code_38([5, 7, 9, 15, 10], 4) == -1
+    assert leet_code_38([5, 7, 9, 15, 10], 6) == 10
+    assert leet_code_38([5, 7, 9, 15, 10], 50) == 1
