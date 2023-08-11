@@ -714,6 +714,48 @@ def leet_code_38(fields, days):  # 农场施肥
     return -1
 
 
+def leet_code_39(arr, total):  # 组装新的数组(硬件产品销售方案题目变种)
+    count = 0
+    arr.sort()  # 元素为正数
+    length = len(arr)
+
+    def _find(idx, _total):
+        if 0 <= _total < arr[0]:
+            nonlocal count
+            count += 1
+            return
+        for i in range(idx, length):
+            if arr[i] <= _total:
+                _find(i, _total - arr[i])
+            else:
+                break
+
+    _find(0, total)
+    return count
+
+
+def leet_code_40(task_num, relations):  # 快速开租建站(拓扑排序)
+    upstream = [0] * task_num  # 每个任务的前置依赖任务个数
+    downstream = [[] for _ in range(task_num)]  # 每个任务的下游任务
+    for relation in relations:
+        upstream[relation[1]] += 1
+        downstream[relation[0]].append(relation[1])
+
+    queue = deque()
+    total_duration = 0
+    duration = 1
+    for task_id in range(task_num):
+        if upstream[task_id] == 0:
+            queue.append((task_id, duration))
+    while queue:
+        upstream_task_id, total_duration = queue.popleft()
+        for downstream_task_id in downstream[upstream_task_id]:
+            upstream[downstream_task_id] -= 1
+            if upstream[downstream_task_id] == 0:
+                queue.append((downstream_task_id, total_duration + duration))
+    return total_duration
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -798,3 +840,6 @@ if __name__ == "__main__":
     assert leet_code_38([5, 7, 9, 15, 10], 4) == -1
     assert leet_code_38([5, 7, 9, 15, 10], 6) == 10
     assert leet_code_38([5, 7, 9, 15, 10], 50) == 1
+    assert leet_code_39([2, 3], 5) == 2
+    assert leet_code_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
+    assert leet_code_40(5, [[0, 3], [0, 4], [1, 3]]) == 2
