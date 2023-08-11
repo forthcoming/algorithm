@@ -117,7 +117,7 @@ def leet_code_6(sheep_num, wolf_num, capacity):  # 羊,狼,农夫过河
     return min_count
 
 
-def leet_code_7(matrix, threshold, width):  # 探索地块建立
+def leet_code_7(matrix, threshold, width):  # 探索地块建立|荒地建设电站|区域发电量统计
     x, y = len(matrix), len(matrix[0])
     p = [[0] * (y + 1) for _ in range(x + 1)]  # p[i][j]代表matrix[0][0]与matrix[i-1][j-1]区域的元素和,二维前缀和
     for i in range(x):
