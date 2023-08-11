@@ -766,6 +766,18 @@ def leet_code_41(task_num, relations):  # 快速开租建站
     return total_duration
 
 
+def leet_code_42(string):  # 严格递增字符串
+    length = len(string)
+    changes = min_changes = string.count("B")
+    for i in range(1, length + 1):  # 假设字符串长度为3,修改后的字符串一定是AAA,AAB,ABB,BBB中的一种,changes代表末尾有0到3个B
+        if string[length - i] == "B":
+            changes -= 1
+            min_changes = min(changes, min_changes)
+        else:
+            changes += 1
+    return min_changes
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -853,3 +865,4 @@ if __name__ == "__main__":
     assert leet_code_39([2, 3], 5) == 2
     assert leet_code_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
     assert leet_code_41(5, [[0, 3], [0, 4], [1, 3]]) == 2
+    assert leet_code_42("BAABBABBAB") == 3
