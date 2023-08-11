@@ -744,15 +744,25 @@ def leet_code_40(task_num, relations):  # 快速开租建站(拓扑排序)
     queue = deque()
     total_duration = 0
     duration = 1
-    for task_id in range(task_num):
-        if upstream[task_id] == 0:
-            queue.append((task_id, duration))
+    for task in range(task_num):
+        if upstream[task] == 0:
+            queue.append((task, duration))
     while queue:
-        upstream_task_id, total_duration = queue.popleft()
-        for downstream_task_id in downstream[upstream_task_id]:
-            upstream[downstream_task_id] -= 1
-            if upstream[downstream_task_id] == 0:
-                queue.append((downstream_task_id, total_duration + duration))
+        upstream_task, total_duration = queue.popleft()
+        for downstream_task in downstream[upstream_task]:
+            upstream[downstream_task] -= 1
+            if upstream[downstream_task] == 0:
+                queue.append((downstream_task, total_duration + duration))
+    return total_duration
+
+
+def leet_code_41(task_num, relations):  # 快速开租建站
+    unfinished_tasks = {*range(task_num)}
+    total_duration = 0
+    duration = 1
+    while unfinished_tasks:
+        unfinished_tasks = {second_task for first_task, second_task in relations if first_task in unfinished_tasks}
+        total_duration += duration
     return total_duration
 
 
@@ -842,4 +852,4 @@ if __name__ == "__main__":
     assert leet_code_38([5, 7, 9, 15, 10], 50) == 1
     assert leet_code_39([2, 3], 5) == 2
     assert leet_code_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
-    assert leet_code_40(5, [[0, 3], [0, 4], [1, 3]]) == 2
+    assert leet_code_41(5, [[0, 3], [0, 4], [1, 3]]) == 2
