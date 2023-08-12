@@ -778,6 +778,29 @@ def leet_code_42(string):  # 严格递增字符串
     return min_changes
 
 
+def leet_code_43(img):  # 简单的自动曝光(二分法)
+    left, right = -255, 255
+    wanted = 128 * len(img)
+    while left < right:
+        mid = (left + right) >> 1
+        total = sum(max(0, min(255, mid + pixel)) for pixel in img)  # 单调递增
+        if total > wanted:
+            right = mid - 1
+        elif total < wanted:
+            left = mid + 1
+        else:
+            return mid
+    # 此时left==right,left左边均值一定小于128,left右边均值一定大于128,且离left越远相差越大,left对应均值与128比可大可小
+    max_delta = float('inf')
+    k = -1
+    for i in range(left - 1, left + 2):
+        delta = abs(sum(max(0, min(255, i + pixel)) for pixel in img) - wanted)
+        if delta < max_delta:  # 不能取等号,应为有多个条件满足时取最小值
+            k = i
+            max_delta = delta
+    return k
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -866,3 +889,5 @@ if __name__ == "__main__":
     assert leet_code_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
     assert leet_code_41(5, [[0, 3], [0, 4], [1, 3]]) == 2
     assert leet_code_42("BAABBABBAB") == 3
+    assert leet_code_43([151, 154, 255, 199, 24, 14, 70, 248, 170, 3]) == -1
+    assert leet_code_43([90, 211, 64, 178, 90, 48, 106, 187, 57, 134]) == 11
