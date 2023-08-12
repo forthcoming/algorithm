@@ -791,13 +791,13 @@ def leet_code_43(img):  # 简单的自动曝光(二分法)
         else:
             return mid
     # 此时left==right,left左边均值一定小于128,left右边均值一定大于128,且离left越远相差越大,left对应均值与128比可大可小
-    max_delta = float('inf')
+    min_delta = float('inf')
     k = -1
     for i in range(left - 1, left + 2):
         delta = abs(sum(max(0, min(255, i + pixel)) for pixel in img) - wanted)
-        if delta < max_delta:  # 不能取等号,应为有多个条件满足时取最小值
+        if delta < min_delta:  # 不能取等号,应为有多个条件满足时取最小值
             k = i
-            max_delta = delta
+            min_delta = delta
     return k
 
 
