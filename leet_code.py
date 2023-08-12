@@ -756,13 +756,35 @@ def leet_code_40(task_num, relations):  # 快速开租建站(拓扑排序)
     return total_duration
 
 
-def leet_code_41(task_num, relations):  # 快速开租建站
-    unfinished_tasks = {*range(task_num)}
-    total_duration = 0
-    duration = 1
-    while unfinished_tasks:
-        unfinished_tasks = {second_task for first_task, second_task in relations if first_task in unfinished_tasks}
-        total_duration += duration
+def leet_code_41(matrix, task):  # 微服务的集成测试(拓扑排序)
+    # length = len(matrix)
+    # unfinished_tasks = {*range(length)}
+    # total_duration = 0
+    # relations = []
+    # for i in range(length):
+    #     for j in range(length):
+    #         if i != j and matrix[i][j]:
+    #             relations.append((i, j))
+    #
+    # while task in unfinished_tasks:
+    #     reliance_task = {first_task for first_task, second_task in relations if second_task in unfinished_tasks}
+    #     process_task = unfinished_tasks - reliance_task
+    #     if task in process_task:
+    #         total_duration += matrix[task][task]
+    #     else:
+    #         total_duration += max(matrix[task][task] for task in process_task)
+    #     unfinished_tasks = reliance_task
+    # return total_duration
+
+    def _dfs(_task):
+        max_time = 0
+        for i in range(length):
+            if matrix[_task][i] != 0 and i != _task:  # 得到服务k启动依赖的服务
+                max_time = max(max_time, _dfs(i))  # 计算启动依赖服务的最大耗时,并记录到总耗时中
+        return max_time + matrix[_task][_task]
+
+    length = len(matrix)
+    total_duration = _dfs(task)
     return total_duration
 
 
@@ -852,13 +874,80 @@ def leet_code_46(content, word):  # 最小覆盖子串(滑动窗口)
         if need[char] > 0:
             missing -= 1
         need[char] -= 1
-        if not missing:  # 当全部覆盖子串时收缩窗口
+        if not missing:  # 当全部覆盖子串时收缩窗口(一旦归零不再增加)
             while need[content[start]] < 0:
                 need[content[start]] += 1
                 start += 1
             if end - start < right - left:
                 left, right = start, end
     return content[left:right + 1] if right < content_len else ''
+
+    # 没有上面简洁,但逻辑更清晰些
+    # if not content:
+    #     return 0
+    # start = end = 0
+    # content_len = len(content)
+    # word_map = collections.Counter(word)
+    # word_char_kind = len(word_map)
+    # content_map = {content[0]: 1}
+    # min_left, min_right = 0, content_len
+    # content_char_kind = 1 if content[0] in word_map and word_map[content[0]] == 1 else 0
+    # while end < content_len:
+    #     if content_char_kind < word_char_kind:
+    #         end += 1
+    #         if end < content_len:
+    #             content_char = content[end]
+    #             if content_char in content_map:
+    #                 content_map[content_char] += 1
+    #             else:
+    #                 content_map[content_char] = 1
+    #             if content_char in word_map and word_map[content_char] == content_map[content_char]:
+    #                 content_char_kind += 1
+    #     else:
+    #         while True:
+    #             left_char = content[start]
+    #             if left_char not in word_map or word_map[left_char] != content_map[left_char]:
+    #                 content_map[left_char] -= 1
+    #                 start += 1
+    #             else:
+    #                 if end - start < min_right - min_left:
+    #                     min_right, min_left = end, start
+    #                 content_map[left_char] -= 1
+    #                 start += 1
+    #                 content_char_kind -= 1
+    #                 break
+    #
+    # return content[min_left:min_right + 1] if min_right < content_len else ''
+
+
+def leet_code_47(encrypt: str):  # 简单的解压缩算法
+    def _do_repeat(repeat_num):
+        substring = ''
+        top = stack.pop()
+        if top.isalpha():
+            stack.append(top * repeat_num)
+        elif top == '}':
+            while stack[-1] != '{':
+                substring = f'{stack.pop()}{substring}'  # 注意顺序
+            stack.pop()  # 弹出{
+            stack.append(substring * repeat_num)
+
+    length = len(encrypt)
+    stack: list[str] = []
+    repeat = ''  # 存储数字字符
+    idx = 0
+    while idx < length:
+        if encrypt[idx].isdigit():
+            repeat += encrypt[idx]
+        else:
+            if repeat:
+                _do_repeat(int(repeat))
+                repeat = ''
+            stack.append(encrypt[idx])
+        idx += 1
+    if repeat:  # 不要忘
+        _do_repeat(int(repeat))
+    return ''.join(stack)
 
 
 if __name__ == "__main__":
@@ -947,7 +1036,19 @@ if __name__ == "__main__":
     assert leet_code_38([5, 7, 9, 15, 10], 50) == 1
     assert leet_code_39([2, 3], 5) == 2
     assert leet_code_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
-    assert leet_code_41(5, [[0, 3], [0, 4], [1, 3]]) == 2
+    assert leet_code_41([
+        [1, 0, 0, 0, 0],
+        [0, 2, 0, 0, 0],
+        [1, 1, 3, 0, 0],
+        [1, 1, 0, 4, 0],
+        [0, 0, 1, 1, 5]
+    ], 2) == 5
+    assert leet_code_41([
+        [2, 0, 0, 0],
+        [0, 3, 0, 0],
+        [1, 1, 4, 0],
+        [1, 1, 1, 5],
+    ], 3) == 12
     assert leet_code_42("BAABBABBAB") == 3
     assert leet_code_43([151, 154, 255, 199, 24, 14, 70, 248, 170, 3]) == -1
     assert leet_code_43([90, 211, 64, 178, 90, 48, 106, 187, 57, 134]) == 11
@@ -955,3 +1056,4 @@ if __name__ == "__main__":
     assert leet_code_44([100, 500, 400, 150, 500, 100], 1000) == 1000
     assert leet_code_45('qweebaewqd', 'qwe') == 2
     assert leet_code_46('ADOBECODEBANC', 'ABC') == 'BANC'
+    assert leet_code_47('{a3b1{c}3}3') == 'aaabcccaaabcccaaabccc'
