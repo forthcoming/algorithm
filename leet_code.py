@@ -823,6 +823,44 @@ def leet_code_44(files, capacity):  # 最大连续文件之和|区块链文件�
     return window_max
 
 
+def leet_code_45(content, word):  # 发现新词的数量|新词挖掘
+    result = 0
+    need = collections.Counter(word)
+    word_len = missing = len(word)
+    for end, char in enumerate(content):
+        if end >= word_len:
+            discard_char = content[end - word_len]
+            if need[discard_char] >= 0:
+                missing += 1
+            need[discard_char] += 1
+        if need[char] > 0:
+            missing -= 1
+        need[char] -= 1
+        if not missing:  # 当全部覆盖子串时收缩窗口
+            result += 1
+    return result
+
+
+def leet_code_46(content, word):  # 最小覆盖子串(滑动窗口)
+    # https://leetcode.cn/problems/minimum-window-substring/description
+    content_len = len(content)
+    need = collections.Counter(word)
+    missing = len(word)
+    left, right = 0, content_len  # 最小覆盖子串索引位置
+    start = 0  # 滑动窗口起始位置
+    for end, char in enumerate(content):
+        if need[char] > 0:
+            missing -= 1
+        need[char] -= 1
+        if not missing:  # 当全部覆盖子串时收缩窗口
+            while need[content[start]] < 0:
+                need[content[start]] += 1
+                start += 1
+            if end - start < right - left:
+                left, right = start, end
+    return content[left:right + 1] if right < content_len else ''
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -915,3 +953,5 @@ if __name__ == "__main__":
     assert leet_code_43([90, 211, 64, 178, 90, 48, 106, 187, 57, 134]) == 11
     assert leet_code_44([100, 300, 500, 400, 400, 150, 100], 1000) == 950
     assert leet_code_44([100, 500, 400, 150, 500, 100], 1000) == 1000
+    assert leet_code_45('qweebaewqd', 'qwe') == 2
+    assert leet_code_46('ADOBECODEBANC', 'ABC') == 'BANC'
