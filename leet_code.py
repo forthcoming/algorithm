@@ -780,7 +780,7 @@ def leet_code_42(string):  # 严格递增字符串
 
 def leet_code_43(img):  # 简单的自动曝光(二分法)
     left, right = -255, 255
-    wanted = 128 * len(img)
+    wanted = len(img) << 7
     while left < right:
         mid = (left + right) >> 1
         total = sum(max(0, min(255, mid + pixel)) for pixel in img)  # 单调递增
@@ -799,6 +799,28 @@ def leet_code_43(img):  # 简单的自动曝光(二分法)
             k = i
             min_delta = delta
     return k
+
+
+def leet_code_44(files, capacity):  # 最大连续文件之和|区块链文件转储系统
+    # https://leetcode.cn/problems/minimum-size-subarray-sum/description
+    # 滑动窗口,前提是连续子数组且元素非负
+    if not files:
+        return 0
+    length = len(files)
+    start, end, window_sum, window_max = 0, 0, files[0], 0  # 滑动窗口起始坐标,滑动窗口大小,最大连续文件之和
+    while end < length:
+        if window_sum < capacity:
+            window_max = max(window_max, window_sum)
+            end += 1
+            if end < length:
+                window_sum += files[end]
+        elif window_sum == capacity:
+            window_max = capacity
+            break
+        else:
+            window_sum -= files[start]
+            start += 1
+    return window_max
 
 
 if __name__ == "__main__":
@@ -891,3 +913,5 @@ if __name__ == "__main__":
     assert leet_code_42("BAABBABBAB") == 3
     assert leet_code_43([151, 154, 255, 199, 24, 14, 70, 248, 170, 3]) == -1
     assert leet_code_43([90, 211, 64, 178, 90, 48, 106, 187, 57, 134]) == 11
+    assert leet_code_44([100, 300, 500, 400, 400, 150, 100], 1000) == 950
+    assert leet_code_44([100, 500, 400, 150, 500, 100], 1000) == 1000
