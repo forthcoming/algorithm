@@ -69,6 +69,7 @@ def coin_number(amount, coins):  # 找出由coins组合面值为amount的最小�
 
 
 def coin_change(amount, coins):  # 找出由coins组合面值为amount的所有组合(注意不是排列问题),背包问题,非常经典
+    # https://leetcode.cn/problems/combination-sum/description
     dp = [0] * (amount + 1)
     dp[0] = 1
     for coin in coins:  # 第i次循环后,dp[sub_amount]的值为用前i种硬币组成金额j的方法数,复杂度是O(mn),m是多少种钱币
