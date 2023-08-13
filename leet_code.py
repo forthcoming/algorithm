@@ -979,19 +979,16 @@ def leet_code_49(layouts):  # 机房布局
     length = len(layouts)
     boxes = [False] * length
     for idx, layout in enumerate(layouts):
-        if layout == 'M':
-            is_first = idx == 0
-            is_last = idx == length - 1
-            before = is_first or not boxes[idx - 1]  # 左边没有电箱
-            after = is_last or not boxes[idx + 1]  # 右边没有电箱
-            if before and after:  # 左右两边都没电箱
+        if layout == 'M' and not (idx and boxes[idx - 1]):  # 左边没电箱(注意右边此时一定无电箱)
+            if idx + 1 < length and layouts[idx + 1] == "I":  # 优先给右边安装电表
+                boxes[idx + 1] = True
                 count += 1
-                if not is_last and layouts[idx + 1] == "I":  # 优先给右边安装电表
-                    boxes[idx + 1] = True
-                elif not is_first and layouts[idx - 1] == "I":
-                    boxes[idx - 1] = True
-                else:
-                    return -1
+            elif idx and layouts[idx - 1] == "I":
+                boxes[idx - 1] = True
+                count += 1
+            else:
+                count = -1
+                break
     return count
 
 
