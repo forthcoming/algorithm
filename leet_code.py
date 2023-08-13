@@ -455,7 +455,7 @@ def leet_code_26(matrix):  # 基站维护最短距离
     return min_distance
 
 
-def leet_code_27(matrix, volume):  # 最大报酬(0-1背包问题)
+def leet_code_27(matrix, volume):  # 最大报酬|查找充电设备组合(0-1背包问题)
     length = len(matrix)
     dp = [[0] * (volume + 1) for _ in range(length + 1)]  # dp[i][j]代表前i件物品放入容量为j的背包能产生的最大价值
     for i in range(1, length + 1):
