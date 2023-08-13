@@ -950,6 +950,32 @@ def leet_code_47(encrypt: str):  # 简单的解压缩算法
     return ''.join(stack)
 
 
+def leet_code_48(matrix):  # 信号发射与接收(单调队列)
+    def _do(x, y, stack):
+        while stack and matrix[x][y] > stack[-1]:
+            result[x][y] += 1
+            stack.pop()
+        if stack:
+            if matrix[x][y] == stack[-1]:
+                result[x][y] += 1
+                stack.pop()
+            else:
+                result[x][y] += 1
+        stack.append(matrix[x][y])
+
+    m, n = len(matrix), len(matrix[0])
+    result = [[0] * n for _ in range(m)]
+    for i in range(m):
+        stack_east = []
+        for j in range(n):
+            _do(i, j, stack_east)
+    for j in range(n):
+        stack_south = []
+        for i in range(m):
+            _do(i, j, stack_south)
+    return result
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -1057,3 +1083,7 @@ if __name__ == "__main__":
     assert leet_code_45('qweebaewqd', 'qwe') == 2
     assert leet_code_46('ADOBECODEBANC', 'ABC') == 'BANC'
     assert leet_code_47('{a3b1{c}3}3') == 'aaabcccaaabcccaaabccc'
+    assert leet_code_48([
+        [2, 5, 4, 3, 2, 8],
+        [9, 7, 5, 10, 10, 3],
+    ]) == [[0, 1, 1, 1, 1, 4], [1, 2, 2, 4, 2, 2]]
