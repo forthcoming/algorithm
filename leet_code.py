@@ -974,6 +974,26 @@ def leet_code_48(matrix):  # 信号发射与接收(单调队列)
     return result
 
 
+def leet_code_49(layouts):  # 机房布局
+    count = 0
+    length = len(layouts)
+    boxes = [False] * length
+    for idx, layout in enumerate(layouts):
+        if layout == 'M':
+            is_first = idx == 0
+            is_last = idx == length - 1
+            before = is_first or not boxes[idx - 1]  # 左边没有电箱
+            after = is_last or not boxes[idx + 1]  # 右边没有电箱
+            if before and after:  # 左右两边都没电箱
+                count += 1
+                if not is_last and layouts[idx + 1] == "|":  # 优先给右边安装电表
+                    boxes[idx + 1] = True
+                elif not is_first and layouts[idx - 1] == "|":
+                    boxes[idx - 1] = True
+                else:
+                    return -1
+    return count
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -1086,3 +1106,4 @@ if __name__ == "__main__":
         [9, 7, 5, 10, 10, 3],
     ]) == [[0, 1, 1, 1, 1, 4], [1, 2, 2, 4, 2, 2]]
     assert leet_code_48([[2, 4, 1, 5, 3, 3]]) == [[0, 1, 1, 2, 1, 1]]
+    print(leet_code_49("M||M"))
