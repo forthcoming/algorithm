@@ -956,11 +956,9 @@ def leet_code_48(matrix):  # 信号发射与接收(单调队列)
             result[x][y] += 1
             stack.pop()
         if stack:
+            result[x][y] += 1
             if matrix[x][y] == stack[-1]:
-                result[x][y] += 1
                 stack.pop()
-            else:
-                result[x][y] += 1
         stack.append(matrix[x][y])
 
     m, n = len(matrix), len(matrix[0])
@@ -1087,3 +1085,4 @@ if __name__ == "__main__":
         [2, 5, 4, 3, 2, 8],
         [9, 7, 5, 10, 10, 3],
     ]) == [[0, 1, 1, 1, 1, 4], [1, 2, 2, 4, 2, 2]]
+    assert leet_code_48([[2, 4, 1, 5, 3, 3]]) == [[0, 1, 1, 2, 1, 1]]
