@@ -21,6 +21,16 @@ from itertools import permutations
 from heap import Heap
 
 
+def find_min_step(destination):  # destination每步可以+-2,+-3,最少多少次可以到0
+    if destination == 1:
+        return 2
+    count = destination // 3
+    destination -= count * 3
+    if destination:
+        count += 1
+    return count
+
+
 def factorization(n):  # 因式分解
     result = ''
     factor = 2
