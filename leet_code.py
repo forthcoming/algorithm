@@ -1010,6 +1010,42 @@ def leet_code_50(layouts):  # 机房布局
     return count
 
 
+def leet_code_51(work_orders):  # 工单调度策略
+    work_orders.sort(key=lambda x: x[0])  # 先根据工单最迟完成时间排序
+    max_score = 0
+    priority_queue = []
+    heapq.heapify(priority_queue)
+    cur_time = 0
+    for end_time, score in work_orders:
+        if end_time >= cur_time + 1:  # +1代表完成该任务需要1个单位时间
+            heapq.heappush(priority_queue, score)
+            max_score += score
+            cur_time += 1
+        else:
+            if priority_queue:
+                min_score = priority_queue[0]  # 哪个更有价值
+                if score > min_score:  # 如果当前值更有价值score大于堆顶,就放弃堆顶,完成当前的
+                    heapq.heappop(priority_queue)
+                    heapq.heappush(priority_queue, score)
+                    max_score += score - min_score
+    return max_score
+
+
+def leet_code_52(work_orders):  # 工单调度策略
+    work_orders.sort(key=lambda x: -x[1])  # 先根据积分逆序排序
+    max_score = [0] * (len(work_orders))
+    for end_time, score in work_orders:
+        if max_score[end_time] == 0:
+            max_score[end_time] = score
+        else:
+            end_time -= 1
+            while end_time and max_score[end_time]:
+                end_time -= 1
+            if end_time:
+                max_score[end_time] = score
+    return sum(max_score)
+
+
 if __name__ == "__main__":
     assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
     assert leet_code_2(3, [3, 2, 2, 1]) == 3
@@ -1123,3 +1159,21 @@ if __name__ == "__main__":
     ]) == [[0, 1, 1, 1, 1, 4], [1, 2, 2, 4, 2, 2]]
     assert leet_code_48([[2, 4, 1, 5, 3, 3]]) == [[0, 1, 1, 2, 1, 1]]
     assert leet_code_49("IMMII") == leet_code_50("IMMII") == 2
+    assert leet_code_51([
+        [1, 6],  # [t,s]意思是工单必须在t时刻之前完成才有s积分,超时也必须完成但没有积分,每个工单需要1小时
+        [1, 7],
+        [3, 2],
+        [3, 1],
+        [2, 4],
+        [2, 5],
+        [6, 1],
+    ]) == 15
+    assert leet_code_52([
+        [1, 6],
+        [1, 7],
+        [3, 2],
+        [3, 1],
+        [2, 4],
+        [2, 5],
+        [6, 1],
+    ]) == 15
