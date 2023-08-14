@@ -414,8 +414,7 @@ def leet_code_24(matrix):  # 查找单入口空闲区域
         if y + 1 < n and matrix[x][y + 1] == "O":
             _find_zone(x, y + 1)
 
-    m = len(matrix)
-    n = len(matrix[0])
+    m, n = len(matrix), len(matrix[0])
     entrance_x = entrance_y = max_count = same_count = -1
     for i in range(m):
         for j in range(n):
@@ -1033,17 +1032,46 @@ def leet_code_51(work_orders):  # 工单调度策略
 
 def leet_code_52(work_orders):  # 工单调度策略
     work_orders.sort(key=lambda x: -x[1])  # 先根据积分逆序排序
-    max_score = [0] * (len(work_orders))
+    scores = {}
     for end_time, score in work_orders:
-        if max_score[end_time] == 0:
-            max_score[end_time] = score
-        else:
+        while end_time and end_time in scores:
             end_time -= 1
-            while end_time and max_score[end_time]:
-                end_time -= 1
-            if end_time:
-                max_score[end_time] = score
-    return sum(max_score)
+        if end_time:
+            scores[end_time] = score  # end_time之前任意时刻完成都能得到分数,为保证总分最大,所以按最晚时刻完成
+    return sum(scores.values())
+
+
+def leet_code_53(matrix, t, c):  # 上班之路(也可以递归做)
+    find = False
+    home = company = (-1, -1)
+    m, n = len(matrix), len(matrix[0])
+    for i in range(m):
+        for j in range(n):
+            if matrix[i][j] == 'S':
+                home = (i, j)
+            elif matrix[i][j] == 'T':
+                company = (i, j)
+
+    directions = [(-1, 0, 1), (1, 0, 2), (0, -1, 3), (0, 1, 4)]
+    queue = deque([(home, 0, t, c)])
+    while queue:
+        position, last_direction, t, c = queue.popleft()
+        if position == company:
+            find = True
+            break
+        matrix[position[0]][position[1]] = 'V'  # 标记访问过的节点
+        for direction in directions:
+            x = position[0] + direction[0]
+            y = position[1] + direction[1]
+            if 0 <= x < m and 0 <= y < n and matrix[x][y] != 'V':
+                new_t, new_c = t, c
+                if last_direction and last_direction != direction[2]:
+                    new_t -= 1
+                if matrix[x][y] == '*':
+                    new_c -= 1
+                if new_t >= 0 and new_c >= 0:
+                    queue.append(((x, y), direction[2], new_t, new_c))
+    return find
 
 
 if __name__ == "__main__":
@@ -1177,3 +1205,17 @@ if __name__ == "__main__":
         [2, 5],
         [6, 1],
     ]) == 15
+    assert leet_code_53([
+        ['.', '.', 'S', '.', '.'],
+        ['*', '*', '*', '*', '.'],
+        ['T', '.', '.', '.', '.'],
+        ['*', '*', '*', '*', '.'],
+        ['.', '.', '.', '.', '.'],
+    ], 2, 0) == True
+    assert leet_code_53([
+        ['.', '*', 'S', '*', '.'],
+        ['*', '*', '*', '*', '*'],
+        ['.', '.', '*', '.', '.'],
+        ['*', '*', '*', '*', '*'],
+        ['T', '.', '.', '.', '.'],
+    ], 1, 2) == False
