@@ -693,22 +693,15 @@ def leet_code_37(start, end, a, b):  # 数字加减游戏
 
 
 def leet_code_38(fields, days):  # 农场施肥
-    def _get_total(_mid):
-        _total = 0
-        for i in range(length):
-            _total += math.ceil(fields[i] / _mid)
-        return _total
-
-    length = len(fields)
     left, right = 1, sorted(fields)[-1]
     while left < right:
         mid = (left + right) >> 1
-        total = _get_total(mid)
+        total = sum(math.ceil(field / mid) for field in fields)
         if total > days:
             left = mid + 1  # 左边一定不满足条件
         else:
             right = mid  # 由于要求最低效率,因此这里不能减1
-    if _get_total(left) <= days:  # 此时left==right
+    if sum(math.ceil(field / left) for field in fields) <= days:  # 此时left==right
         return left
     return -1
 
@@ -788,10 +781,10 @@ def leet_code_41(matrix, task):  # 微服务的集成测试(拓扑排序)
 
 
 def leet_code_42(string):  # 严格递增字符串
-    length = len(string)
-    changes = min_changes = string.count("B")
-    for i in range(1, length + 1):  # 假设字符串长度为3,修改后的字符串一定是AAA,AAB,ABB,BBB中的一种,changes代表末尾有0到3个B
-        if string[length - i] == "B":
+    changes = min_changes = string.count("A")
+    for char in string:  # 假设字符串长度为3,修改后的字符串一定是BBB,ABB,AAB,AAA中的一种,changes代表开头有0到3个A时需要交换的次数
+        # 第几次循环意思是想让前几个字符都变为A
+        if char == "A":
             changes -= 1
             min_changes = min(changes, min_changes)
         else:
