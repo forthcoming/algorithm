@@ -1004,14 +1004,12 @@ def huawei_od_50(layouts):  # 机房布局
 
 def huawei_od_51(work_orders):  # 工单调度策略
     work_orders.sort(key=lambda x: x[0])  # 先根据工单最迟完成时间排序
-    max_score = 0
     priority_queue = []
     heapq.heapify(priority_queue)
     cur_time = 0
     for end_time, score in work_orders:
         if end_time >= cur_time + 1:  # +1代表完成该任务需要1个单位时间
             heapq.heappush(priority_queue, score)
-            max_score += score
             cur_time += 1
         else:
             if priority_queue:
@@ -1019,8 +1017,7 @@ def huawei_od_51(work_orders):  # 工单调度策略
                 if score > min_score:  # 如果当前值更有价值score大于堆顶,就放弃堆顶,完成当前的
                     heapq.heappop(priority_queue)
                     heapq.heappush(priority_queue, score)
-                    max_score += score - min_score
-    return max_score
+    return sum(priority_queue)
 
 
 def huawei_od_52(work_orders):  # 工单调度策略
