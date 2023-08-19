@@ -6,7 +6,7 @@ from collections import deque, Counter
 from itertools import permutations
 
 
-def leet_code_1(tasks: list[tuple[int, int, int]]):  # 最大化控制资源成本
+def huawei_od_1(tasks: list[tuple[int, int, int]]):  # 最大化控制资源成本
     # tuple[int, int, int]代表[开始时间, 结束时间, 占用资源数]
     max_resource = 0
     borders = [border for task in tasks for border in task[:2]]
@@ -19,7 +19,7 @@ def leet_code_1(tasks: list[tuple[int, int, int]]):  # 最大化控制资源成�
     return max_resource
 
 
-def leet_code_2(max_weight, weights):  # 骑车去绿岛
+def huawei_od_2(max_weight, weights):  # 骑车去绿岛
     # max_weight: 双人自行车最大承载量
     # weights: 每个人的体重
     # 隐含条件: 一辆双人车最多承载2人,且最大承载量大于每个人的体重
@@ -37,7 +37,7 @@ def leet_code_2(max_weight, weights):  # 骑车去绿岛
     return count
 
 
-def leet_code_3(point_num, edges):  # 无向图染色
+def huawei_od_3(point_num, edges):  # 无向图染色
     count = 0
     for i in range(1 << point_num):
         for edge in edges:
@@ -48,7 +48,7 @@ def leet_code_3(point_num, edges):  # 无向图染色
     return count
 
 
-def leet_code_4(left, right):  # 不含101的数
+def huawei_od_4(left, right):  # 不含101的数
     count = 0
     for ele in range(left, right + 1):
         while ele >= 0b101:
@@ -60,7 +60,7 @@ def leet_code_4(left, right):  # 不含101的数
     return count
 
 
-def leet_code_5(num_str, block_str):  # 过滤组合字符串
+def huawei_od_5(num_str, block_str):  # 过滤组合字符串
     result = []
     mapping = {
         '0': 'abc',
@@ -91,7 +91,7 @@ def leet_code_5(num_str, block_str):  # 过滤组合字符串
     return result
 
 
-def leet_code_6(sheep_num, wolf_num, capacity):  # 羊,狼,农夫过河
+def huawei_od_6(sheep_num, wolf_num, capacity):  # 羊,狼,农夫过河
     min_count = float("inf")
 
     def _dfs(_sheep_num, _wolf_num, oppo_sheep, oppo_wolf, count):
@@ -117,7 +117,7 @@ def leet_code_6(sheep_num, wolf_num, capacity):  # 羊,狼,农夫过河
     return min_count
 
 
-def leet_code_7(matrix, threshold, width):  # 探索地块建立|荒地建设电站|区域发电量统计
+def huawei_od_7(matrix, threshold, width):  # 探索地块建立|荒地建设电站|区域发电量统计
     x, y = len(matrix), len(matrix[0])
     p = [[0] * (y + 1) for _ in range(x + 1)]  # p[i][j]代表matrix[0][0]与matrix[i-1][j-1]区域的元素和,二维前缀和
     for i in range(x):
@@ -132,7 +132,7 @@ def leet_code_7(matrix, threshold, width):  # 探索地块建立|荒地建设电
     return count
 
 
-def leet_code_8(logs):  # 日志首次上报最多积分
+def huawei_od_8(logs):  # 日志首次上报最多积分
     max_score = minus_score = left_score = 0
     for current_score in logs:
         if minus_score + current_score <= 100:
@@ -144,7 +144,7 @@ def leet_code_8(logs):  # 日志首次上报最多积分
     return max_score
 
 
-def leet_code_9(clips: list[list[int]], left, right):  # 区间交叠问题
+def huawei_od_9(clips: list[list[int]], left, right):  # 区间交叠问题
     # https://leetcode.cn/problems/video-stitching/
     dp = [0] + [-1] * (right - left)
     for i in range(1, 1 + right - left):  # dp[i]代表将区间[left,left+i]覆盖所需的最少子区间数量
@@ -158,7 +158,7 @@ def leet_code_9(clips: list[list[int]], left, right):  # 区间交叠问题
     return dp[-1]
 
 
-def leet_code_10(passwords):  # 最长的密码
+def huawei_od_10(passwords):  # 最长的密码
     passwords.sort(key=lambda x: (len(x), x))  # 先根据长度排序,再根据字典排序
     passwords_set = set(passwords)
     while passwords:
@@ -171,7 +171,7 @@ def leet_code_10(passwords):  # 最长的密码
                 end -= 1
 
 
-def leet_code_11(prices: list[int]) -> int:  # 买卖股票的最佳时机I
+def huawei_od_11(prices: list[int]) -> int:  # 买卖股票的最佳时机I
     # https://leetcode.cn/problems/best-time-to-buy-and-sell-stock
     min_price = prices[0]
     max_profit = 0
@@ -181,7 +181,7 @@ def leet_code_11(prices: list[int]) -> int:  # 买卖股票的最佳时机I
     return max_profit
 
 
-def leet_code_12(prices: list[int]) -> int:  # 买卖股票的最佳时机II
+def huawei_od_12(prices: list[int]) -> int:  # 买卖股票的最佳时机II
     # https://leetcode.cn/problems/best-time-to-buy-and-sell-stock-ii/
     length = len(prices)
     # 定义状态dp[i][0]表示第i天交易完后手里没有股票的最大利润,dp[i][1]表示第i天交易完后手里持有一支股票的最大利润(i从0开始)
@@ -201,7 +201,7 @@ def leet_code_12(prices: list[int]) -> int:  # 买卖股票的最佳时机II
     # return max_profit
 
 
-def leet_code_13(messages, total_money):  # 最多获得的短信条数
+def huawei_od_13(messages, total_money):  # 最多获得的短信条数
     dp = [0] * (total_money + 1)  # dp[i]代表i元时最多可发送的短信条数
     for i in range(1, total_money + 1):
         for money, message in enumerate(messages, 1):
@@ -212,7 +212,7 @@ def leet_code_13(messages, total_money):  # 最多获得的短信条数
     return dp[-1]
 
 
-def leet_code_14(boxes, width):  # 箱子之字型摆放
+def huawei_od_14(boxes, width):  # 箱子之字型摆放
     result = [""] * width
     index = 0
     asc = True  # True表示从上到下，False表示从下到上
@@ -253,7 +253,7 @@ def leet_code_14(boxes, width):  # 箱子之字型摆放
     #     print(tmp.strip('*'))
 
 
-def leet_code_15(n, k):  # 对称美学
+def huawei_od_15(n, k):  # 对称美学
     # 将R对应成比特位1,B对应成比特位0,适用于长度比较小的情况
     bit_value = 0b1
     for i in range(n - 1):
@@ -264,7 +264,7 @@ def leet_code_15(n, k):  # 对称美学
     return bit_value >> (bit_length - k - 1) & 1
 
 
-def leet_code_16(n, k):  # 对称美学
+def huawei_od_16(n, k):  # 对称美学
     def _find(_n, _k, xor):
         if _n == 1:
             return "blue" if xor else "red"
@@ -277,7 +277,7 @@ def leet_code_16(n, k):  # 对称美学
     return _find(n, k, False)
 
 
-def leet_code_17(sites):  # 快递业务站(也可以并查集,初始状态每个站点作为一个跟节点)
+def huawei_od_17(sites):  # 快递业务站(也可以并查集,初始状态每个站点作为一个跟节点)
     count = 0
     cover = set()
     length = len(sites)
@@ -291,7 +291,7 @@ def leet_code_17(sites):  # 快递业务站(也可以并查集,初始状态每�
     return count
 
 
-def leet_code_18(nodes):  # 寻找路径
+def huawei_od_18(nodes):  # 寻找路径
     length = len(nodes)
     min_leaf = float("inf")
     result = None
@@ -319,7 +319,7 @@ def leet_code_18(nodes):  # 寻找路径
     return result
 
 
-def leet_code_19(nodes):  # 寻找路径(先找到最小叶子结点,再回溯)
+def huawei_od_19(nodes):  # 寻找路径(先找到最小叶子结点,再回溯)
     length = len(nodes)
     min_pos = -1
     for pos, node in enumerate(nodes):
@@ -335,7 +335,7 @@ def leet_code_19(nodes):  # 寻找路径(先找到最小叶子结点,再回溯)
     return path
 
 
-def leet_code_20(tasks):  # 任务调度
+def huawei_od_20(tasks):  # 任务调度
     success = []
     while tasks:
         start_time = tasks[0]['start_time']
@@ -354,7 +354,7 @@ def leet_code_20(tasks):  # 任务调度
     return success
 
 
-def leet_code_21(numbers):  # 分奖金(也可以暴力搜索)
+def huawei_od_21(numbers):  # 分奖金(也可以暴力搜索)
     result = [0] * len(numbers)
     stack = []  # 单调栈
     for idx, number in enumerate(numbers):
@@ -367,7 +367,7 @@ def leet_code_21(numbers):  # 分奖金(也可以暴力搜索)
     return result
 
 
-def leet_code_22(numbers, k):  # 最差产品奖(优先队列)
+def huawei_od_22(numbers, k):  # 最差产品奖(优先队列)
     length = len(numbers)
     queue = [(numbers[i], i) for i in range(k)]
     heapq.heapify(queue)
@@ -380,7 +380,7 @@ def leet_code_22(numbers, k):  # 最差产品奖(优先队列)
     return result
 
 
-def leet_code_23(numbers, k):  # 最差产品奖(单调队列)
+def huawei_od_23(numbers, k):  # 最差产品奖(单调队列)
     length = len(numbers)
     queue = collections.deque()
     for i in range(k):
@@ -399,7 +399,7 @@ def leet_code_23(numbers, k):  # 最差产品奖(单调队列)
     return result
 
 
-def leet_code_24(matrix):  # 查找单入口空闲区域
+def huawei_od_24(matrix):  # 查找单入口空闲区域
     def _find_zone(x, y):  # 也可以用队列做
         nonlocal entrance, count
         count += 1
@@ -435,13 +435,13 @@ def leet_code_24(matrix):  # 查找单入口空闲区域
         return max_count
 
 
-def leet_code_25(prices, k, budget):  # 预定酒店
+def huawei_od_25(prices, k, budget):  # 预定酒店
     price_rating = [(price - budget, price) for price in prices]
     price_rating.sort(key=lambda x: (abs(x[0]), x[0]))
     return sorted([item[1] for item in price_rating[:k]])
 
 
-def leet_code_26(matrix):  # 基站维护最短距离
+def huawei_od_26(matrix):  # 基站维护最短距离
     min_distance = float("inf")
     for item in permutations(range(1, len(matrix))):
         from_ = 0
@@ -454,7 +454,7 @@ def leet_code_26(matrix):  # 基站维护最短距离
     return min_distance
 
 
-def leet_code_27(matrix, volume):  # 最大报酬|查找充电设备组合(0-1背包问题)
+def huawei_od_27(matrix, volume):  # 最大报酬|查找充电设备组合(0-1背包问题)
     length = len(matrix)
     dp = [[0] * (volume + 1) for _ in range(length + 1)]  # dp[i][j]代表前i件物品放入容量为j的背包能产生的最大价值
     for i in range(1, length + 1):
@@ -467,7 +467,7 @@ def leet_code_27(matrix, volume):  # 最大报酬|查找充电设备组合(0-1�
     return dp[-1][-1]
 
 
-def leet_code_28(arr):  # 二进制差异数
+def huawei_od_28(arr):  # 二进制差异数
     mapping = {}
     for number in arr:
         while True:
@@ -496,7 +496,7 @@ def leet_code_28(arr):  # 二进制差异数
     # return total
 
 
-def leet_code_29(nodes, x, y):  # 查找二叉树节点
+def huawei_od_29(nodes, x, y):  # 查找二叉树节点
     queue = deque([nodes[0], 1])
     count = 0
     flag = False
@@ -515,7 +515,7 @@ def leet_code_29(nodes, x, y):  # 查找二叉树节点
                 queue.append(nodes[child])
 
 
-def leet_code_30(candidates, target):  # 硬件产品销售方案
+def huawei_od_30(candidates, target):  # 硬件产品销售方案
     # https://leetcode.cn/problems/combination-sum/description/
     candidates.sort()  # 非必需,用于减少递归次数
     path = []
@@ -537,7 +537,7 @@ def leet_code_30(candidates, target):  # 硬件产品销售方案
     return result
 
 
-def leet_code_31(matrix, x, y):  # 计算网络信号
+def huawei_od_31(matrix, x, y):  # 计算网络信号
     m, n = len(matrix), len(matrix[0])
     queue = deque()
     for i in range(m):  # 寻找信号源
@@ -563,7 +563,7 @@ def leet_code_31(matrix, x, y):  # 计算网络信号
                 queue.append((new_i, new_j))
 
 
-def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以大顶堆做,效率会差一丢丢)
+def huawei_od_32(operators, volunteers):  # 核酸最快检测效率(也可以大顶堆做,效率会差一丢丢)
     def _get_incr(op_pos):
         incr = operators[op_pos] * rate
         if with_volunteers[op_pos] == 0:
@@ -602,7 +602,7 @@ def leet_code_32(operators, volunteers):  # 核酸最快检测效率(也可以�
     return int(total)
 
 
-def leet_code_33(str1, str2):  # 字符串解密
+def huawei_od_33(str1, str2):  # 字符串解密
     counter = {}
     length = len(set(str2))
     for word in re.findall(r'[^0-9a-f]+', str1):
@@ -617,7 +617,7 @@ def leet_code_33(str1, str2):  # 字符串解密
         return sorted(counter[max_length])[-1]
 
 
-def leet_code_34(string):  # 删除重复数字后的最大数字
+def huawei_od_34(string):  # 删除重复数字后的最大数字
     counter = Counter(string)
     used_counter = {char: 0 for char in counter}  # 初始化每个使用过的字符个数为0
     stack = []
@@ -632,7 +632,7 @@ def leet_code_34(string):  # 删除重复数字后的最大数字
     return ''.join(stack)
 
 
-def leet_code_35(heights):  # 水库蓄水问题(双指针法)
+def huawei_od_35(heights):  # 水库蓄水问题(双指针法)
     # https://leetcode.cn/problems/container-with-most-water/description
     length = len(heights)
     left, right = 0, length - 1
@@ -651,7 +651,7 @@ def leet_code_35(heights):  # 水库蓄水问题(双指针法)
     return bond_left, bond_right, max_area
 
 
-def leet_code_36(arr, k):  # 优雅子数组
+def huawei_od_36(arr, k):  # 优雅子数组
     result = 0
     length = len(arr)
     for i in range(length):  # i是子数组起点
@@ -673,7 +673,7 @@ def leet_code_36(arr, k):  # 优雅子数组
     return result
 
 
-def leet_code_37(start, end, a, b):  # 数字加减游戏
+def huawei_od_37(start, end, a, b):  # 数字加减游戏
     """
     (start-end-a*0)%b (start-end+a*0)%b
     (start-end-a*1)%b (start-end+a*1)%b
@@ -692,7 +692,7 @@ def leet_code_37(start, end, a, b):  # 数字加减游戏
     return count
 
 
-def leet_code_38(fields, days):  # 农场施肥
+def huawei_od_38(fields, days):  # 农场施肥
     left, right = 1, sorted(fields)[-1]
     while left < right:
         mid = (left + right) >> 1
@@ -706,7 +706,7 @@ def leet_code_38(fields, days):  # 农场施肥
     return -1
 
 
-def leet_code_39(arr, total):  # 组装新的数组(硬件产品销售方案题目变种)
+def huawei_od_39(arr, total):  # 组装新的数组(硬件产品销售方案题目变种)
     count = 0
     arr.sort()  # 元素为正数
     length = len(arr)
@@ -726,7 +726,7 @@ def leet_code_39(arr, total):  # 组装新的数组(硬件产品销售方案题�
     return count
 
 
-def leet_code_40(task_num, relations):  # 快速开租建站(拓扑排序)
+def huawei_od_40(task_num, relations):  # 快速开租建站(拓扑排序)
     upstream = [0] * task_num  # 每个任务的前置依赖任务个数
     downstream = [[] for _ in range(task_num)]  # 每个任务的下游任务
     for relation in relations:
@@ -748,7 +748,7 @@ def leet_code_40(task_num, relations):  # 快速开租建站(拓扑排序)
     return total_duration
 
 
-def leet_code_41(matrix, task):  # 微服务的集成测试(拓扑排序)
+def huawei_od_41(matrix, task):  # 微服务的集成测试(拓扑排序)
     # length = len(matrix)
     # unfinished_tasks = {*range(length)}
     # total_duration = 0
@@ -780,7 +780,7 @@ def leet_code_41(matrix, task):  # 微服务的集成测试(拓扑排序)
     return total_duration
 
 
-def leet_code_42(string):  # 严格递增字符串
+def huawei_od_42(string):  # 严格递增字符串
     changes = min_changes = string.count("A")
     for char in string:  # 假设字符串长度为3,修改后的字符串一定是BBB,ABB,AAB,AAA中的一种,changes代表开头有0到3个A时需要交换的次数
         # 第几次循环意思是想让前几个字符都变为A
@@ -792,7 +792,7 @@ def leet_code_42(string):  # 严格递增字符串
     return min_changes
 
 
-def leet_code_43(img):  # 简单的自动曝光(二分法)
+def huawei_od_43(img):  # 简单的自动曝光(二分法)
     left, right = -255, 255
     wanted = len(img) << 7
     while left < right:
@@ -815,7 +815,7 @@ def leet_code_43(img):  # 简单的自动曝光(二分法)
     return k
 
 
-def leet_code_44(files, capacity):  # 最大连续文件之和|区块链文件转储系统
+def huawei_od_44(files, capacity):  # 最大连续文件之和|区块链文件转储系统
     # https://leetcode.cn/problems/minimum-size-subarray-sum/description
     # 滑动窗口,前提是连续子数组且元素非负
     if not files:
@@ -837,7 +837,7 @@ def leet_code_44(files, capacity):  # 最大连续文件之和|区块链文件�
     return window_max
 
 
-def leet_code_45(content, word):  # 发现新词的数量|新词挖掘
+def huawei_od_45(content, word):  # 发现新词的数量|新词挖掘
     result = 0
     need = collections.Counter(word)
     word_len = missing = len(word)
@@ -855,7 +855,7 @@ def leet_code_45(content, word):  # 发现新词的数量|新词挖掘
     return result
 
 
-def leet_code_46(content, word):  # 最小覆盖子串(滑动窗口)
+def huawei_od_46(content, word):  # 最小覆盖子串(滑动窗口)
     # https://leetcode.cn/problems/minimum-window-substring/description
     content_len = len(content)
     need = collections.Counter(word)
@@ -912,7 +912,7 @@ def leet_code_46(content, word):  # 最小覆盖子串(滑动窗口)
     # return content[min_left:min_right + 1] if min_right < content_len else ''
 
 
-def leet_code_47(encrypt: str):  # 简单的解压缩算法
+def huawei_od_47(encrypt: str):  # 简单的解压缩算法
     def _do_repeat(repeat_num):
         substring = ''
         top = stack.pop()
@@ -942,7 +942,7 @@ def leet_code_47(encrypt: str):  # 简单的解压缩算法
     return ''.join(stack)
 
 
-def leet_code_48(matrix):  # 信号发射与接收(单调队列)
+def huawei_od_48(matrix):  # 信号发射与接收(单调队列)
     def _do(x, y, stack):
         while stack and matrix[x][y] > stack[-1]:
             result[x][y] += 1
@@ -966,7 +966,7 @@ def leet_code_48(matrix):  # 信号发射与接收(单调队列)
     return result
 
 
-def leet_code_49(layouts):  # 机房布局
+def huawei_od_49(layouts):  # 机房布局
     count = 0
     length = len(layouts)
     boxes = [False] * length
@@ -984,7 +984,7 @@ def leet_code_49(layouts):  # 机房布局
     return count
 
 
-def leet_code_50(layouts):  # 机房布局
+def huawei_od_50(layouts):  # 机房布局
     count = 0
     length = len(layouts)
     i = 0
@@ -1002,7 +1002,7 @@ def leet_code_50(layouts):  # 机房布局
     return count
 
 
-def leet_code_51(work_orders):  # 工单调度策略
+def huawei_od_51(work_orders):  # 工单调度策略
     work_orders.sort(key=lambda x: x[0])  # 先根据工单最迟完成时间排序
     max_score = 0
     priority_queue = []
@@ -1023,7 +1023,7 @@ def leet_code_51(work_orders):  # 工单调度策略
     return max_score
 
 
-def leet_code_52(work_orders):  # 工单调度策略
+def huawei_od_52(work_orders):  # 工单调度策略
     work_orders.sort(key=lambda x: -x[1])  # 先根据积分逆序排序
     scores = {}
     for end_time, score in work_orders:
@@ -1034,7 +1034,7 @@ def leet_code_52(work_orders):  # 工单调度策略
     return sum(scores.values())
 
 
-def leet_code_53(matrix, t, c):  # 上班之路(也可以递归做)
+def huawei_od_53(matrix, t, c):  # 上班之路(也可以递归做)
     find = False
     home = company = (-1, -1)
     m, n = len(matrix), len(matrix[0])
@@ -1068,33 +1068,33 @@ def leet_code_53(matrix, t, c):  # 上班之路(也可以递归做)
 
 
 if __name__ == "__main__":
-    assert leet_code_1([(3, 9, 2), (4, 7, 3)]) == 5
-    assert leet_code_2(3, [3, 2, 2, 1]) == 3
-    assert leet_code_3(4, [[1, 2], [2, 4], [3, 4], [1, 3]]) == 7
-    assert leet_code_4(10, 20) == 7
-    assert leet_code_5('78', 'ux') == ['uw', 'vw', 'vx']
-    assert leet_code_6(5, 4, 1) == 0
-    assert leet_code_7([[1, 3, 4, 5, 8], [2, 3, 6, 7, 1]], 6, 2) == 4
-    assert leet_code_8([3, 7, 40, 10, 60]) == 37
-    assert leet_code_9([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 0, 10) == 3
-    assert leet_code_9([[1, 4], [2, 5], [3, 6]], 1, 6) == 2
-    assert leet_code_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']) == 'bwwln'
-    assert leet_code_11([7, 1, 5, 3, 6, 4]) == 5
-    assert leet_code_12([7, 1, 5, 3, 6, 4]) == 7
-    assert leet_code_13([10, 20, 30, 40, 60, 60, 70, 80, 90, 150], 15) == 210
-    assert leet_code_14('abcdefg', 3) == ['afg', 'be', 'cd']
-    assert leet_code_15(1, 0) == 1
-    assert leet_code_16(64, 73709551616) == 'red'
-    assert leet_code_17([
+    assert huawei_od_1([(3, 9, 2), (4, 7, 3)]) == 5
+    assert huawei_od_2(3, [3, 2, 2, 1]) == 3
+    assert huawei_od_3(4, [[1, 2], [2, 4], [3, 4], [1, 3]]) == 7
+    assert huawei_od_4(10, 20) == 7
+    assert huawei_od_5('78', 'ux') == ['uw', 'vw', 'vx']
+    assert huawei_od_6(5, 4, 1) == 0
+    assert huawei_od_7([[1, 3, 4, 5, 8], [2, 3, 6, 7, 1]], 6, 2) == 4
+    assert huawei_od_8([3, 7, 40, 10, 60]) == 37
+    assert huawei_od_9([[0, 2], [4, 6], [8, 10], [1, 9], [1, 5], [5, 9]], 0, 10) == 3
+    assert huawei_od_9([[1, 4], [2, 5], [3, 6]], 1, 6) == 2
+    assert huawei_od_10(['b', 'ereddred', 'bw', 'bww', 'bwwl', 'bwwlm', 'bwwln']) == 'bwwln'
+    assert huawei_od_11([7, 1, 5, 3, 6, 4]) == 5
+    assert huawei_od_12([7, 1, 5, 3, 6, 4]) == 7
+    assert huawei_od_13([10, 20, 30, 40, 60, 60, 70, 80, 90, 150], 15) == 210
+    assert huawei_od_14('abcdefg', 3) == ['afg', 'be', 'cd']
+    assert huawei_od_15(1, 0) == 1
+    assert huawei_od_16(64, 73709551616) == 'red'
+    assert huawei_od_17([
         [1, 0, 0, 0, 0],
         [0, 1, 0, 0, 0],
         [0, 0, 1, 1, 0],
         [0, 0, 1, 1, 1],
         [0, 0, 0, 1, 1],
     ]) == 3
-    assert leet_code_18([5, 9, 8, -1, -1, 7, -1, -1, -1, -1, -1, 6]) == [5, 8, 7, 6]
-    assert leet_code_19([3, 5, 7, -1, -1, 2, 4]) == deque([3, 7, 2])
-    assert leet_code_20([
+    assert huawei_od_18([5, 9, 8, -1, -1, 7, -1, -1, -1, -1, -1, 6]) == [5, 8, 7, 6]
+    assert huawei_od_19([3, 5, 7, -1, -1, 2, 4]) == deque([3, 7, 2])
+    assert huawei_od_20([
         {'thread_id': 1, 'priority': 3, 'cost': 5, 'start_time': 1},  # 任务id,任务优先级,执行时间,到达时间
         {'thread_id': 2, 'priority': 1, 'cost': 5, 'start_time': 10},
         {'thread_id': 3, 'priority': 2, 'cost': 7, 'start_time': 12},
@@ -1102,38 +1102,38 @@ if __name__ == "__main__":
         {'thread_id': 5, 'priority': 4, 'cost': 9, 'start_time': 21},
         {'thread_id': 6, 'priority': 4, 'cost': 2, 'start_time': 22},
     ]) == [[1, 6], [3, 19], [5, 30], [6, 32], [4, 33], [2, 35]]
-    assert leet_code_21([2, 10, 3]) == [8, 10, 3]
-    assert leet_code_22([12, 3, 8, 6, 5], 3) == [3, 3, 5]
-    assert leet_code_23([12, 3, 8, 6, 5], 3) == [3, 3, 5]
-    assert leet_code_24([
+    assert huawei_od_21([2, 10, 3]) == [8, 10, 3]
+    assert huawei_od_22([12, 3, 8, 6, 5], 3) == [3, 3, 5]
+    assert huawei_od_23([12, 3, 8, 6, 5], 3) == [3, 3, 5]
+    assert huawei_od_24([
         ["X", "X", "X", "X"],
         ["X", "O", "O", "X"],
         ["X", "O", "O", "X"],
         ["X", "O", "X", "X"],
     ]) == (3, 1, 5)
-    assert leet_code_24([
+    assert huawei_od_24([
         ["X", "X", "X", "X"],
         ["X", "O", "O", "O"],
         ["X", "X", "X", "X"],
         ["X", "O", "O", "O"],
         ["X", "X", "X", "X"],
     ]) == 3
-    assert leet_code_25([10, 9, 8, 7, 6, 5, 4, 3, 2, 1], 4, 6) == [4, 5, 6, 7]
-    assert leet_code_26([
+    assert huawei_od_25([10, 9, 8, 7, 6, 5, 4, 3, 2, 1], 4, 6) == [4, 5, 6, 7]
+    assert huawei_od_26([
         [0, 2, 1],
         [1, 0, 2],
         [2, 1, 0],
     ]) == 3
-    assert leet_code_27([
+    assert huawei_od_27([
         [1, 2],
         [2, 4],
         [3, 4],
         [4, 5],
     ], 5) == 8
-    assert leet_code_28([7, 6, 33, 2, 1, 9, 88, 4, 3, 5, 2]) == 46
-    assert leet_code_29([(10, 1, 2), (-21, 3, 4), (23, 5), (14,), (35,), (66,)], 1, 1) == 23
-    assert leet_code_30([5, 2, 3], 8) == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
-    assert leet_code_31([
+    assert huawei_od_28([7, 6, 33, 2, 1, 9, 88, 4, 3, 5, 2]) == 46
+    assert huawei_od_29([(10, 1, 2), (-21, 3, 4), (23, 5), (14,), (35,), (66,)], 1, 1) == 23
+    assert huawei_od_30([5, 2, 3], 8) == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
+    assert huawei_od_31([
         [0, 0, 0, -1, 0],
         [0, 0, 0, 0, 0],
         [0, 0, -1, 4, 0],
@@ -1141,46 +1141,46 @@ if __name__ == "__main__":
         [0, 0, 0, 0, -1],
         [0, 0, 0, 0, 0]
     ], 1, 4) == 2
-    assert leet_code_32([300, 200, 400, 10], 10) == 1138
-    assert leet_code_33("123admyffc79ptaagghi2222smeersst88mnrt", "ssyyfgh") == "mnrt"
-    assert leet_code_33("abcmnq", "rt") is None
-    assert leet_code_34("54457950451") == '54795041'
-    assert leet_code_35([1, 8, 6, 2, 5, 4, 8, 3, 7]) == (1, 8, 49)
-    assert leet_code_36([1, 2, 3, 1, 2, 3, 1], 2) == 9
-    assert leet_code_37(11, 33, 4, 10) == 2
-    assert leet_code_38([5, 7, 9, 15, 10], 4) == -1
-    assert leet_code_38([5, 7, 9, 15, 10], 6) == 10
-    assert leet_code_38([5, 7, 9, 15, 10], 50) == 1
-    assert leet_code_39([2, 3], 5) == 2
-    assert leet_code_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
-    assert leet_code_41([
+    assert huawei_od_32([300, 200, 400, 10], 10) == 1138
+    assert huawei_od_33("123admyffc79ptaagghi2222smeersst88mnrt", "ssyyfgh") == "mnrt"
+    assert huawei_od_33("abcmnq", "rt") is None
+    assert huawei_od_34("54457950451") == '54795041'
+    assert huawei_od_35([1, 8, 6, 2, 5, 4, 8, 3, 7]) == (1, 8, 49)
+    assert huawei_od_36([1, 2, 3, 1, 2, 3, 1], 2) == 9
+    assert huawei_od_37(11, 33, 4, 10) == 2
+    assert huawei_od_38([5, 7, 9, 15, 10], 4) == -1
+    assert huawei_od_38([5, 7, 9, 15, 10], 6) == 10
+    assert huawei_od_38([5, 7, 9, 15, 10], 50) == 1
+    assert huawei_od_39([2, 3], 5) == 2
+    assert huawei_od_40(5, [[0, 4], [1, 2], [1, 3], [2, 3], [2, 4]]) == 3
+    assert huawei_od_41([
         [1, 0, 0, 0, 0],
         [0, 2, 0, 0, 0],
         [1, 1, 3, 0, 0],
         [1, 1, 0, 4, 0],
         [0, 0, 1, 1, 5]
     ], 2) == 5
-    assert leet_code_41([
+    assert huawei_od_41([
         [2, 0, 0, 0],
         [0, 3, 0, 0],
         [1, 1, 4, 0],
         [1, 1, 1, 5],
     ], 3) == 12
-    assert leet_code_42("BAABBABBAB") == 3
-    assert leet_code_43([151, 154, 255, 199, 24, 14, 70, 248, 170, 3]) == -1
-    assert leet_code_43([90, 211, 64, 178, 90, 48, 106, 187, 57, 134]) == 11
-    assert leet_code_44([100, 300, 500, 400, 400, 150, 100], 1000) == 950
-    assert leet_code_44([100, 500, 400, 150, 500, 100], 1000) == 1000
-    assert leet_code_45('qweebaewqd', 'qwe') == 2
-    assert leet_code_46('ADOBECODEBANC', 'ABC') == 'BANC'
-    assert leet_code_47('{a3b1{c}3}3') == 'aaabcccaaabcccaaabccc'
-    assert leet_code_48([
+    assert huawei_od_42("BAABBABBAB") == 3
+    assert huawei_od_43([151, 154, 255, 199, 24, 14, 70, 248, 170, 3]) == -1
+    assert huawei_od_43([90, 211, 64, 178, 90, 48, 106, 187, 57, 134]) == 11
+    assert huawei_od_44([100, 300, 500, 400, 400, 150, 100], 1000) == 950
+    assert huawei_od_44([100, 500, 400, 150, 500, 100], 1000) == 1000
+    assert huawei_od_45('qweebaewqd', 'qwe') == 2
+    assert huawei_od_46('ADOBECODEBANC', 'ABC') == 'BANC'
+    assert huawei_od_47('{a3b1{c}3}3') == 'aaabcccaaabcccaaabccc'
+    assert huawei_od_48([
         [2, 5, 4, 3, 2, 8],
         [9, 7, 5, 10, 10, 3],
     ]) == [[0, 1, 1, 1, 1, 4], [1, 2, 2, 4, 2, 2]]
-    assert leet_code_48([[2, 4, 1, 5, 3, 3]]) == [[0, 1, 1, 2, 1, 1]]
-    assert leet_code_49("IMMII") == leet_code_50("IMMII") == 2
-    assert leet_code_51([
+    assert huawei_od_48([[2, 4, 1, 5, 3, 3]]) == [[0, 1, 1, 2, 1, 1]]
+    assert huawei_od_49("IMMII") == huawei_od_50("IMMII") == 2
+    assert huawei_od_51([
         [1, 6],  # [t,s]意思是工单必须在t时刻之前完成才有s积分,超时也必须完成但没有积分,每个工单需要1小时
         [1, 7],
         [3, 2],
@@ -1189,7 +1189,7 @@ if __name__ == "__main__":
         [2, 5],
         [6, 1],
     ]) == 15
-    assert leet_code_52([
+    assert huawei_od_52([
         [1, 6],
         [1, 7],
         [3, 2],
@@ -1198,14 +1198,14 @@ if __name__ == "__main__":
         [2, 5],
         [6, 1],
     ]) == 15
-    assert leet_code_53([
+    assert huawei_od_53([
         ['.', '.', 'S', '.', '.'],
         ['*', '*', '*', '*', '.'],
         ['T', '.', '.', '.', '.'],
         ['*', '*', '*', '*', '.'],
         ['.', '.', '.', '.', '.'],
     ], 2, 0) is True
-    assert leet_code_53([
+    assert huawei_od_53([
         ['.', '*', 'S', '*', '.'],
         ['*', '*', '*', '*', '*'],
         ['.', '.', '*', '.', '.'],
