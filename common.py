@@ -22,7 +22,7 @@ from heap import Heap
 
 
 def find_min_step(destination):  # destination每步可以+-2,+-3,最少多少次可以到0
-    # 也可以动态规划dp[i]=min(dp[i-2],dp[i-3)+1
+    # 也可以动态规划dp[i]=min(dp[i-2],dp[i-3])+1
     if destination == 1:
         return 2
     count = destination // 3
