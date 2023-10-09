@@ -508,7 +508,7 @@ def top_k_quicksort(arr, k):  # 选择数组中第k个数
     index = k - 1
 
     def _top_k(left, right):
-        if left > right:
+        if left > right:  # 注意这里不能有等号,排序可以有等号
             return
         mid = left
         for idx in range(left + 1, right + 1):
