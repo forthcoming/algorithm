@@ -21,6 +21,24 @@ from itertools import permutations
 from heap import Heap
 
 
+def find_substr(s):  # 无重复字符的最长子串
+    # https://leetcode.cn/problems/longest-substring-without-repeating-characters/description
+    start = 0
+    visited = set()
+    max_length = 0
+    for end, char in enumerate(s):
+        if char in visited:
+            while True:
+                item = s[start]
+                visited.remove(item)
+                start += 1
+                if item == char:
+                    break
+        max_length = max(max_length, end - start + 1)
+        visited.add(char)
+    return max_length
+
+
 def find_min_step(destination):  # destination每步可以+-2,+-3,最少多少次可以到0
     # 也可以动态规划dp[i]=min(dp[i-2],dp[i-3])+1
     if destination == 1:
@@ -775,3 +793,4 @@ if __name__ == "__main__":
     print(ball_game())
     print(encode_string('qddddftddjhh'))
     n_queens_bit(4)
+    print(find_substr('pwwkew'))
