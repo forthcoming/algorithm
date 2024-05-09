@@ -137,17 +137,16 @@ def longest_common_subseq_recur(string_x, string_y):  # 最长公共子序列带
     len_y = len(string_y)
     dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]
 
-    def _solve(x, y, _len_x, _len_y):
+    def _solve(_len_x, _len_y):
         if _len_x and _len_y and not dp[_len_x][_len_y]:
-            if x[_len_x - 1] == y[_len_y - 1]:  # dp每个位置不一定都遍历到
-                dp[_len_x][_len_y] = _solve(x, y, _len_x - 1, _len_y - 1) + 1
+            if string_x[_len_x - 1] == string_y[_len_y - 1]:  # dp每个位置不一定都遍历到
+                dp[_len_x][_len_y] = _solve(_len_x - 1, _len_y - 1) + 1
             else:
-                dp[_len_x][_len_y] = max(_solve(x, y, _len_x - 1, _len_y), _solve(x, y, _len_x, _len_y - 1))
+                dp[_len_x][_len_y] = max(_solve(_len_x - 1, _len_y), _solve(_len_x, _len_y - 1))
         return dp[_len_x][_len_y]
 
-    _solve(string_x, string_y, len_x, len_y)
-    for i in dp:
-        print(i)
+    count = _solve(len_x, len_y)
+    return count
 
 
 def longest_common_substring(string_x, string_y):  # 寻找2字符串中的最长公共子串(特殊的子序列)
@@ -236,4 +235,5 @@ if __name__ == "__main__":
      [0, 1, 2, 2, 3, 4, 4]
     """
     longest_common_subseq('abcbdab', 'bdcaba')  # ['b', 'c', 'b', 'a']
-    print(longest_common_substring("abcdefghijklmnop", "abcsafjklmnopqrstuvw"))  # jklmnop
+    # longest_common_subseq_recur('abcbdab', 'bdcaba')  
+    # print(longest_common_substring("abcdefghijklmnop", "abcsafjklmnopqrstuvw"))  # jklmnop
