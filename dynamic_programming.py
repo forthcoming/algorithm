@@ -102,7 +102,7 @@ def longest_incr_seq(arr):  # 最长递增子序列,O(n^2),还可以将arr排序
 def longest_common_subseq(string_x, string_y):  # 最长公共子序列,O(m*n)
     len_x = len(string_x)
     len_y = len(string_y)
-    dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]  # d[i][j]指子串string_x[0:i]与string_y[0:j]的最长公共子序列长度
+    dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]  # dp[i][j]指子串string_x[0:i]与string_y[0:j]的最长公共子序列长度
     for i in range(len_x):
         for j in range(len_y):
             if string_x[i] == string_y[j]:
@@ -118,21 +118,10 @@ def longest_common_subseq(string_x, string_y):  # 最长公共子序列,O(m*n)
                 说明:x[i] != y[j]意味着a不能同时大于b和c
                 """
                 dp[i + 1][j + 1] = max(dp[i + 1][j], dp[i][j + 1])
-    result = []
-    while len_x and len_y:  # 最长公共子序列不止一个,回溯的不同方向能找到所有解
-        if dp[len_x][len_y] == dp[len_x - 1][len_y]:
-            len_x -= 1
-        elif dp[len_x][len_y] == dp[len_x][len_y - 1]:
-            len_y -= 1
-        else:  # 注意这里要求string_x和string_y子串结尾都是满足要求的最后一个字符才行
-            len_x -= 1
-            len_y -= 1
-            # result.append(string_x[len_x])
-            result.append(string_y[len_y])
-    print(result[::-1])
+    return dp[-1][-1]
 
 
-def longest_common_subseq_recur(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m+n)
+def longest_common_subseq_recur(string_x, string_y):  # 最长公共子序列带备忘录版递归,O(m*n)
     len_x = len(string_x)
     len_y = len(string_y)
     dp = [[0] * (len_y + 1) for _ in range(len_x + 1)]
@@ -146,6 +135,18 @@ def longest_common_subseq_recur(string_x, string_y):  # 最长公共子序列带
         return dp[_len_x][_len_y]
 
     count = _solve(len_x, len_y)
+    result = []
+    while len_x and len_y:  # 最长公共子序列不止一个,回溯的不同方向能找到所有解
+        if dp[len_x][len_y] == dp[len_x - 1][len_y]:
+            len_x -= 1
+        elif dp[len_x][len_y] == dp[len_x][len_y - 1]:
+            len_y -= 1
+        else:  # 注意这里要求string_x和string_y子串结尾都是满足要求的最后一个字符才行
+            len_x -= 1
+            len_y -= 1
+            # result.append(string_x[len_x])
+            result.append(string_y[len_y])
+    print(result[::-1])
     return count
 
 
@@ -235,5 +236,5 @@ if __name__ == "__main__":
      [0, 1, 2, 2, 3, 4, 4]
     """
     longest_common_subseq('abcbdab', 'bdcaba')  # ['b', 'c', 'b', 'a']
-    # longest_common_subseq_recur('abcbdab', 'bdcaba')  
+    # longest_common_subseq_recur('abcbdab', 'bdcaba')
     # print(longest_common_substring("abcdefghijklmnop", "abcsafjklmnopqrstuvw"))  # jklmnop
